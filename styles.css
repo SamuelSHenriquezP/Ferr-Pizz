@@ -1,0 +1,3064 @@
+/* ========================================================
+   FER PIZZ (CARTAGENA) — SISTEMA EDITORIAL CON TOQUES MOSTAZA & ROJO
+   Diseño Fluido Edge-to-Edge, Sin Bordes Enclaustrados, Adaptado a Móviles
+   ======================================================== */
+
+:root {
+  /* PALETA ORIGINAL FER PIZZ & EDITORIAL DA MARIA */
+  --mustard-ferpizz: #FCD968;      /* Mostaza más claro y radiante (artesanal) */
+  --mustard-deep: #EDB936;         /* Mostaza tostado para bordes y sombras */
+  --accent-crimson: #BD2026;       /* Rojo característico Fer Pizz */
+  --red-bright: #D8262D;           /* Rojo encendido para botones y llamadas */
+  --ink-wine: #4A1417;             /* Bordó profundo / Vino del logo */
+  --bg-canvas: #F8F1E2;            /* Fondo crema cálido y elegante */
+  --bg-card: #F1E5D0;              /* Papel crema con profundidad para tarjetas */
+  --ink-charcoal: #1A1615;         /* Tinta offset oscura */
+  --ink-muted: #5C544F;            /* Tinta secundaria */
+  --border-paper: #D9CEBF;         /* Líneas sutiles de prensa */
+  --border-mustard: #E8C15A;       /* Líneas mostaza clara */
+  --white-pure: #FFFFFF;
+
+  /* TIPOGRAFÍAS */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-headline: 'Bitter', 'Playfair Display', serif;
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* TRANSICIONES & FLUIDEZ */
+  --trans-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --trans-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --trans-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* RESET GENERAL SIN BORDES PERIMETRALES */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  background-color: var(--bg-canvas);
+  color: var(--ink-charcoal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body.newspaper-theme.full-viewport {
+  font-family: var(--font-sans);
+  background-color: var(--bg-canvas);
+  background-image: 
+    radial-gradient(rgba(252, 217, 104, 0.22) 1.5px, transparent 0),
+    radial-gradient(rgba(74, 20, 23, 0.035) 1px, transparent 0);
+  background-size: 32px 32px, 16px 16px;
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  overflow-x: hidden;
+  line-height: 1.55;
+}
+
+/* CONTENEDOR FLUIDO BIEN PROPORCIONADO */
+.site-container {
+  width: 100%;
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ========================================================
+   TOPBAR EDITORIAL UNIFICADA (FONDO VINO — ESPACIOSA Y ELEGANTE)
+   ======================================================== */
+.unified-editorial-topbar {
+  background-color: var(--ink-wine);
+  color: #F8F1E2;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  padding: 16px 0; /* Más aire en el primer banner */
+  border-bottom: 2.5px solid var(--accent-crimson);
+  position: relative;
+  z-index: 50;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+}
+
+.topbar-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.topbar-left, .topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.badge-oven {
+  background-color: var(--accent-crimson);
+  color: var(--white-pure);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35);
+}
+
+.topbar-sep {
+  color: var(--mustard-ferpizz);
+  font-size: 0.7rem;
+}
+
+.topbar-text, .topbar-date {
+  font-weight: 700;
+  color: #FAF4E8;
+  text-transform: uppercase;
+}
+
+.desktop-only {
+  display: inline-flex;
+}
+
+.topbar-slogan {
+  font-family: var(--font-headline);
+  font-weight: 800;
+  font-size: 0.86rem;
+  letter-spacing: 0.08em;
+  color: var(--mustard-ferpizz);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.topbar-contact-link {
+  color: #FFFFFF;
+  text-decoration: none;
+  font-weight: 800;
+  transition: color var(--trans-fast);
+}
+
+.topbar-contact-link:hover {
+  color: var(--mustard-ferpizz);
+  text-decoration: underline;
+}
+
+/* ========================================================
+   HEADER PRINCIPAL SIMÉTRICO CON LOGO ORIGINAL
+   ======================================================== */
+.editorial-header-fluid {
+  padding: 38px 0 34px;
+  background-color: var(--bg-canvas);
+  position: relative;
+  z-index: 40;
+}
+
+.header-layout {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 36px;
+}
+
+.header-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.header-nav-group.left-nav {
+  justify-content: flex-start;
+}
+.header-nav-group.right-nav {
+  justify-content: flex-end;
+}
+
+/* BOTONES PÍLDORA EDITORIALES */
+.pill-btn-nav, .pill-btn-subtle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 20px;
+  border-radius: 9999px;
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1.5px solid var(--accent-crimson);
+  color: var(--ink-wine);
+  background-color: transparent;
+  transition: all var(--trans-fast);
+}
+
+.pill-btn-nav:hover, .pill-btn-nav.active {
+  background-color: var(--accent-crimson);
+  color: var(--white-pure);
+  box-shadow: 2px 3px 0 var(--mustard-deep);
+  transform: translateY(-1px);
+}
+
+.pill-btn-subtle {
+  border-color: var(--border-paper);
+  color: var(--ink-muted);
+}
+.pill-btn-subtle:hover {
+  border-color: var(--mustard-deep);
+  background-color: var(--mustard-ferpizz);
+  color: var(--ink-wine);
+}
+
+/* BOTÓN DE PEDIDO CON ANIMACIÓN */
+.pill-btn-cart {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 9999px;
+  border: 2px solid var(--ink-wine);
+  background: linear-gradient(135deg, var(--accent-crimson), #9e141a);
+  color: var(--white-pure);
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--mustard-ferpizz);
+  transition: all var(--trans-bounce);
+}
+
+.pill-btn-cart:hover {
+  background: linear-gradient(135deg, #a6161c, var(--ink-wine));
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 4px 4px 0 var(--mustard-deep);
+}
+
+.cart-spin-icon {
+  color: var(--mustard-ferpizz);
+  font-size: 1.1rem;
+  display: inline-block;
+  animation: spinSlow 12s linear infinite;
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.cart-badge-counter {
+  font-variant-numeric: tabular-nums;
+  background-color: var(--mustard-ferpizz);
+  color: var(--ink-wine);
+  padding: 1px 7px;
+  border-radius: 9999px;
+  font-weight: 900;
+  margin-left: 2px;
+  transition: transform var(--trans-bounce);
+}
+
+/* LOGO CENTRAL FER PIZZ */
+.brand-center-wrapper {
+  text-align: center;
+}
+
+.logo-link {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.logo-circle-ring {
+  width: 136px;
+  height: 136px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  padding: 6px;
+  background: radial-gradient(circle, var(--mustard-ferpizz) 45%, var(--bg-card) 100%);
+  border: 2px solid var(--accent-crimson);
+  box-shadow: 0 10px 28px rgba(74, 20, 23, 0.16);
+  transition: transform var(--trans-bounce), box-shadow var(--trans-bounce);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-circle-ring:hover {
+  transform: scale(1.06) rotate(2deg);
+  box-shadow: 0 14px 34px rgba(189, 32, 38, 0.28);
+}
+
+.official-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+  display: block;
+}
+
+.brand-tagline {
+  font-family: var(--font-headline);
+  font-style: normal;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.82rem;
+  color: var(--ink-wine);
+  margin-top: 10px;
+  letter-spacing: 0.08em;
+}
+
+/* ========================================================
+   MARQUESINA INFINITA (MOSTAZA Y ROJO)
+   ======================================================== */
+.marquee-mustard-wrapper {
+  width: 100%;
+  border-top: 2.5px solid var(--ink-wine);
+  border-bottom: 2.5px solid var(--ink-wine);
+  padding: 24px 0; /* Más aire en el segundo banner */
+  background-color: var(--mustard-ferpizz);
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.08), 0 4px 14px rgba(74, 20, 23, 0.08);
+}
+
+.marquee-track {
+  display: flex;
+  width: fit-content;
+  white-space: nowrap;
+  animation: marqueeRun 42s linear infinite;
+}
+.marquee-mustard-wrapper:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marqueeRun {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee-content {
+  display: inline-block;
+  font-family: var(--font-headline);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-wine);
+  padding-right: 36px;
+}
+
+.m-diamond {
+  color: var(--accent-crimson);
+  margin: 0 10px;
+  font-size: 0.9rem;
+}
+
+/* ========================================================
+   HERO EDITORIAL FLUIDO
+   ======================================================== */
+.hero-fluid-section {
+  padding: 60px 0 40px;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 54px;
+  align-items: center;
+}
+
+.hero-kicker-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--mustard-ferpizz);
+  color: var(--ink-wine);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border: 1px solid var(--ink-wine);
+  margin-bottom: 16px;
+}
+.kicker-star {
+  color: var(--accent-crimson);
+}
+
+.hero-headline-title {
+  font-family: var(--font-headline);
+  font-size: clamp(2.4rem, 4vw, 3.4rem);
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  color: var(--ink-charcoal);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.hero-rule-ornate {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.rule-line {
+  flex: 1;
+  height: 1px;
+  background-color: var(--border-paper);
+}
+.rule-symbol {
+  font-size: 0.8rem;
+  color: var(--accent-crimson);
+  letter-spacing: 4px;
+}
+
+.editorial-pullquote {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 1.08rem;
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--ink-charcoal);
+  border: 1px solid var(--border-paper);
+  border-left: 4px solid var(--accent-crimson);
+  background-color: var(--bg-card);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  box-shadow: 2px 2px 0 rgba(74, 20, 23, 0.05);
+}
+
+.hero-body-text {
+  font-family: var(--font-sans);
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: var(--ink-charcoal);
+  margin-bottom: 34px;
+}
+
+/* DROP CAP EDITORIAL */
+.letterhighlight {
+  float: left;
+  font-family: var(--font-headline);
+  font-size: 2.85rem;
+  line-height: 0.85;
+  padding: 10px 14px 6px 14px;
+  margin: 4px 14px 6px 0;
+  background-color: var(--accent-crimson);
+  color: var(--mustard-ferpizz);
+  font-weight: 900;
+  text-transform: uppercase;
+  border: 2px solid var(--ink-wine);
+  box-shadow: 3px 3px 0 var(--mustard-deep);
+}
+
+.hero-action-row {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+/* BOTÓN MOSTAZA SÓLIDO */
+.btn-mustard-solid {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 32px;
+  background: linear-gradient(135deg, var(--mustard-ferpizz), var(--mustard-deep));
+  color: var(--ink-wine);
+  border: 2px solid var(--ink-wine);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--accent-crimson);
+  transition: all var(--trans-fast);
+}
+
+.btn-mustard-solid:hover {
+  background: var(--mustard-ferpizz);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--ink-wine);
+}
+
+.btn-editorial-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 28px;
+  background: transparent;
+  color: var(--accent-crimson);
+  border: 2px solid var(--accent-crimson);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--trans-fast);
+}
+
+.btn-editorial-outline:hover {
+  background-color: var(--accent-crimson);
+  color: var(--white-pure);
+  box-shadow: 3px 3px 0 var(--mustard-ferpizz);
+}
+
+/* COMPOSICIÓN FOTOGRÁFICA HERO */
+.photo-composition-wrap {
+  position: relative;
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+/* SELLO DE GARANTÍA EDITORIAL ORIGINAL (MÁS COMPACTO PARA CUBRIR MENOS ESPACIO) */
+.clean-seal-badge {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  z-index: 10;
+  width: 98px;
+  height: 98px;
+  filter: drop-shadow(0 6px 14px rgba(74, 20, 23, 0.22));
+  transition: transform var(--trans-smooth);
+}
+
+.clean-seal-badge:hover {
+  transform: scale(1.05);
+}
+
+.seal-outer-circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--bg-canvas);
+  border: 2px solid var(--accent-crimson);
+  padding: 3px;
+  box-shadow: inset 0 0 0 1.5px var(--mustard-deep);
+}
+
+.seal-inner-circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1px dashed var(--accent-crimson);
+  background: radial-gradient(circle, var(--bg-canvas) 50%, var(--bg-card) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4px 2px;
+  gap: 1px;
+}
+
+.seal-city-tag {
+  font-family: var(--font-sans);
+  font-size: 0.50rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--ink-wine);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.seal-stars {
+  color: var(--mustard-deep);
+  font-size: 0.54rem;
+  letter-spacing: 1.5px;
+  line-height: 1;
+  margin-top: 1px;
+}
+
+.seal-brand {
+  font-family: var(--font-headline);
+  font-size: 0.96rem;
+  font-weight: 900;
+  color: var(--accent-crimson);
+  letter-spacing: 0.05em;
+  line-height: 1;
+  margin: 1px 0;
+}
+
+.seal-tradition {
+  font-family: var(--font-sans);
+  font-size: 0.44rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--ink-wine);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.seal-pill {
+  display: inline-block;
+  background-color: var(--mustard-ferpizz);
+  color: var(--ink-wine);
+  font-size: 0.52rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  border: 1px solid var(--ink-wine);
+  margin-top: 1px;
+  line-height: 1.2;
+}
+
+.framed-photo-card {
+  background-color: var(--bg-card);
+  border: 2px solid var(--accent-crimson);
+  padding: 12px 12px 18px;
+  box-shadow: 
+    0 20px 45px rgba(26, 22, 21, 0.14),
+    5px 5px 0 var(--mustard-ferpizz);
+  transition: transform var(--trans-smooth);
+}
+
+.framed-photo-card:hover {
+  transform: translateY(-4px);
+}
+
+.editorial-main-img {
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+  display: block;
+  border: 1px solid var(--border-paper);
+}
+
+.photo-caption-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-wine);
+}
+.caption-icon {
+  color: var(--accent-crimson);
+}
+
+/* ========================================================
+   SECCIÓN VISUAL DE PORCIONES Y TAMAÑOS (DISEÑO DEL MENÚ ORIGINAL)
+   ======================================================== */
+.portions-guide-section {
+  padding: 50px 0;
+  background-color: rgba(249, 195, 72, 0.14);
+  border-top: 1px solid var(--border-mustard);
+  border-bottom: 1px solid var(--border-mustard);
+}
+
+.section-title-wrap {
+  margin-bottom: 40px;
+}
+
+.kicker-tag {
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent-crimson);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.section-headline {
+  font-family: var(--font-headline);
+  font-size: clamp(2rem, 3.2vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: var(--ink-charcoal);
+  text-transform: uppercase;
+}
+
+.section-sub {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 0.96rem;
+  font-weight: 500;
+  color: var(--ink-wine);
+  margin-top: 4px;
+}
+
+.mustard-divider-line {
+  width: 120px;
+  height: 3px;
+  background-color: var(--accent-crimson);
+  margin: 14px auto 0;
+  border-radius: 2px;
+}
+
+/* GRILLA DE 4 PORCIONES */
+.portions-interactive-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.portion-card {
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--border-paper);
+  padding: 28px 20px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+  transition: all var(--trans-smooth);
+}
+
+.portion-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent-crimson);
+  box-shadow: 0 12px 24px rgba(74, 20, 23, 0.1), 3px 3px 0 var(--mustard-ferpizz);
+}
+
+.portion-card.active-featured {
+  border: 2px solid var(--accent-crimson);
+  background-color: #FAF2E3;
+  box-shadow: 4px 4px 0 var(--mustard-deep);
+}
+
+.portion-badge-pop {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--accent-crimson);
+  color: var(--white-pure);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  box-shadow: 1px 1px 0 var(--ink-wine);
+}
+
+.portion-circle-diagram {
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 16px;
+  transition: transform var(--trans-bounce);
+}
+
+.portion-card:hover .portion-circle-diagram {
+  transform: rotate(45deg) scale(1.08);
+}
+
+.pizza-cut-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.portion-count-tag {
+  display: block;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 0.84rem;
+  color: var(--accent-crimson);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.portion-name {
+  font-family: var(--font-headline);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--ink-charcoal);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.portion-desc {
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+/* ========================================================
+   LA CARTA DE PIZZAS INTERACTIVA & FILTROS
+   ======================================================== */
+.menu-interactive-section {
+  padding: 60px 0 40px;
+}
+
+.menu-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+  gap: 20px;
+  border-bottom: 2px solid var(--border-paper);
+  padding-bottom: 20px;
+}
+
+.menu-giant-title {
+  font-family: var(--font-headline);
+  font-size: clamp(2.4rem, 3.8vw, 3.4rem);
+  font-weight: 900;
+  color: var(--ink-charcoal);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  line-height: 1;
+  margin-top: 4px;
+}
+
+.menu-lead-sub {
+  font-size: 0.95rem;
+  color: var(--ink-muted);
+  margin-top: 8px;
+  max-width: 620px;
+}
+
+/* BARRA DE FILTROS */
+.menu-filter-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-tab {
+  padding: 8px 16px;
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--border-paper);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--ink-charcoal);
+  cursor: pointer;
+  border-radius: 9999px;
+  transition: all var(--trans-fast);
+}
+
+.filter-tab:hover {
+  border-color: var(--accent-crimson);
+  background-color: var(--mustard-ferpizz);
+  color: var(--ink-wine);
+}
+
+.filter-tab.active {
+  background-color: var(--accent-crimson);
+  color: var(--white-pure);
+  border-color: var(--ink-wine);
+  box-shadow: 2px 2px 0 var(--mustard-deep);
+}
+
+/* GRILLA DE PLATOS */
+.menu-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+}
+
+/* TARJETA INDIVIDUAL DE PIZZA */
+.pizza-editorial-card {
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--border-paper);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform var(--trans-smooth), box-shadow var(--trans-smooth), border-color var(--trans-smooth);
+}
+
+.pizza-editorial-card:hover {
+  border-color: var(--accent-crimson);
+  box-shadow: 
+    0 16px 32px rgba(74, 20, 23, 0.12),
+    4px 4px 0 var(--mustard-ferpizz);
+  transform: translateY(-4px);
+}
+
+.pizza-editorial-card.card-featured {
+  border: 2px solid var(--accent-crimson);
+  background-color: #FAF4E8;
+  box-shadow: 3px 3px 0 var(--mustard-deep);
+}
+
+.card-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 8px;
+  border-bottom: 1px dashed var(--border-mustard);
+  padding-bottom: 8px;
+}
+
+.pizza-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pizza-number {
+  font-family: var(--font-headline);
+  font-style: normal;
+  font-size: 0.95rem;
+  color: var(--accent-crimson);
+  font-weight: 800;
+}
+
+.pizza-name {
+  font-family: var(--font-headline);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--ink-charcoal);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.special-badge {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  background-color: var(--mustard-ferpizz);
+  color: var(--ink-wine);
+  border: 1px solid var(--ink-wine);
+  text-transform: uppercase;
+}
+
+.pizza-price-display {
+  font-family: var(--font-headline);
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: var(--accent-crimson);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.pizza-description {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--ink-muted);
+  margin-bottom: 18px;
+  flex: 1;
+}
+
+/* SELECTOR DE TAMAÑOS CON MINI DIAGRAMA */
+.size-selector-wrap {
+  margin-bottom: 14px;
+}
+
+.size-selector-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-wine);
+  margin-bottom: 6px;
+}
+
+.size-pill-group {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.size-pill-btn {
+  padding: 8px 4px;
+  background-color: var(--bg-canvas);
+  border: 1px solid var(--border-paper);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--ink-charcoal);
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--trans-fast);
+}
+
+.size-pill-btn:hover {
+  border-color: var(--accent-crimson);
+  background-color: var(--mustard-ferpizz);
+}
+
+.size-pill-btn.active {
+  background-color: var(--accent-crimson);
+  color: var(--white-pure);
+  border-color: var(--ink-wine);
+  box-shadow: 2px 2px 0 var(--mustard-deep);
+}
+
+.size-portions-hint {
+  display: block;
+  font-size: 0.62rem;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+
+/* ADICIONALES POR PLATO */
+.additions-box {
+  margin-bottom: 16px;
+  background-color: rgba(255, 255, 255, 0.6);
+  border: 1px dashed var(--border-mustard);
+  padding: 10px 12px;
+}
+
+.additions-header {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--accent-crimson);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.additions-options-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.addition-check-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.74rem;
+  color: var(--ink-charcoal);
+  cursor: pointer;
+}
+
+.addition-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.addition-check-label input[type="checkbox"] {
+  accent-color: var(--accent-crimson);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+.addition-price-tag {
+  font-weight: 700;
+  color: var(--ink-wine);
+}
+
+/* PIE DE TARJETA */
+.card-bottom-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: auto;
+  border-top: 1px solid var(--border-paper);
+  padding-top: 14px;
+}
+
+.btn-add-to-cart {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background-color: var(--accent-crimson);
+  border: 1px solid var(--ink-wine);
+  color: var(--white-pure);
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--mustard-deep);
+  transition: all var(--trans-fast);
+}
+
+.btn-add-to-cart:hover {
+  background-color: var(--mustard-ferpizz);
+  color: var(--ink-wine);
+  border-color: var(--ink-wine);
+  box-shadow: 3px 3px 0 var(--accent-crimson);
+  transform: translate(-1px, -1px);
+}
+
+.out-of-stock-tag {
+  color: #a02020;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+/* ========================================================
+   TABLA DE ADICIONALES OFICIAL DEL MENÚ
+   ======================================================== */
+.additions-official-panel {
+  margin-top: 50px;
+  background-color: var(--bg-card);
+  border: 2px solid var(--ink-wine);
+  box-shadow: 6px 6px 0 var(--mustard-ferpizz);
+  padding: 30px;
+}
+
+.additions-panel-header {
+  margin-bottom: 20px;
+}
+.panel-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: var(--accent-crimson);
+}
+.panel-title {
+  font-family: var(--font-headline);
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--ink-charcoal);
+  text-transform: uppercase;
+}
+.panel-sub {
+  font-size: 0.9rem;
+  color: var(--ink-muted);
+}
+
+.additions-table-wrap {
+  overflow-x: auto;
+}
+
+.additions-editorial-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.additions-editorial-table th {
+  background-color: var(--mustard-ferpizz);
+  color: var(--ink-wine);
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid var(--border-mustard);
+}
+
+.additions-editorial-table td {
+  padding: 12px 16px;
+  border: 1px solid var(--border-paper);
+  background-color: var(--bg-canvas);
+}
+
+/* ========================================================
+   "COOK'S NOTE" & SLOGAN BANNER (BLOQUE ROJO Y MOSTAZA)
+   ======================================================== */
+.cooks-banner-section {
+  padding: 40px 0;
+}
+
+.cooks-fluid-card {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  border: 2px solid var(--ink-wine);
+  box-shadow: 8px 8px 0 var(--mustard-ferpizz);
+  overflow: hidden;
+}
+
+.cooks-red-panel {
+  background: linear-gradient(135deg, var(--accent-crimson), #9a1217);
+  color: var(--white-pure);
+  padding: 50px 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.red-panel-tag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.74rem;
+  letter-spacing: 0.2em;
+  color: var(--mustard-ferpizz);
+  margin-bottom: 18px;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+.cooks-greeting-title {
+  font-family: var(--font-headline);
+  font-size: clamp(2.2rem, 3.5vw, 3.2rem);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: var(--white-pure);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.cooks-quote {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 1.15rem;
+  font-weight: 500;
+  line-height: 1.6;
+  color: #FFF6EE;
+  margin-bottom: 28px;
+}
+
+.cooks-sign-block {
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  padding-top: 18px;
+}
+
+.sign-name {
+  font-family: var(--font-headline);
+  font-size: 1.25rem;
+  font-weight: 800;
+  display: block;
+}
+
+.sign-motto {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--mustard-ferpizz);
+  text-transform: uppercase;
+  margin-top: 4px;
+  display: block;
+}
+
+.cooks-photo-panel {
+  position: relative;
+  min-height: 380px;
+  background-color: #2D2726;
+}
+
+.dough-action-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: sepia(0.3) contrast(1.15) brightness(0.9);
+}
+
+.photo-overlay-tag {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(26, 22, 21, 0.9), transparent);
+  padding: 24px 20px 14px;
+  color: var(--white-pure);
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ========================================================
+   SECCIÓN CONTACTO & HISTORIA (CON VOLANTE ORIGINAL)
+   ======================================================== */
+.contact-order-section {
+  padding: 50px 0;
+}
+
+.contact-split-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+  align-items: stretch;
+}
+
+.contact-card-box {
+  background-color: var(--bg-card);
+  border: 2px solid var(--accent-crimson);
+  box-shadow: 4px 4px 0 var(--mustard-deep);
+  display: flex;
+  flex-direction: column;
+}
+
+.card-box-header {
+  background-color: var(--accent-crimson);
+  color: var(--white-pure);
+  padding: 16px 24px;
+  border-bottom: 2px solid var(--ink-wine);
+}
+
+.box-kicker {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.9;
+  display: block;
+}
+
+.box-title {
+  font-family: var(--font-headline);
+  font-size: 1.4rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.card-box-body {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contact-lead-phone {
+  background-color: var(--mustard-ferpizz);
+  border: 1.5px solid var(--ink-wine);
+  padding: 14px 18px;
+  box-shadow: 3px 3px 0 var(--ink-wine);
+}
+
+.phone-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--ink-wine);
+  margin-bottom: 4px;
+}
+
+.phone-big-link {
+  font-family: var(--font-headline);
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: var(--accent-crimson);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: color var(--trans-fast);
+}
+
+.phone-big-link:hover {
+  color: var(--ink-wine);
+}
+
+.info-block-row {
+  border-bottom: 1px dashed var(--border-paper);
+  padding-bottom: 14px;
+}
+.info-block-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.info-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-crimson);
+  margin-bottom: 4px;
+}
+
+.info-text {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--ink-charcoal);
+}
+
+.insta-follow-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: var(--bg-canvas);
+  border: 1.5px solid var(--ink-wine);
+  color: var(--ink-wine);
+  font-family: var(--font-headline);
+  font-size: 1.05rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: all var(--trans-fast);
+}
+
+.insta-follow-btn:hover {
+  background-color: var(--accent-crimson);
+  color: var(--white-pure);
+  box-shadow: 2px 2px 0 var(--mustard-ferpizz);
+}
+
+/* FLYER ORIGINAL PREVIEW */
+.brand-story-box {
+  background-color: var(--bg-card);
+  border: 2px solid var(--border-mustard);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.flyer-preview-frame {
+  max-width: 320px;
+  border: 3px solid var(--accent-crimson);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  margin-bottom: 16px;
+  overflow: hidden;
+  background-color: var(--mustard-ferpizz);
+}
+
+.original-flyer-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform var(--trans-smooth);
+}
+.flyer-preview-frame:hover .original-flyer-img {
+  transform: scale(1.03);
+}
+
+.flyer-slogan {
+  font-family: var(--font-headline);
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--accent-crimson);
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* ========================================================
+   PIE DE PÁGINA OFICIAL FER PIZZ
+   ======================================================== */
+.official-brand-footer {
+  background: linear-gradient(135deg, var(--ink-wine), #2B0A0C);
+  color: var(--white-pure);
+  padding: 50px 0 0;
+  border-top: 4px solid var(--mustard-ferpizz);
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 0.8fr;
+  gap: 40px;
+  padding-bottom: 40px;
+}
+
+.footer-logo-wrap {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 14px;
+}
+.footer-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.footer-brand-name {
+  font-family: var(--font-headline);
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--mustard-ferpizz);
+  letter-spacing: 0.06em;
+}
+
+.footer-motto-quote {
+  font-family: var(--font-headline);
+  font-style: normal;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #FFF6EE;
+  margin: 6px 0 8px;
+}
+
+.footer-sub {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.footer-heading {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mustard-ferpizz);
+  margin-bottom: 16px;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-links a {
+  color: #F0E6D8;
+  text-decoration: none;
+  font-size: 0.86rem;
+  transition: color var(--trans-fast);
+}
+.footer-links a:hover {
+  color: var(--mustard-ferpizz);
+  text-decoration: underline;
+}
+
+/* SELLO POSTAL OCULTO CMS */
+.footer-stamp-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.secret-postage-stamp {
+  cursor: pointer;
+  user-select: none;
+  transition: transform var(--trans-fast);
+}
+.secret-postage-stamp:hover {
+  transform: rotate(3deg) scale(1.08);
+}
+
+.stamp-serrated-border {
+  width: 96px;
+  height: 116px;
+  background-color: var(--mustard-ferpizz);
+  border: 2px dashed var(--ink-wine);
+  padding: 5px;
+  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.stamp-inner-content {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--accent-crimson);
+  background-color: #FAF4E8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.postage-country {
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--ink-wine);
+}
+
+.postage-val {
+  font-family: var(--font-headline);
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--accent-crimson);
+}
+.postage-sub {
+  font-size: 0.54rem;
+  font-weight: 700;
+  color: var(--ink-muted);
+}
+
+.postage-hint {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 8px;
+  font-style: normal;
+}
+
+.footer-bottom-strip {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 16px 0;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.strip-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* ========================================================
+   BARRA FLOTANTE MÓVIL (STICKY EN PANTALLAS PEQUEÑAS)
+   ======================================================== */
+.mobile-sticky-order-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--ink-wine);
+  border-top: 3px solid var(--mustard-ferpizz);
+  padding: 12px 18px;
+  z-index: 900;
+  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.25);
+}
+
+.sticky-bar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.sticky-title {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--mustard-ferpizz);
+}
+
+.sticky-total {
+  font-family: var(--font-headline);
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--white-pure);
+}
+
+.btn-sticky-checkout {
+  padding: 10px 18px;
+  background: linear-gradient(135deg, var(--mustard-ferpizz), var(--mustard-deep));
+  color: var(--ink-wine);
+  border: 1px solid var(--white-pure);
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--accent-crimson);
+}
+
+/* ========================================================
+   ANIMACIONES ESPECTACULARES DE SCROLL (REVEAL-ON-SCROLL & GSAP)
+   ======================================================== */
+.reveal-on-scroll {
+  opacity: 1;
+  transform: none;
+}
+
+.reveal-on-scroll.revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* PULSE CTA */
+.pulse-cta {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 4px 4px 0 var(--accent-crimson);
+  }
+  50% {
+    box-shadow: 4px 4px 16px rgba(189, 32, 38, 0.45), 4px 4px 0 var(--accent-crimson);
+  }
+}
+
+/* ========================================================
+   MODAL / DRAWER DESPLEGABLE DE TOPPINGS & PERSONALIZACIÓN
+   ======================================================== */
+.toppings-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(26, 22, 21, 0.72);
+  backdrop-filter: blur(5px);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--trans-smooth);
+}
+
+.toppings-modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.toppings-drawer {
+  width: 100%;
+  max-width: 540px;
+  max-height: 90vh;
+  background-color: var(--bg-canvas);
+  border: 3px solid var(--accent-crimson);
+  box-shadow: 0 20px 50px rgba(74, 20, 23, 0.35), 6px 6px 0 var(--mustard-deep);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  transform: translateY(30px) scale(0.97);
+  transition: transform var(--trans-bounce);
+}
+
+.toppings-modal-backdrop.open .toppings-drawer {
+  transform: translateY(0) scale(1);
+}
+
+.toppings-header {
+  padding: 24px 28px 18px;
+  background: linear-gradient(135deg, var(--mustard-ferpizz), #F9CB56);
+  border-bottom: 2.5px solid var(--ink-wine);
+  position: relative;
+  text-align: center;
+}
+
+.toppings-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  line-height: 1;
+  color: var(--ink-wine);
+  cursor: pointer;
+  transition: color var(--trans-fast);
+}
+.toppings-close-btn:hover {
+  color: var(--accent-crimson);
+}
+
+.toppings-kicker-tag {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-crimson);
+  margin-bottom: 4px;
+}
+
+.toppings-title {
+  font-family: var(--font-headline);
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: var(--ink-wine);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.toppings-sub {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink-charcoal);
+  margin-top: 4px;
+}
+
+.toppings-base-pill {
+  display: inline-block;
+  background-color: var(--ink-wine);
+  color: #FFF;
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding: 3px 12px;
+  border-radius: 9999px;
+  margin-top: 8px;
+  letter-spacing: 0.05em;
+}
+
+.modal-size-pills-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.modal-size-btn {
+  padding: 5px 12px;
+  background-color: var(--bg-canvas);
+  border: 1.5px solid var(--ink-wine);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--ink-wine);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+}
+
+.modal-size-btn:hover {
+  background-color: var(--accent-crimson);
+  color: #FFF;
+  border-color: var(--accent-crimson);
+}
+
+.modal-size-btn.active {
+  background-color: var(--accent-crimson);
+  color: #FFF;
+  border-color: var(--ink-wine);
+  box-shadow: 2px 2px 0 var(--ink-wine);
+}
+
+.toppings-body {
+  padding: 22px 28px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.toppings-section-intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--border-paper);
+  padding-bottom: 8px;
+}
+
+.toppings-section-intro span {
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-crimson);
+}
+
+.toppings-section-intro small {
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+}
+
+.toppings-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.topping-option-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--border-paper);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+  user-select: none;
+}
+
+.topping-option-item:hover {
+  border-color: var(--accent-crimson);
+  background-color: #FAF2E3;
+}
+
+.topping-option-item.selected {
+  border-color: var(--accent-crimson);
+  background-color: #FFF6E8;
+  box-shadow: 2px 2px 0 var(--mustard-deep);
+}
+
+.topping-left-col {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topping-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-crimson);
+  cursor: pointer;
+}
+
+.topping-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.topping-name {
+  font-family: var(--font-headline);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--ink-charcoal);
+}
+
+.topping-desc {
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+}
+
+.topping-price-tag {
+  font-family: var(--font-headline);
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--accent-crimson);
+}
+
+/* CANTIDAD Y NOTAS */
+.toppings-qty-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: var(--bg-card);
+  border: 1px dashed var(--border-paper);
+}
+
+.qty-label {
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--ink-wine);
+}
+
+.qty-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-qty {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-canvas);
+  border: 1.5px solid var(--ink-wine);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--ink-wine);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+}
+.btn-qty:hover {
+  background-color: var(--accent-crimson);
+  color: #FFF;
+  border-color: var(--accent-crimson);
+}
+
+.qty-count {
+  font-family: var(--font-headline);
+  font-size: 1.15rem;
+  font-weight: 900;
+  min-width: 24px;
+  text-align: center;
+  color: var(--ink-charcoal);
+}
+
+.toppings-notes-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.toppings-notes-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+}
+
+.toppings-footer {
+  padding: 16px 28px 20px;
+  background-color: var(--bg-card);
+  border-top: 2px solid var(--border-paper);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.toppings-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--ink-wine);
+}
+
+.toppings-price-sum {
+  font-family: var(--font-headline);
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--accent-crimson);
+  font-variant-numeric: tabular-nums;
+}
+
+.btn-add-custom-pizza {
+  width: 100%;
+  padding: 16px 20px;
+  font-size: 0.88rem;
+  text-align: center;
+  box-shadow: 3px 3px 0 var(--accent-crimson);
+}
+
+/* ========================================================
+   CHECKOUT EDITORIAL TIPO RECIBO (DRAWER)
+   ======================================================== */
+.checkout-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(26, 22, 21, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--trans-smooth);
+}
+
+.checkout-modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.checkout-receipt-drawer {
+  width: 100%;
+  max-width: 520px;
+  height: 100vh;
+  background-color: var(--bg-canvas);
+  border-left: 3px solid var(--accent-crimson);
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform var(--trans-smooth);
+  position: relative;
+}
+
+.checkout-modal-backdrop.open .checkout-receipt-drawer {
+  transform: translateX(0);
+}
+
+.receipt-header {
+  padding: 24px 28px 16px;
+  background-color: var(--bg-card);
+  position: relative;
+  text-align: center;
+  border-bottom: 2px solid var(--mustard-deep);
+}
+
+.receipt-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  line-height: 1;
+  color: var(--ink-charcoal);
+  cursor: pointer;
+}
+.receipt-close-btn:hover {
+  color: var(--accent-crimson);
+}
+
+.receipt-stamp-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--ink-wine);
+  background-color: var(--mustard-ferpizz);
+  border: 1px solid var(--ink-wine);
+  padding: 3px 8px;
+  margin-bottom: 8px;
+}
+
+.receipt-main-title {
+  font-family: var(--font-headline);
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: var(--ink-charcoal);
+}
+
+.receipt-subtitle {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-wine);
+}
+
+.receipt-dashed-line {
+  width: 100%;
+  height: 1px;
+  border-bottom: 1.5px dashed var(--border-paper);
+  margin: 16px 0;
+}
+
+.receipt-scrollable-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 28px 24px;
+}
+
+.receipt-section-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-crimson);
+  margin-bottom: 12px;
+}
+
+.receipt-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.receipt-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 12px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-paper);
+}
+
+.receipt-item-name {
+  font-family: var(--font-headline);
+  font-size: 0.96rem;
+  font-weight: 800;
+  color: var(--ink-charcoal);
+}
+
+.receipt-item-meta {
+  font-size: 0.74rem;
+  color: var(--ink-muted);
+}
+
+.receipt-item-additions {
+  font-size: 0.7rem;
+  color: var(--accent-crimson);
+  font-style: normal;
+  font-weight: 600;
+}
+
+.receipt-item-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.receipt-item-price {
+  font-family: var(--font-headline);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--accent-crimson);
+}
+
+.receipt-item-remove-btn {
+  background: none;
+  border: none;
+  color: #9c2828;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.receipt-empty-state {
+  text-align: center;
+  padding: 30px 10px;
+  color: var(--ink-muted);
+}
+.receipt-empty-state .empty-icon {
+  font-size: 2rem;
+  color: var(--mustard-deep);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.receipt-totals-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.receipt-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.receipt-total-row.total-highlight {
+  font-family: var(--font-headline);
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--accent-crimson);
+  border-top: 2px solid var(--border-paper);
+  padding-top: 10px;
+}
+
+.free-badge {
+  font-size: 0.68rem;
+  background-color: var(--mustard-ferpizz);
+  padding: 2px 6px;
+  border: 1px solid var(--ink-wine);
+  color: var(--ink-wine);
+  font-weight: 800;
+}
+
+.newspaper-input, .newspaper-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-paper);
+  color: var(--ink-charcoal);
+  border-radius: 0;
+  outline: none;
+}
+.newspaper-input:focus, .newspaper-textarea:focus {
+  border-color: var(--accent-crimson);
+  background-color: var(--white-pure);
+}
+
+.form-row {
+  margin-bottom: 14px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-wine);
+  margin-bottom: 4px;
+}
+
+/* MAPA SEPIA */
+.map-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.map-bar-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--accent-crimson);
+}
+
+.btn-geo-locate {
+  background: var(--mustard-ferpizz);
+  border: 1px solid var(--ink-wine);
+  padding: 3px 8px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--ink-wine);
+  cursor: pointer;
+}
+
+.map-instruction {
+  font-size: 0.74rem;
+  color: var(--ink-muted);
+  font-style: normal;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.editorial-sepia-map {
+  width: 100%;
+  height: 220px;
+  border: 2px solid var(--accent-crimson);
+  filter: sepia(0.3) contrast(1.1) brightness(0.95);
+}
+
+.map-coords-display {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  margin-top: 6px;
+  background-color: var(--bg-card);
+  padding: 4px 8px;
+  border: 1px dashed var(--border-paper);
+}
+
+.btn-whatsapp-order {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #1FAF38, #128C2B);
+  color: var(--white-pure);
+  border: 2px solid #0d581c;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 #0d581c;
+  transition: all var(--trans-fast);
+}
+
+.btn-whatsapp-order:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 #0d581c;
+}
+
+.receipt-wa-disclaimer {
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  text-align: center;
+  margin-top: 10px;
+}
+
+.receipt-serrated-bottom {
+  height: 14px;
+  background: radial-gradient(circle, transparent, transparent 50%, var(--bg-canvas) 50%, var(--bg-canvas) 100%);
+  background-size: 16px 14px;
+  border-top: 1px dashed var(--border-paper);
+}
+
+/* ========================================================
+   MODAL PANEL CMS
+   ======================================================== */
+.admin-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(26, 22, 21, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--trans-smooth);
+}
+
+.admin-modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.admin-panel-container {
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  background-color: var(--bg-canvas);
+  border: 3px solid var(--accent-crimson);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.admin-panel-header {
+  padding: 18px 24px;
+  background-color: var(--mustard-ferpizz);
+  border-bottom: 2px solid var(--ink-wine);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-badge {
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  background-color: var(--accent-crimson);
+  color: var(--white-pure);
+  padding: 3px 8px;
+  text-transform: uppercase;
+}
+
+.admin-title {
+  font-family: var(--font-headline);
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: var(--ink-wine);
+  margin-top: 4px;
+}
+
+.admin-sub {
+  font-size: 0.76rem;
+  color: var(--ink-charcoal);
+}
+
+.admin-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: var(--ink-wine);
+}
+
+.admin-auth-view {
+  padding: 50px 30px;
+  text-align: center;
+  max-width: 440px;
+  margin: 0 auto;
+}
+.auth-lock-icon {
+  font-size: 2.8rem;
+  margin-bottom: 12px;
+}
+
+.auth-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+.auth-error-msg {
+  color: var(--accent-crimson);
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.admin-dashboard-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+.admin-dashboard-view.hidden {
+  display: none;
+}
+
+.admin-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border-paper);
+  background-color: var(--bg-card);
+}
+.admin-tab-btn {
+  flex: 1;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+.admin-tab-btn.active {
+  color: var(--accent-crimson);
+  border-bottom-color: var(--accent-crimson);
+  background-color: var(--bg-canvas);
+}
+
+.admin-tab-content {
+  display: none;
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+.admin-tab-content.active {
+  display: block;
+}
+
+.tab-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.btn-admin-action {
+  padding: 8px 16px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid var(--ink-charcoal);
+  background: transparent;
+}
+
+.btn-save-main {
+  background-color: var(--accent-crimson);
+  color: var(--white-pure);
+  border-color: var(--ink-wine);
+}
+
+.admin-pizza-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+.admin-pizza-table th {
+  background-color: var(--mustard-ferpizz);
+  color: var(--ink-wine);
+  padding: 10px 12px;
+  text-align: left;
+  border: 1px solid var(--border-mustard);
+}
+.admin-pizza-table td {
+  padding: 8px 12px;
+  border: 1px solid var(--border-paper);
+}
+
+.admin-table-input {
+  width: 90px;
+  padding: 6px;
+  font-size: 0.8rem;
+  border: 1px solid var(--border-paper);
+  background-color: var(--bg-canvas);
+  text-align: right;
+}
+
+/* TOAST */
+.editorial-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background-color: var(--ink-wine);
+  color: var(--mustard-ferpizz);
+  border: 2px solid var(--mustard-deep);
+  padding: 14px 28px;
+  font-family: var(--font-sans);
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  z-index: 3000;
+  opacity: 0;
+  transition: all var(--trans-fast);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.editorial-toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* ========================================================
+   ADAPTADO A MÓVILES (RESPONSIVE BREAKPOINTS DE ÉLITE)
+   ======================================================== */
+@media (max-width: 1024px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .portions-interactive-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .menu-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .cooks-fluid-card {
+    grid-template-columns: 1fr;
+  }
+  .contact-split-grid {
+    grid-template-columns: 1fr;
+  }
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Evitar desbordes horizontales y asegurar scroll fluido nativo */
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.newspaper-theme.full-viewport {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .site-container {
+    padding: 0 16px;
+  }
+
+  /* 1. BARRA SUPERIOR VINO: PERFECTAMENTE ORDENADA, CENTRADA Y EN 1 SOLA LÍNEA */
+  .unified-editorial-topbar {
+    padding: 7px 0;
+  }
+  .topbar-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  .topbar-left {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+    line-height: 1;
+  }
+  .badge-oven {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    font-size: 0.62rem;
+    font-weight: 800;
+    line-height: 1;
+    border-radius: 9999px;
+    letter-spacing: 0.06em;
+  }
+  .topbar-sep {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.60rem;
+    color: var(--mustard-ferpizz);
+    line-height: 1;
+  }
+  .topbar-text {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #FAF4E8;
+    line-height: 1;
+  }
+  .desktop-only,
+  .topbar-date,
+  .topbar-center,
+  .topbar-right {
+    display: none !important; /* Elimina elementos desbordantes en móvil */
+  }
+
+  /* 2. CABECERA EDITORIAL Y LOGOTIPO BIEN PROPORCIONADOS */
+  .editorial-header-fluid {
+    padding: 10px 0 8px;
+  }
+  .header-layout {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 6px;
+  }
+  .header-nav-group.left-nav {
+    display: none;
+  }
+  .header-nav-group.right-nav {
+    justify-content: center !important;
+    gap: 6px;
+  }
+  .logo-circle-ring {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 3px;
+    border-width: 2px;
+  }
+  .official-logo-img {
+    width: 60px;
+    height: 60px;
+  }
+  .brand-name {
+    font-size: 1.15rem;
+  }
+  .brand-tagline {
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
+    margin: 0 0 6px 0;
+  }
+  .pill-btn-nav, .pill-btn-subtle, .pill-btn-cart {
+    padding: 6px 14px;
+    font-size: 0.70rem;
+    box-shadow: 2px 2px 0 var(--mustard-ferpizz);
+  }
+
+  /* 3. MARQUESINA MOSTAZA FLUIDA */
+  .marquee-mustard-wrapper {
+    padding: 5px 0;
+  }
+  .marquee-content {
+    font-size: 0.78rem;
+    padding-right: 20px;
+  }
+
+  /* 4. HERO SECTION COMPACTO Y ACOMODADO */
+  .hero-fluid-section {
+    padding: 16px 0 14px;
+  }
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .hero-kicker-badge {
+    font-size: 0.62rem;
+    padding: 3px 8px;
+    margin-bottom: 8px;
+  }
+  .hero-headline-title {
+    font-size: clamp(1.55rem, 6.2vw, 1.95rem);
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .hero-rule-ornate {
+    margin-bottom: 10px;
+  }
+  .editorial-pullquote {
+    font-size: 0.86rem;
+    line-height: 1.45;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+  }
+  .hero-body-text {
+    font-size: 0.86rem;
+    line-height: 1.48;
+    margin-bottom: 14px;
+  }
+  .hero-body-text .dropcap {
+    font-size: 1.85rem;
+    padding: 4px 8px 2px;
+    margin: 2px 8px 2px 0;
+  }
+  .hero-action-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+  .hero-action-row .btn-mustard-solid,
+  .hero-action-row .btn-editorial-outline {
+    width: 100%;
+    justify-content: center;
+    padding: 11px 16px;
+    font-size: 0.76rem;
+    text-align: center;
+  }
+
+  /* FOTOGRAFÍA HERO Y SELLO PROPORCIONADO */
+  .photo-composition-wrap {
+    max-width: 100%;
+  }
+  .framed-photo-card {
+    padding: 8px 8px 12px;
+    box-shadow: 0 10px 24px rgba(26, 22, 21, 0.12), 3px 3px 0 var(--mustard-ferpizz);
+  }
+  .editorial-main-img {
+    height: 280px;
+    object-fit: cover;
+  }
+  .photo-caption-bar {
+    margin-top: 10px;
+    font-size: 0.68rem;
+    gap: 6px;
+  }
+  .clean-seal-badge {
+    width: 82px;
+    height: 82px;
+    top: -8px;
+    left: -8px;
+    filter: drop-shadow(0 4px 10px rgba(74, 20, 23, 0.20));
+  }
+  .seal-city-tag { font-size: 0.42rem; }
+  .seal-stars { font-size: 0.46rem; letter-spacing: 1px; }
+  .seal-brand { font-size: 0.80rem; margin: 0; }
+  .seal-tradition { font-size: 0.36rem; }
+  .seal-pill { font-size: 0.44rem; padding: 1px 5px; }
+
+  /* 5. FORMATOS Y PORCIONES: GRILLA 2x2 CÓMODA */
+  .portions-guide-section {
+    padding: 32px 0 20px;
+  }
+  .section-headline {
+    font-size: clamp(1.6rem, 5.5vw, 2rem);
+    line-height: 1.1;
+  }
+  .section-sub {
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
+  .portions-interactive-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px;
+  }
+  .portion-card {
+    padding: 12px 8px 10px;
+  }
+  .portion-circle-diagram {
+    width: 54px;
+    height: 54px;
+    margin: 0 auto 6px;
+  }
+  .portion-size-name {
+    font-size: 0.90rem;
+    margin-bottom: 2px;
+  }
+  .portion-slices-count {
+    font-size: 0.70rem;
+    margin-bottom: 4px;
+  }
+  .portion-desc {
+    font-size: 0.66rem;
+    line-height: 1.3;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .portion-select-pill {
+    padding: 6px 8px;
+    font-size: 0.66rem;
+    width: 100%;
+  }
+
+  /* 6. MENÚ DE PIZZAS Y PESTAÑAS HORIZONTALES CON SWIPE */
+  .pizza-menu-section {
+    padding: 34px 0 24px;
+  }
+  .menu-header-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .menu-giant-title {
+    font-size: clamp(1.8rem, 6.5vw, 2.3rem);
+  }
+  .menu-lead-sub {
+    font-size: 0.86rem;
+  }
+  .menu-filter-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 8px;
+    width: 100%;
+    padding: 4px 2px 10px 2px;
+    scrollbar-width: none;
+  }
+  .menu-filter-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .filter-tab {
+    flex-shrink: 0;
+    padding: 7px 15px;
+    font-size: 0.72rem;
+  }
+
+  /* TARJETAS DE PIZZAS */
+  .menu-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .pizza-editorial-card {
+    padding: 16px 14px 14px;
+  }
+  .pizza-name {
+    font-size: 1.15rem;
+  }
+  .pizza-price-display {
+    font-size: 1.30rem;
+  }
+  .pizza-description {
+    font-size: 0.84rem;
+    line-height: 1.45;
+    margin-bottom: 12px;
+  }
+  .size-selector-label {
+    font-size: 0.64rem;
+  }
+  .size-pill-group {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 4px;
+  }
+  .size-pill-btn {
+    padding: 7px 2px;
+    font-size: 0.68rem;
+    min-height: 38px;
+  }
+  .size-btn-name {
+    font-size: 0.68rem;
+    font-weight: 800;
+  }
+  .size-btn-cut {
+    font-size: 0.58rem;
+  }
+  .card-footer-action {
+    margin-top: 10px;
+  }
+  .pizza-add-btn {
+    padding: 12px 14px;
+    font-size: 0.78rem;
+    width: 100%;
+  }
+
+  /* 7. ADICIONALES Y ACOMPAÑAMIENTOS */
+  .additions-official-panel {
+    padding: 18px 14px;
+    margin: 28px 0;
+  }
+  .additions-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .addition-item {
+    padding: 10px 12px;
+  }
+
+  /* 8. BANNER DEL CHEF, CONTACTO Y MAPA */
+  .cooks-banner-section {
+    padding: 28px 0;
+  }
+  .cooks-fluid-card {
+    grid-template-columns: 1fr;
+  }
+  .cooks-red-panel {
+    padding: 24px 16px;
+  }
+  .cooks-quote-big {
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+  .cooks-photo-panel {
+    height: 220px;
+    min-height: 220px;
+  }
+  .contact-order-section {
+    padding: 28px 0;
+  }
+  .contact-split-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .contact-card-box, .brand-story-box {
+    padding: 20px 16px;
+  }
+  .map-container-wrap {
+    height: 220px;
+  }
+  .flyer-preview-frame {
+    max-width: 250px;
+  }
+
+  /* 9. FOOTER DE LA MARCA */
+  .official-brand-footer {
+    padding: 32px 0 20px;
+  }
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    text-align: center;
+  }
+  .footer-col {
+    align-items: center;
+  }
+  .footer-tag-pills {
+    justify-content: center;
+  }
+
+  /* 10. MODAL DE TOPPINGS TIPO BOTTOM SHEET NATIVO */
+  .toppings-drawer {
+    width: 100%;
+    max-width: 100%;
+    max-height: 88vh;
+    border-radius: 20px 20px 0 0;
+    margin-top: auto;
+  }
+  .toppings-header {
+    padding: 16px 18px 12px;
+  }
+  .toppings-title {
+    font-size: 1.25rem;
+  }
+  .toppings-body {
+    padding: 14px 16px;
+    gap: 12px;
+    max-height: calc(88vh - 160px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .options-chip-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+  .toppings-footer {
+    padding: 12px 16px calc(14px + env(safe-area-inset-bottom, 0px));
+  }
+  .toppings-confirm-btn {
+    padding: 13px 18px;
+    font-size: 0.84rem;
+  }
+
+  /* 11. CHECKOUT TIPO RECIBO EN MÓVIL */
+  .checkout-receipt-drawer {
+    width: 100%;
+    max-width: 100%;
+    height: 100vh;
+  }
+  .receipt-header {
+    padding: 18px 16px 12px;
+  }
+  .receipt-scrollable-body {
+    padding: 0 16px 20px;
+  }
+  .receipt-footer-fixed {
+    padding: 12px 16px calc(14px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* 12. BARRA FLOTANTE MÓVIL DE PEDIDO */
+  .mobile-sticky-order-bar {
+    display: block !important;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+    z-index: 950;
+  }
+  .sticky-title {
+    font-size: 0.62rem;
+  }
+  .sticky-total {
+    font-size: 1.05rem;
+  }
+  .sticky-action-btn {
+    padding: 10px 18px;
+    font-size: 0.76rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-container {
+    padding: 0 12px;
+  }
+  .hero-headline-title {
+    font-size: 1.85rem;
+  }
+  .editorial-main-img {
+    height: 240px;
+  }
+  .clean-seal-badge {
+    width: 76px;
+    height: 76px;
+    top: -6px;
+    left: -6px;
+  }
+  .seal-city-tag { font-size: 0.40rem; }
+  .seal-brand { font-size: 0.74rem; }
+  .seal-pill { font-size: 0.42rem; }
+  .size-pill-group {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}

@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>FER PIZZ — Pizzeria Artigianale | Cartagena de Indias</title>
+  <meta name="description" content="Pizzería artesanal Fer Pizz en Cartagena. Una idea que nació para servir: pizzas recién horneadas, ingredientes frescos y el auténtico sabor tradicional de Cartagena.">
+
+  <!-- Google Fonts: Playfair Display, Bitter & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600;1,700&display=swap" rel="stylesheet">
+
+  <!-- Leaflet.js CSS (OpenStreetMap - 100% Gratuito) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+  <!-- Estilos Maestros Da Maria + Fer Pizz Brand -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="newspaper-theme full-viewport">
+
+  <!-- TOPBAR EDITORIAL UNIFICADA (ELEGANTE, SIN DOBLE AMARILLO) -->
+  <div class="unified-editorial-topbar">
+    <div class="site-container topbar-flex">
+      <div class="topbar-left">
+        <span class="badge-oven">🔥 HORNO ENCENDIDO</span>
+        <span class="topbar-sep">✦</span>
+        <span class="topbar-text">CARTAGENA DE INDIAS</span>
+        <span class="topbar-sep desktop-only">✦</span>
+        <span class="topbar-date desktop-only" id="currentDateDisplay">EDICIÓN DE HOY</span>
+      </div>
+      <div class="topbar-center">
+        <span class="topbar-slogan">“UNA IDEA QUE NACIÓ PARA SERVIR”</span>
+      </div>
+      <div class="topbar-right">
+        <a href="https://wa.me/573162446724" target="_blank" rel="noopener noreferrer" class="topbar-contact-link">
+          📞 (316) 244-6724
+        </a>
+        <span class="topbar-sep">✦</span>
+        <a href="https://instagram.com/Ferpizz.ctg" target="_blank" rel="noopener noreferrer" class="topbar-contact-link">
+          @Ferpizz.ctg
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER PRINCIPAL SIMÉTRICO CON LOGO ORIGINAL -->
+  <header class="editorial-header-fluid" id="mainHeader">
+    <div class="site-container header-layout">
+      
+      <!-- LADO IZQUIERDO: NAVEGACIÓN -->
+      <nav class="header-nav-group left-nav" aria-label="Navegación principal">
+        <a href="#menu-section" class="pill-btn-nav active">
+          <span class="pill-ornament">✦</span>
+          <span>LA CARTA</span>
+        </a>
+        <a href="#porciones-section" class="pill-btn-subtle">
+          <span>TAMAÑOS</span>
+        </a>
+        <a href="#horarios-section" class="pill-btn-subtle">
+          <span>CONTACTO</span>
+        </a>
+      </nav>
+
+      <!-- CENTRO: LOGO OFICIAL FER PIZZ -->
+      <div class="brand-center-wrapper">
+        <a href="#" class="logo-link" aria-label="Inicio Fer Pizz">
+          <div class="logo-circle-ring">
+            <img 
+              src="logo.png" 
+              alt="Logo Oficial Fer Pizz - Pizzería Artigianale Cartagena" 
+              class="official-logo-img"
+              width="130"
+              height="130"
+            />
+          </div>
+        </a>
+        <p class="brand-tagline">Pizzeria Artigianale — Cartagena de Indias</p>
+      </div>
+
+      <!-- LADO DERECHO: BOTÓN DE PEDIDO INTERACTIVO -->
+      <div class="header-nav-group right-nav">
+        <button id="cartTriggerBtn" class="pill-btn-cart" aria-label="Ver carrito de compras">
+          <span class="cart-spin-icon">✹</span>
+          <span class="cart-label">PEDIDO</span>
+          <span class="cart-badge-counter" id="cartCountBadge">(0)</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MARQUESINA INFINITA CONTINUA (LOOP TICKER MOSTAZA Y ROJO) -->
+  <div class="marquee-mustard-wrapper" aria-label="Cinta de novedades">
+    <div class="marquee-track" id="marqueeTrack">
+      <div class="marquee-content">
+        FER PIZZ <span class="m-diamond">✦</span> “UNA IDEA QUE NACIÓ PARA SERVIR” <span class="m-diamond">✦</span> CARTAGENA DE INDIAS <span class="m-diamond">✦</span> RECETA TRADICIONAL DE LA CASA <span class="m-diamond">✦</span> PEDIDOS AL (316) 244-6724 <span class="m-diamond">✦</span> @FERPIZZ.CTG <span class="m-diamond">✦</span> DEL HORNO A TU MESA <span class="m-diamond">✦</span>
+      </div>
+      <div class="marquee-content" aria-hidden="true">
+        FER PIZZ <span class="m-diamond">✦</span> “UNA IDEA QUE NACIÓ PARA SERVIR” <span class="m-diamond">✦</span> CARTAGENA DE INDIAS <span class="m-diamond">✦</span> RECETA TRADICIONAL DE LA CASA <span class="m-diamond">✦</span> PEDIDOS AL (316) 244-6724 <span class="m-diamond">✦</span> @FERPIZZ.CTG <span class="m-diamond">✦</span> DEL HORNO A TU MESA <span class="m-diamond">✦</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO EDITORIAL CON ANIMACIÓN DE ENTRADA -->
+  <section class="hero-fluid-section">
+    <div class="site-container hero-grid">
+      
+      <!-- COLUMNA IZQUIERDA HERO: MANIFIESTO & CITA -->
+      <div class="hero-manifesto-col reveal-on-scroll">
+        <div class="hero-kicker-badge">
+          <span class="kicker-star">★</span> GACETA CULINARIA OFICIAL • AÑO 2026
+        </div>
+        <h1 class="hero-headline-title">
+          EL ARTE DE LA PIZZA HECHA CON TIEMPO, PACIENCIA Y CORAZÓN.
+        </h1>
+        <div class="hero-rule-ornate">
+          <span class="rule-line"></span>
+          <span class="rule-symbol">✦ ✦ ✦</span>
+          <span class="rule-line"></span>
+        </div>
+        <p class="hero-body-text">
+          <span class="letterhighlight">E</span>n <strong>Fer Pizz</strong> preparamos cada pizza con dedicación y esmero artesanal. Seleccionamos ingredientes frescos de primera calidad, generosa mozzarella hilada y horneamos a fuego vivo para conseguir ese borde crujiente y dorado que tanto le gusta a Cartagena.
+        </p>
+
+        <div class="hero-action-row">
+          <a href="#menu-section" class="btn-mustard-solid pulse-cta">
+            <span>EXPLORAR LA CARTA COMPLETA ↓</span>
+          </a>
+          <a href="https://wa.me/573162446724?text=Hola%20Fer%20Pizz%2C%20quisiera%20hacer%20un%20pedido%20directo" target="_blank" rel="noopener noreferrer" class="btn-editorial-outline">
+            <span>WHATSAPP DIRECTO ↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- COLUMNA DERECHA HERO: FOTO ENMARCADA & SELLO VINTAGE FLOTANTE -->
+      <div class="hero-visual-col reveal-on-scroll delay-1">
+        <div class="photo-composition-wrap">
+          
+          <!-- SELLO DE GARANTÍA EDITORIAL ORGANIZADO Y ELEGANTE -->
+          <div class="clean-seal-badge" id="rubberStamp" title="Sello de Garantía Fer Pizz">
+            <div class="seal-outer-circle">
+              <div class="seal-inner-circle">
+                <span class="seal-city-tag">CARTAGENA</span>
+                <span class="seal-stars">★ ★ ★</span>
+                <strong class="seal-brand">FER PIZZ</strong>
+                <span class="seal-tradition">TRADICIONAL</span>
+                <span class="seal-pill">2026</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- FOTOGRAFÍA PRINCIPAL VERTICAL -->
+          <div class="framed-photo-card">
+            <img 
+              src="https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1200&auto=format&fit=crop" 
+              alt="Pizza artesanal Fer Pizz horneada al punto con queso fundido y albahaca fresca"
+              class="editorial-main-img"
+              loading="eager"
+            />
+            <div class="photo-caption-bar">
+              <span class="caption-icon">❧</span>
+              <span class="caption-text">Receta Tradicional • Hornos de Fuego Vivo • Cartagena</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECCIÓN VISUAL DE PORCIONES Y TAMAÑOS (DISEÑO EXACTO DEL MENÚ ORIGINAL) -->
+  <section class="portions-guide-section" id="porciones-section">
+    <div class="site-container">
+      
+      <div class="section-title-wrap text-center reveal-on-scroll">
+        <span class="kicker-tag">FORMATOS Y PORCIONES</span>
+        <h2 class="section-headline">ESCOGE EL TAMAÑO PERFECTO</h2>
+        <p class="section-sub">Diagramas de corte tradicionales de nuestra cocina en Cartagena</p>
+        <div class="mustard-divider-line"></div>
+      </div>
+
+      <!-- GRILLA DE LOS 4 FORMATOS ORIGINALES -->
+      <div class="portions-interactive-grid reveal-on-scroll delay-1">
+        
+        <!-- FORMATO 1: PERSONAL -->
+        <div class="portion-card" data-size="personal">
+          <div class="portion-circle-diagram">
+            <!-- 4 Porciones: Cruz en círculo -->
+            <svg viewBox="0 0 100 100" class="pizza-cut-svg">
+              <circle cx="50" cy="50" r="44" stroke="#BD2026" stroke-width="3" fill="#FCD968" fill-opacity="0.25"/>
+              <line x1="50" y1="6" x2="50" y2="94" stroke="#BD2026" stroke-width="2.5"/>
+              <line x1="6" y1="50" x2="94" y2="50" stroke="#BD2026" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <span class="portion-count-tag">(4 porciones)</span>
+          <h3 class="portion-name">Personal</h3>
+          <p class="portion-desc">Ideal para disfrutar de forma individual con el auténtico sabor tradicional.</p>
+        </div>
+
+        <!-- FORMATO 2: PIZZETA -->
+        <div class="portion-card" data-size="pizzeta">
+          <div class="portion-circle-diagram">
+            <!-- 6 Porciones: 3 líneas a 60° -->
+            <svg viewBox="0 0 100 100" class="pizza-cut-svg">
+              <circle cx="50" cy="50" r="44" stroke="#BD2026" stroke-width="3" fill="#FCD968" fill-opacity="0.25"/>
+              <line x1="50" y1="6" x2="50" y2="94" stroke="#BD2026" stroke-width="2.5"/>
+              <line x1="12" y1="28" x2="88" y2="72" stroke="#BD2026" stroke-width="2.5"/>
+              <line x1="12" y1="72" x2="88" y2="28" stroke="#BD2026" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <span class="portion-count-tag">(6 porciones)</span>
+          <h3 class="portion-name">Pizzeta</h3>
+          <p class="portion-desc">Perfecta para compartir entre dos o cuando el antojo es mayor.</p>
+        </div>
+
+        <!-- FORMATO 3: MEDIANA -->
+        <div class="portion-card active-featured" data-size="mediana">
+          <div class="portion-badge-pop">POPULAR</div>
+          <div class="portion-circle-diagram">
+            <!-- 10 Porciones -->
+            <svg viewBox="0 0 100 100" class="pizza-cut-svg">
+              <circle cx="50" cy="50" r="44" stroke="#BD2026" stroke-width="3" fill="#FCD968" fill-opacity="0.32"/>
+              <line x1="50" y1="6" x2="50" y2="94" stroke="#BD2026" stroke-width="2"/>
+              <line x1="8" y1="36" x2="92" y2="64" stroke="#BD2026" stroke-width="2"/>
+              <line x1="24" y1="14" x2="76" y2="86" stroke="#BD2026" stroke-width="2"/>
+              <line x1="76" y1="14" x2="24" y2="86" stroke="#BD2026" stroke-width="2"/>
+              <line x1="92" y1="36" x2="8" y2="64" stroke="#BD2026" stroke-width="2"/>
+            </svg>
+          </div>
+          <span class="portion-count-tag">(10 porciones)</span>
+          <h3 class="portion-name">Mediana</h3>
+          <p class="portion-desc">El formato predilecto de la casa para 3 o 4 comensales.</p>
+        </div>
+
+        <!-- FORMATO 4: FAMILIAR -->
+        <div class="portion-card" data-size="familiar">
+          <div class="portion-circle-diagram">
+            <!-- 12 Porciones -->
+            <svg viewBox="0 0 100 100" class="pizza-cut-svg">
+              <circle cx="50" cy="50" r="44" stroke="#BD2026" stroke-width="3" fill="#FCD968" fill-opacity="0.25"/>
+              <line x1="50" y1="6" x2="50" y2="94" stroke="#BD2026" stroke-width="1.8"/>
+              <line x1="6" y1="50" x2="94" y2="50" stroke="#BD2026" stroke-width="1.8"/>
+              <line x1="19" y1="19" x2="81" y2="81" stroke="#BD2026" stroke-width="1.8"/>
+              <line x1="19" y1="81" x2="81" y2="19" stroke="#BD2026" stroke-width="1.8"/>
+              <line x1="10" y1="35" x2="90" y2="65" stroke="#BD2026" stroke-width="1.8"/>
+              <line x1="35" y1="10" x2="65" y2="90" stroke="#BD2026" stroke-width="1.8"/>
+            </svg>
+          </div>
+          <span class="portion-count-tag">(12 porciones)</span>
+          <h3 class="portion-name">Familiar</h3>
+          <p class="portion-desc">Para reuniones familiares y amigos. Abundante y generosa.</p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- LA CARTA DE PIZZAS INTERACTIVA CON FILTROS Y ANIMACIONES -->
+  <section class="menu-interactive-section" id="menu-section">
+    <div class="site-container">
+      
+      <div class="menu-header-bar reveal-on-scroll">
+        <div class="menu-header-text">
+          <span class="kicker-tag">SELECCIÓN TRADICIONAL</span>
+          <h2 class="menu-giant-title">LA CARTA DE PIZZAS</h2>
+          <p class="menu-lead-sub">Elige tu sabor y ajusta el tamaño en tiempo real. Precios oficiales de nuestra pizzería en Cartagena.</p>
+        </div>
+        
+        <!-- FILTROS DE CATEGORÍA INTERACTIVOS -->
+        <div class="menu-filter-nav" role="tablist" aria-label="Filtrar por categoría">
+          <button type="button" class="filter-tab active" data-filter="all">Todas (8)</button>
+          <button type="button" class="filter-tab" data-filter="especial">Especialidad</button>
+          <button type="button" class="filter-tab" data-filter="pollo">Con Pollo</button>
+          <button type="button" class="filter-tab" data-filter="clasica">Clásicas</button>
+        </div>
+      </div>
+
+      <!-- GRILLA PRINCIPAL DE PLATOS INTERACTIVA -->
+      <div class="menu-cards-grid" id="pizzaMenuContainer">
+        <!-- Renderizado dinámicamente con app.js -->
+      </div>
+
+      <!-- TABLA DE ADICIONALES OFICIAL DEL MENÚ (TAMAÑOS DINÁMICOS) -->
+      <div class="additions-official-panel reveal-on-scroll">
+        <div class="additions-panel-header">
+          <div class="panel-tag">INGREDIENTES EXTRA</div>
+          <h3 class="panel-title">ADICIONALES POR TAMAÑO</h3>
+          <p class="panel-sub">Elige adiciones al configurar tu pizza o solicítalas directo a la cocina.</p>
+        </div>
+        <div class="additions-table-wrap">
+          <table class="additions-editorial-table">
+            <thead>
+              <tr>
+                <th>Adicional</th>
+                <th>Personal</th>
+                <th>Pizzeta</th>
+                <th>Mediana</th>
+                <th>Familiar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Maíz Tierno</strong></td>
+                <td>$3.000</td>
+                <td>$3.000</td>
+                <td>$5.000</td>
+                <td>$6.000</td>
+              </tr>
+              <tr>
+                <td><strong>Verdura</strong> <small>(pimentón y cebolla blanca)</small></td>
+                <td>$2.000</td>
+                <td>$2.000</td>
+                <td>$4.000</td>
+                <td>$5.000</td>
+              </tr>
+              <tr>
+                <td><strong>Orégano</strong></td>
+                <td>$1.000</td>
+                <td>$1.000</td>
+                <td>$2.000</td>
+                <td>$3.000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- "COOK'S NOTE" & SLOGAN BANNER (BLOQUE ROJO Y MOSTAZA) -->
+  <section class="cooks-banner-section reveal-on-scroll">
+    <div class="site-container">
+      <div class="cooks-fluid-card">
+        
+        <!-- BLOQUE ROJO SÓLIDO (#BD2026) TIPO CIAO AMICI -->
+        <div class="cooks-red-panel">
+          <div class="red-panel-tag">
+            <span>✦ ✦ ✦</span>
+            <span>NOTAS DE LA COCINA</span>
+            <span>✦ ✦ ✦</span>
+          </div>
+          <h3 class="cooks-greeting-title">¡Hola Amigos!</h3>
+          <p class="cooks-quote">
+            «Pizzas recién horneadas con el auténtico sabor tradicional de Cartagena, abundante queso mozzarella e ingredientes frescos seleccionados cada día. Vengan con hambre, váyanse felices.»
+          </p>
+          <div class="cooks-sign-block">
+            <span class="sign-name">— Fer Pizz</span>
+            <span class="sign-motto">“UNA IDEA QUE NACIÓ PARA SERVIR”</span>
+          </div>
+        </div>
+
+        <!-- BLOQUE FOTOGRÁFICO DE PIZZA ARTESANAL EN EL HORNO -->
+        <div class="cooks-photo-panel">
+          <img 
+            src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1000&auto=format&fit=crop" 
+            alt="Pizza artesanal recién horneada Fer Pizz con queso fundido" 
+            class="dough-action-img"
+            loading="lazy"
+          />
+          <div class="photo-overlay-tag">
+            <span>Receta tradicional • Horneada al punto en Cartagena</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN BOOK & ORDER / HORARIOS / MAPA COBERTURA -->
+  <section class="contact-order-section" id="horarios-section">
+    <div class="site-container">
+      <div class="contact-split-grid reveal-on-scroll">
+        
+        <!-- COLUMNA IZQUIERDA: TARJETA DE PEDIDOS -->
+        <div class="contact-card-box">
+          <div class="card-box-header">
+            <span class="box-kicker">ATENCIÓN & DOMICILIOS</span>
+            <h3 class="box-title">PEDIDOS DIRECTOS</h3>
+          </div>
+          <div class="card-box-body">
+            
+            <div class="contact-lead-phone">
+              <span class="phone-label">LÍNEA DE PEDIDOS & WHATSAPP</span>
+              <a href="https://wa.me/573162446724" target="_blank" rel="noopener noreferrer" class="phone-big-link">
+                📞 (316) 244-6724
+              </a>
+            </div>
+
+            <div class="info-block-row">
+              <span class="info-label">HORARIOS DE ATENCIÓN</span>
+              <p class="info-text">
+                <strong>Lunes a Jueves:</strong> 4:30 PM — 11:00 PM<br>
+                <strong>Viernes a Domingo & Festivos:</strong> 4:00 PM — 11:45 PM
+              </p>
+            </div>
+
+            <div class="info-block-row">
+              <span class="info-label">COBERTURA & CIUDAD</span>
+              <p class="info-text">
+                Cartagena de Indias, Colombia.<br>
+                <span>Despachos térmicos directos para que tu pizza llegue caliente y con el queso bien derretido.</span>
+              </p>
+            </div>
+
+            <div class="info-block-row">
+              <span class="info-label">SÍGUENOS EN REDES</span>
+              <a href="https://instagram.com/Ferpizz.ctg" target="_blank" rel="noopener noreferrer" class="insta-follow-btn">
+                <span class="ig-icon">📸</span> @Ferpizz.ctg
+              </a>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: FLYER ORIGINAL & HISTORIA DE MARCA -->
+        <div class="brand-story-box">
+          <div class="flyer-preview-frame">
+            <img 
+              src="menu_original.png" 
+              alt="Volante y Menú Original de Fer Pizz Cartagena" 
+              class="original-flyer-img"
+              loading="lazy"
+            />
+          </div>
+          <div class="flyer-caption">
+            <span class="flyer-slogan">“UNA IDEA QUE NACIÓ PARA SERVIR”</span>
+            <p>La receta que conquistó a Cartagena, ahora disponible con pedido digital interactivo.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PIE DE PÁGINA ROJO Y MOSTAZA OFICIAL DE FER PIZZ -->
+  <footer class="official-brand-footer">
+    <div class="site-container footer-content">
+      
+      <div class="footer-brand-col">
+        <div class="footer-logo-wrap">
+          <img src="logo.png" alt="Fer Pizz Logo" class="footer-logo-img" width="90" height="90">
+        </div>
+        <h3 class="footer-brand-name">FER PIZZ</h3>
+        <p class="footer-motto-quote">“UNA IDEA QUE NACIÓ PARA SERVIR”</p>
+        <p class="footer-sub">Pizzería Artigianale • Cartagena de Indias, Colombia</p>
+      </div>
+
+      <div class="footer-nav-col">
+        <span class="footer-heading">CARTA Y ACCESO</span>
+        <ul class="footer-links">
+          <li><a href="#menu-section">Ver La Carta de Pizzas</a></li>
+          <li><a href="#porciones-section">Formatos y Porciones</a></li>
+          <li><a href="#horarios-section">Horarios & Domicilios</a></li>
+          <li><a href="https://wa.me/573162446724" target="_blank" rel="noopener noreferrer">WhatsApp: (316) 244-6724</a></li>
+          <li><a href="https://instagram.com/Ferpizz.ctg" target="_blank" rel="noopener noreferrer">Instagram: @Ferpizz.ctg</a></li>
+        </ul>
+      </div>
+
+      <!-- SELLO POSTAL INTERACTIVO (ACCESO SECRETO AL CMS: 5 CLICS) -->
+      <div class="footer-stamp-col">
+        <span class="footer-heading">SELLO DE AUTENTICIDAD</span>
+        <div 
+          class="secret-postage-stamp" 
+          id="secretStampTrigger" 
+          title="Sello Postal Oficial Fer Pizz (Haz 5 clics para el CMS)"
+          role="button"
+          tabindex="0"
+          aria-label="Sello postal conmemorativo"
+        >
+          <div class="stamp-serrated-border">
+            <div class="stamp-inner-content">
+              <span class="postage-country">COLOMBIA</span>
+              <img src="logo.png" alt="Stamp Logo" width="34" height="34" style="margin: 2px auto;">
+              <span class="postage-val">FER PIZZ</span>
+              <span class="postage-sub">CTG • 2026</span>
+            </div>
+          </div>
+        </div>
+        <p class="postage-hint">Garantía artesanal sellada.</p>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom-strip">
+      <div class="site-container strip-flex">
+        <span>© 2026 FER PIZZ CARTAGENA — TODOS LOS DERECHOS RESERVADOS.</span>
+        <span>DISEÑO EDITORIAL INSPIRADO EN LA GACETA CLÁSICA «DA MARIA».</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- BARRA FLOTANTE MÓVIL (QUICK CART ACCESS EN SMARTPHONES) -->
+  <aside class="mobile-sticky-order-bar" id="mobileStickyBar">
+    <div class="sticky-bar-content">
+      <div class="sticky-order-info">
+        <span class="sticky-title">TU PEDIDO:</span>
+        <span class="sticky-total" id="mobileStickyTotal">$0 COP</span>
+      </div>
+      <button type="button" class="btn-sticky-checkout" id="mobileCartOpenBtn">
+        <span>VER CARRITO 🛒</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ======================================================== -->
+  <!-- MODAL DESPLEGABLE / DRAWER DE TOPPINGS & PERSONALIZACIÓN -->
+  <!-- ======================================================== -->
+  <div class="toppings-modal-backdrop" id="toppingsModalBackdrop" aria-hidden="true">
+    <div class="toppings-drawer" role="dialog" aria-labelledby="toppingsModalTitle">
+      <div class="toppings-header">
+        <button type="button" class="toppings-close-btn" id="closeToppingsModalBtn" aria-label="Cerrar personalizador">&times;</button>
+        <span class="toppings-kicker-tag">✦ PERSONALIZA TU PIZZA</span>
+        <h3 class="toppings-title" id="toppingsModalTitle">PIZZA ENCHULADA</h3>
+        <p class="toppings-sub" id="toppingsModalSub">Formato seleccionado: Mediana (10 porciones)</p>
+        <div class="toppings-base-pill" id="toppingsBasePill">Precio base: $0 COP</div>
+        <div class="modal-size-pills-row" id="modalSizePillsRow"></div>
+      </div>
+
+      <div class="toppings-body">
+        <div class="toppings-section-intro">
+          <span>ELIGE TUS TOPPINGS Y ADICIONALES:</span>
+          <small>Precios oficiales calculados por tamaño</small>
+        </div>
+
+        <!-- LISTA INTERACTIVA DE ADICIONALES -->
+        <div class="toppings-cards-list" id="toppingsCardsList">
+          <!-- Inyectado dinámicamente vía app.js -->
+        </div>
+
+        <!-- SELECTOR DE CANTIDAD -->
+        <div class="toppings-qty-row">
+          <span class="qty-label">CANTIDAD DE PIZZAS:</span>
+          <div class="qty-stepper">
+            <button type="button" class="btn-qty" id="modalQtyMinusBtn" aria-label="Disminuir">-</button>
+            <span class="qty-count" id="modalQtyCount">1</span>
+            <button type="button" class="btn-qty" id="modalQtyPlusBtn" aria-label="Aumentar">+</button>
+          </div>
+        </div>
+
+        <!-- NOTAS ESPECIALES -->
+        <div class="toppings-notes-wrap">
+          <label for="modalItemNotes" class="toppings-notes-label">INSTRUCCIONES PARA LA COCINA (OPCIONAL):</label>
+          <input type="text" id="modalItemNotes" class="newspaper-input" placeholder="Ej: Borde bien tostadito, orégano bien distribuido...">
+        </div>
+      </div>
+
+      <div class="toppings-footer">
+        <div class="toppings-total-row">
+          <span>TOTAL DE ESTE PLATO:</span>
+          <strong class="toppings-price-sum" id="modalTotalSumDisplay">$0 COP</strong>
+        </div>
+        <button type="button" class="btn-mustard-solid btn-add-custom-pizza" id="btnConfirmCustomPizza">
+          <span>✓ AGREGAR AL CARRITO</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL / DRAWER DE CHECKOUT EDITORIAL CON MAPA SEPIA      -->
+  <!-- ======================================================== -->
+  <div class="checkout-modal-backdrop" id="checkoutBackdrop" aria-hidden="true">
+    <div class="checkout-receipt-drawer" role="dialog" aria-labelledby="receiptTitle">
+      
+      <!-- CABECERA DEL RECIBO -->
+      <div class="receipt-header">
+        <button class="receipt-close-btn" id="closeCartBtn" aria-label="Cerrar carrito">&times;</button>
+        <div class="receipt-stamp-badge">FER PIZZ • CARRITO</div>
+        <h3 class="receipt-main-title" id="receiptTitle">RECIBO DE PEDIDO</h3>
+        <p class="receipt-subtitle">Carrito de Pedido Oficial — Cartagena</p>
+        <div class="receipt-dashed-line"></div>
+      </div>
+
+      <!-- CUERPO CON SCROLL -->
+      <div class="receipt-scrollable-body">
+        
+        <!-- LISTA DE ARTÍCULOS EN EL CARRITO -->
+        <div class="receipt-items-section">
+          <div class="receipt-section-label">ARTÍCULOS SELECCIONADOS</div>
+          <div class="receipt-items-list" id="receiptItemsList">
+            <!-- Inyectado vía JavaScript -->
+          </div>
+        </div>
+
+        <div class="receipt-dashed-line"></div>
+
+        <!-- RESUMEN DE TOTALES -->
+        <div class="receipt-totals-block">
+          <div class="receipt-total-row">
+            <span>SUBTOTAL CARRITO:</span>
+            <span id="receiptSubtotalDisplay">$0 COP</span>
+          </div>
+          <div class="receipt-total-row">
+            <span>DESPACHO A DOMICILIO:</span>
+            <span class="free-badge">SE CALCULA POR ZONA</span>
+          </div>
+          <div class="receipt-total-row total-highlight">
+            <span>TOTAL ESTIMADO:</span>
+            <span id="receiptTotalDisplay">$0 COP</span>
+          </div>
+        </div>
+
+        <div class="receipt-dashed-line"></div>
+
+        <!-- FORMULARIO DE DESPACHO & CLIENTE -->
+        <form class="receipt-order-form" id="orderCheckoutForm" onsubmit="return false;">
+          <div class="receipt-section-label">DATOS DE ENTREGA</div>
+
+          <div class="form-row">
+            <label for="clientNameInput" class="form-label">Nombre y Apellido *</label>
+            <input type="text" id="clientNameInput" class="newspaper-input" placeholder="Ej: Don Carlos Mendoza" required autocomplete="name">
+          </div>
+
+          <div class="form-row">
+            <label for="clientPhoneInput" class="form-label">Teléfono / WhatsApp *</label>
+            <input type="tel" id="clientPhoneInput" class="newspaper-input" placeholder="Ej: 316 244 6724" required autocomplete="tel">
+          </div>
+
+          <div class="form-row">
+            <label for="clientAddressInput" class="form-label">Dirección Escrita (Barrio, Edificio, Apto) *</label>
+            <input type="text" id="clientAddressInput" class="newspaper-input" placeholder="Ej: Bocagrande, Cra 3 # 7-45, Apto 402" required>
+          </div>
+
+          <div class="form-row">
+            <label for="clientNotesInput" class="form-label">Instrucciones Especiales / Notas para la Cocina</label>
+            <textarea id="clientNotesInput" class="newspaper-textarea" rows="2" placeholder="Ej: Cortar en porciones bien separadas, llamar al llegar..."></textarea>
+          </div>
+
+          <div class="receipt-dashed-line"></div>
+
+          <!-- MAPA LEAFLET CON FILTRO SEPIA -->
+          <div class="map-receipt-wrapper">
+            <div class="map-header-bar">
+              <span class="map-bar-title">📍 PIN DE GEOLOCALIZACIÓN EN CARTAGENA</span>
+              <button type="button" class="btn-geo-locate" id="btnGeolocate" title="Ubicar mi posición satelital">
+                <span>🎯 Ubicar mi GPS</span>
+              </button>
+            </div>
+            <p class="map-instruction">
+              Arrastra el pin al punto exacto de tu entrada para que el repartidor no se pierda.
+            </p>
+            <div id="leafletMap" class="editorial-sepia-map"></div>
+            <div class="map-coords-display">
+              <span>Coordenadas fijadas:</span>
+              <strong id="coordsText">10.4236° N, 75.5378° W (Cartagena)</strong>
+            </div>
+          </div>
+
+          <!-- BOTÓN DE ENVÍO DIRECTO A WHATSAPP -->
+          <div class="receipt-submit-wrap">
+            <button type="submit" class="btn-whatsapp-order" id="sendWhatsAppOrderBtn">
+              <span class="btn-wa-icon">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.299.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.353.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.144.39-.086s1.011.477 1.184.564.289.13.332.202c.043.073.043.419-.101.824z"/>
+                  <path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.526 3.662 1.444 5.177L2 22l4.98-1.309A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.053c-1.63 0-3.15-.47-4.44-1.282l-.318-.2-2.965.778.791-2.89-.208-.331A8.028 8.028 0 0 1 3.947 12C3.947 7.559 7.559 3.947 12 3.947c4.44 0 8.053 3.614 8.053 8.053 0 4.44-3.613 8.053-8.053 8.053z"/>
+                </svg>
+              </span>
+              <span class="btn-wa-text">ENVIAR PEDIDO A WHATSAPP</span>
+            </button>
+            <p class="receipt-wa-disclaimer">
+              Se enviará tu pedido con formato oficial y se abrirá el chat oficial de Fer Pizz con tu ubicación GPS.
+            </p>
+          </div>
+
+        </form>
+
+      </div>
+      <div class="receipt-serrated-bottom"></div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL DEL PANEL ADMINISTRADOR OCULTO (CMS SECRETO)       -->
+  <!-- ======================================================== -->
+  <div class="admin-modal-backdrop" id="adminBackdrop" aria-hidden="true">
+    <div class="admin-panel-container" role="dialog" aria-labelledby="adminTitle">
+      <div class="admin-panel-header">
+        <div>
+          <span class="admin-badge">CMS PRIVADO</span>
+          <h3 class="admin-title" id="adminTitle">PANEL DE GESTIÓN FER PIZZ</h3>
+          <p class="admin-sub">Edición de Carta, Precios, Stock y Sincronización Firebase</p>
+        </div>
+        <button class="admin-close-btn" id="closeAdminBtn" aria-label="Cerrar panel de administración">&times;</button>
+      </div>
+
+      <div class="admin-auth-view" id="adminAuthView">
+        <div class="auth-lock-icon">🔒</div>
+        <h4>Acceso Restringido a Maestros Pizzaiolos</h4>
+        <p>Introduce la clave de acceso de Fer Pizz para modificar la carta y precios.</p>
+        <div class="auth-input-group">
+          <input type="password" id="adminPasswordInput" class="newspaper-input text-center" placeholder="Clave de acceso (defecto: ferpizz2026)" autocomplete="current-password">
+          <button type="button" class="btn-mustard-solid" id="adminLoginBtn">ENTRAR AL CMS</button>
+        </div>
+        <p class="auth-error-msg" id="authErrorMsg"></p>
+      </div>
+
+      <div class="admin-dashboard-view hidden" id="adminDashboardView">
+        <div class="admin-tabs">
+          <button type="button" class="admin-tab-btn active" data-tab="tab-pizzas">🍕 Carta de Pizzas & Precios</button>
+          <button type="button" class="admin-tab-btn" data-tab="tab-anuncio">📢 Nota de Cocina & Promo</button>
+          <button type="button" class="admin-tab-btn" data-tab="tab-firebase">☁️ Firebase Firestore Spark</button>
+        </div>
+
+        <div class="admin-tab-content active" id="tab-pizzas">
+          <div class="tab-toolbar">
+            <p class="toolbar-info">Precios oficiales en COP y disponibilidad. Los cambios se guardan al instante.</p>
+            <div class="toolbar-actions">
+              <button type="button" class="btn-admin-action" id="btnResetDefaults">Restaurar Precios Fábrica</button>
+              <button type="button" class="btn-admin-action btn-save-main" id="btnSaveAdminChanges">Guardar Cambios</button>
+            </div>
+          </div>
+
+          <div class="admin-pizza-table-wrapper">
+            <table class="admin-pizza-table" id="adminPizzaTable">
+              <thead>
+                <tr>
+                  <th>Sabor / Especialidad</th>
+                  <th>Estado</th>
+                  <th>Personal (4p)</th>
+                  <th>Pizzeta (6p)</th>
+                  <th>Mediana (10p)</th>
+                  <th>Familiar (12p)</th>
+                </tr>
+              </thead>
+              <tbody id="adminPizzaTbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="admin-tab-content" id="tab-anuncio">
+          <div class="admin-form-group">
+            <label class="form-label" for="adminCooksGreeting">Título de la Nota de Cocina</label>
+            <input type="text" id="adminCooksGreeting" class="newspaper-input">
+          </div>
+          <div class="admin-form-group">
+            <label class="form-label" for="adminCooksMessage">Mensaje del Chef / Anuncio de Temporada</label>
+            <textarea id="adminCooksMessage" class="newspaper-textarea" rows="4"></textarea>
+          </div>
+          <div class="admin-form-group">
+            <label class="form-label" for="adminMarqueeText">Texto de la Marquesina Superior (Separar con ✦)</label>
+            <input type="text" id="adminMarqueeText" class="newspaper-input">
+          </div>
+          <button type="button" class="btn-admin-action btn-save-main" id="btnSaveAnnounceChanges">Guardar Anuncios</button>
+        </div>
+
+        <div class="admin-tab-content" id="tab-firebase">
+          <div class="firebase-status-box">
+            <div class="status-indicator">
+              <span class="status-pill status-spark">Modo: LocalStorage + Spark Tier Zero-Cost</span>
+            </div>
+            <p>
+              El CMS funciona de forma 100% autónoma y offline mediante <code>localStorage</code> (cero lecturas a servidores para garantizar la capa gratuita).
+            </p>
+          </div>
+          <div class="admin-form-group">
+            <label class="form-label" for="fbConfigJson">Configuración Firebase JSON (Opcional)</label>
+            <textarea id="fbConfigJson" class="newspaper-textarea code-font" rows="6"></textarea>
+          </div>
+          <div class="firebase-actions-row">
+            <button type="button" class="btn-admin-action" id="btnTestFirebase">Probar Conexión Firestore</button>
+            <button type="button" class="btn-admin-action btn-save-main" id="btnSaveFirebaseConfig">Vincular Proyecto</button>
+          </div>
+          <div id="firebaseFeedback" class="feedback-toast"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICACIONES TIPO PRENSA -->
+  <div class="editorial-toast" id="editorialToast" role="alert" aria-live="assertive"></div>
+
+  <!-- Leaflet.js JS (OpenStreetMap Gratuito) -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- GSAP 3 & ScrollTrigger para animaciones espectaculares de entrada -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- Lógica Interactiva y Animaciones -->
+  <script src="app.js"></script>
+</body>
+</html>
