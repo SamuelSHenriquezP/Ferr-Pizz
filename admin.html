@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FER PIZZ — Panel de Administración Completo (CMS)</title>
+
+  <!-- Google Fonts: Playfair Display, Bitter & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600;1,700&display=swap" rel="stylesheet">
+
+  <!-- Estilos Maestros de Fer Pizz -->
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    /* ESTILOS EXCLUSIVOS DE LA PÁGINA COMPLETA DE ADMINISTRACIÓN */
+    body.admin-page-body {
+      background-color: var(--bg-canvas);
+      color: var(--ink-charcoal);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 60px !important;
+    }
+
+    /* PANTALLA DE ACCESO (LOGIN) */
+    .admin-login-screen {
+      position: fixed;
+      inset: 0;
+      background-color: var(--bg-canvas);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .admin-login-screen.hidden {
+      display: none;
+    }
+    .admin-login-card {
+      background-color: var(--bg-card);
+      border: 2px solid var(--ink-wine);
+      box-shadow: 6px 6px 0 var(--mustard-ferpizz);
+      max-width: 440px;
+      width: 100%;
+      padding: 36px 30px;
+      text-align: center;
+    }
+    .login-ornament {
+      font-size: 1.6rem;
+      color: var(--accent-crimson);
+      margin-bottom: 10px;
+      display: block;
+    }
+    .admin-login-card h1 {
+      font-family: var(--font-headline);
+      font-size: 1.55rem;
+      font-weight: 900;
+      color: var(--ink-wine);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .admin-login-card p {
+      font-size: 0.86rem;
+      color: var(--ink-muted);
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+
+    /* BARRA SUPERIOR STICKY DEL ADMIN */
+    .cms-top-header {
+      position: sticky;
+      top: 0;
+      z-index: 900;
+      background-color: var(--ink-wine);
+      color: var(--bg-card);
+      border-bottom: 3px solid var(--mustard-ferpizz);
+      padding: 14px 0;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+    }
+    .cms-header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .cms-brand-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .cms-brand-logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 2px solid var(--mustard-ferpizz);
+      object-fit: cover;
+      background-color: var(--bg-card);
+    }
+    .cms-brand-titles h1 {
+      font-family: var(--font-headline);
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--mustard-ferpizz);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin: 0;
+    }
+    .cms-brand-titles span {
+      font-size: 0.72rem;
+      color: #E8DFD1;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .cms-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .cms-db-status-badge {
+      font-family: var(--font-sans);
+      font-size: 0.70rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(249, 195, 72, 0.5);
+      color: var(--mustard-ferpizz);
+    }
+    .cms-db-status-badge.connected {
+      background-color: #1A4D2E;
+      border-color: #65B741;
+      color: #E8F5E9;
+    }
+
+    .btn-cms-top {
+      padding: 9px 16px;
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1.5px solid var(--mustard-ferpizz);
+      background-color: transparent;
+      color: var(--mustard-ferpizz);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .btn-cms-top:hover {
+      background-color: var(--mustard-ferpizz);
+      color: var(--ink-wine);
+    }
+    .btn-cms-publish {
+      padding: 10px 22px;
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background-color: var(--mustard-ferpizz);
+      color: var(--ink-wine);
+      border: 2px solid var(--white-pure);
+      cursor: pointer;
+      box-shadow: 3px 3px 0 var(--accent-crimson);
+      transition: all 0.18s ease;
+    }
+    .btn-cms-publish:hover {
+      background-color: var(--white-pure);
+      transform: translate(-1px, -1px);
+    }
+
+    /* LAYOUT PRINCIPAL DE ADMINISTRACIÓN */
+    .cms-main-container {
+      max-width: 1280px;
+      width: 100%;
+      margin: 28px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    /* MENÚ LATERAL DE SECCIONES */
+    .cms-sidebar-nav {
+      background-color: var(--bg-card);
+      border: 1.5px solid var(--border-paper);
+      box-shadow: 4px 4px 0 rgba(74, 20, 23, 0.08);
+      position: sticky;
+      top: 92px;
+    }
+    .cms-sidebar-header {
+      padding: 14px 18px;
+      background-color: rgba(249, 195, 72, 0.18);
+      border-bottom: 1.5px solid var(--border-mustard);
+      font-family: var(--font-sans);
+      font-size: 0.70rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-wine);
+    }
+    .cms-nav-list {
+      list-style: none;
+      margin: 0;
+      padding: 6px 0;
+    }
+    .cms-nav-btn {
+      width: 100%;
+      text-align: left;
+      padding: 13px 18px;
+      background: transparent;
+      border: none;
+      border-left: 4px solid transparent;
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--ink-charcoal);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.15s ease;
+    }
+    .cms-nav-btn:hover {
+      background-color: rgba(249, 195, 72, 0.12);
+      color: var(--accent-crimson);
+    }
+    .cms-nav-btn.active {
+      background-color: #FAF2E3;
+      border-left-color: var(--accent-crimson);
+      color: var(--accent-crimson);
+      font-weight: 800;
+    }
+    .cms-sidebar-footer {
+      padding: 14px 18px;
+      border-top: 1px dashed var(--border-paper);
+      font-size: 0.74rem;
+      color: var(--ink-muted);
+      line-height: 1.45;
+    }
+
+    /* PANELES DE CONTENIDO */
+    .cms-section-panel {
+      display: none;
+      background-color: var(--bg-card);
+      border: 1.5px solid var(--border-paper);
+      padding: 28px;
+      box-shadow: 0 10px 28px rgba(26, 22, 21, 0.06);
+    }
+    .cms-section-panel.active {
+      display: block;
+    }
+
+    .cms-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--border-mustard);
+    }
+    .cms-panel-title-group h2 {
+      font-family: var(--font-headline);
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--ink-charcoal);
+      text-transform: uppercase;
+      margin: 0 0 4px 0;
+    }
+    .cms-panel-title-group p {
+      font-size: 0.86rem;
+      color: var(--ink-muted);
+      margin: 0;
+    }
+
+    /* SUB-BLOQUES DE FORMULARIO */
+    .cms-fieldset-card {
+      background-color: var(--bg-canvas);
+      border: 1px solid var(--border-paper);
+      padding: 20px;
+      margin-bottom: 22px;
+    }
+    .cms-fieldset-title {
+      font-family: var(--font-headline);
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: var(--accent-crimson);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 0 0 16px 0;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border-mustard);
+    }
+
+    .cms-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .cms-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+    .cms-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    /* EDITOR DE IMAGEN CON MINIATURA Y BOTONES */
+    .cms-image-picker-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .cms-image-preview-box {
+      width: 110px;
+      height: 74px;
+      border: 1.5px solid var(--ink-wine);
+      background-color: #EDE8DE;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .cms-image-preview-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .cms-image-controls {
+      flex: 1;
+      min-width: 240px;
+    }
+    .cms-image-btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* TARJETAS DE EDICIÓN DE PIZZAS COMPLETAS */
+    .cms-pizza-cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .cms-pizza-edit-card {
+      background-color: var(--bg-canvas);
+      border: 1.5px solid var(--border-paper);
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .cms-pizza-photo-col {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+    .cms-pizza-photo-frame {
+      width: 140px;
+      height: 96px;
+      border: 1.5px solid var(--ink-wine);
+      overflow: hidden;
+      background-color: #EDE8DE;
+    }
+    .cms-pizza-photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    @media (max-width: 980px) {
+      .cms-main-container {
+        grid-template-columns: 1fr;
+      }
+      .cms-sidebar-nav {
+        position: static;
+      }
+      .cms-grid-2, .cms-grid-3, .cms-grid-4 {
+        grid-template-columns: 1fr;
+      }
+      .cms-pizza-edit-card {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="newspaper-theme admin-page-body">
+
+  <!-- PANTALLA DE LOGIN PROTEGIDA -->
+  <div class="admin-login-screen" id="adminLoginScreen">
+    <div class="admin-login-card">
+      <span class="login-ornament">✦ ✦ ✦</span>
+      <h1>FER PIZZ — CMS EDITORIAL</h1>
+      <p>Introduce la clave de administrador para editar textos, fotografías, precios, complementos y conectar la base de datos.</p>
+      <div class="admin-form-group" style="text-align: left;">
+        <label class="form-label" for="cmsPasswordInput">Clave de Acceso</label>
+        <input type="password" id="cmsPasswordInput" class="newspaper-input text-center" placeholder="Clave (por defecto: ferpizz2026)" autocomplete="current-password">
+      </div>
+      <button type="button" class="btn-mustard-solid" id="cmsLoginSubmitBtn" style="width: 100%; margin-top: 8px;">
+        INGRESAR AL ADMINISTRADOR
+      </button>
+      <p class="auth-error-msg" id="cmsLoginError" style="margin-top: 10px;"></p>
+      <div style="margin-top: 18px; border-top: 1px dashed var(--border-paper); padding-top: 12px;">
+        <a href="index.html" style="font-size: 0.78rem; color: var(--ink-wine); font-weight: 700; text-decoration: none;">
+          &larr; Volver a la Página Pública de Fer Pizz
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- BARRA SUPERIOR DEL CMS -->
+  <header class="cms-top-header">
+    <div class="site-container cms-header-inner">
+      <div class="cms-brand-left">
+        <img src="logo.png" alt="Logo Fer Pizz" class="cms-brand-logo">
+        <div class="cms-brand-titles">
+          <h1>FER PIZZ — ADMINISTRADOR GENERAL</h1>
+          <span>Edición Completa de Sitio Web, Carta, Complementos y Nube</span>
+        </div>
+      </div>
+
+      <div class="cms-header-actions">
+        <span class="cms-db-status-badge" id="cmsDbStatusBadge">Modo: LocalStorage</span>
+        <a href="index.html" target="_blank" class="btn-cms-top">Ver Página Pública &nearr;</a>
+        <button type="button" class="btn-cms-publish" id="btnPublishAllTop">
+          ✓ PUBLICAR TODOS LOS CAMBIOS
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENEDOR PRINCIPAL CON MENÚ LATERAL Y SECCIONES -->
+  <main class="cms-main-container">
+
+    <!-- NAVEGACIÓN LATERAL -->
+    <aside class="cms-sidebar-nav">
+      <div class="cms-sidebar-header">SECCIONES EDITABLES</div>
+      <ul class="cms-nav-list">
+        <li>
+          <button type="button" class="cms-nav-btn active" data-section="sec-pizzas">
+            <span>1. Carta de Pizzas</span>
+            <span>&rarr;</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="cms-nav-btn" data-section="sec-complementos">
+            <span>2. Complementos y Salsas</span>
+            <span>&rarr;</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="cms-nav-btn" data-section="sec-portada">
+            <span>3. Portada, Barra y Tamaños</span>
+            <span>&rarr;</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="cms-nav-btn" data-section="sec-chef">
+            <span>4. Nota del Chef e Historia</span>
+            <span>&rarr;</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="cms-nav-btn" data-section="sec-contacto">
+            <span>5. Contacto, Horarios y Redes</span>
+            <span>&rarr;</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="cms-nav-btn" data-section="sec-database">
+            <span>6. Base de Datos y Fotos CDN</span>
+            <span>&rarr;</span>
+          </button>
+        </li>
+      </ul>
+      <div class="cms-sidebar-footer">
+        <p style="margin: 0 0 8px 0;"><strong>Consejo:</strong> Haz tus cambios en cualquier pestaña y presiona <strong>Publicar Todos los Cambios</strong> arriba a la derecha.</p>
+        <button type="button" class="btn-admin-action" id="btnLogoutCms" style="width: 100%; font-size: 0.72rem; padding: 6px;">
+          Cerrar Sesión
+        </button>
+      </div>
+    </aside>
+
+    <!-- ÁREA DE PANELES DE EDICIÓN -->
+    <div class="cms-panels-wrapper">
+
+      <!-- ================================================================ -->
+      <!-- SECCIÓN 1: CARTA DE PIZZAS (PRECIOS, TEXTOS, FOTOS Y CREACIÓN)  -->
+      <!-- ================================================================ -->
+      <section class="cms-section-panel active" id="sec-pizzas">
+        <div class="cms-panel-header">
+          <div class="cms-panel-title-group">
+            <h2>1. Carta de Pizzas, Descripciones, Precios y Fotos</h2>
+            <p>Edita los sabores actuales, cambia sus fotografías con Cloudinary o añade nuevas especialidades al menú.</p>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button type="button" class="btn-admin-action" id="btnResetPizzasFactory">Restaurar 8 Pizzas de Fábrica</button>
+            <button type="button" class="btn-admin-action btn-save-main" id="btnSavePizzasSection">Guardar y Publicar Pizzas</button>
+          </div>
+        </div>
+
+        <!-- FORMULARIO PARA CREAR UNA NUEVA PIZZA -->
+        <div class="cms-fieldset-card">
+          <h3 class="cms-fieldset-title">✦ Añadir Nuevo Sabor de Pizza al Catálogo</h3>
+          <div class="cms-grid-3">
+            <div class="admin-form-group">
+              <label class="form-label" for="newPizzaName">Nombre de la Pizza *</label>
+              <input type="text" id="newPizzaName" class="newspaper-input" placeholder="Ej: Napolitana o Cuatro Quesos">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="newPizzaCategory">Categoría del Filtro</label>
+              <select id="newPizzaCategory" class="newspaper-input">
+                <option value="tradicional">Tradicionales</option>
+                <option value="clasica">Clásicas</option>
+                <option value="especial">Especialidad</option>
+                <option value="pollo">Con Pollo</option>
+              </select>
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="newPizzaBadge">Etiqueta / Insignia</label>
+              <input type="text" id="newPizzaBadge" class="newspaper-input" placeholder="Ej: ✦ ESPECIALIDAD o TRADICIONAL" value="TRADICIONAL">
+            </div>
+          </div>
+
+          <div class="admin-form-group" style="margin-top: 10px;">
+            <label class="form-label" for="newPizzaDesc">Descripción de Ingredientes</label>
+            <input type="text" id="newPizzaDesc" class="newspaper-input" placeholder="Ej: Rodajas de tomate fresco, mozzarella fundida, albahaca y aceite de oliva.">
+          </div>
+
+          <div class="cms-grid-4" style="margin-top: 10px;">
+            <div class="admin-form-group">
+              <label class="form-label" for="newPizzaPersonal">Precio Personal (4p)</label>
+              <input type="number" id="newPizzaPersonal" class="newspaper-input" value="14000">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="newPizzaPizzeta">Precio Pizzeta (6p)</label>
+              <input type="number" id="newPizzaPizzeta" class="newspaper-input" value="25000">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="newPizzaMediana">Precio Mediana (10p)</label>
+              <input type="number" id="newPizzaMediana" class="newspaper-input" value="36000">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="newPizzaFamiliar">Precio Familiar (12p)</label>
+              <input type="number" id="newPizzaFamiliar" class="newspaper-input" value="48000">
+            </div>
+          </div>
+
+          <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+            <button type="button" class="btn-mustard-solid" id="btnAddNewPizzaFlavor" style="padding: 10px 22px; font-size: 0.76rem;">
+              + AGREGAR PIZZA A LA CARTA
+            </button>
+          </div>
+        </div>
+
+        <!-- LISTA DETALLADA DE PIZZAS EDITABLES -->
+        <div class="cms-pizza-cards-list" id="cmsPizzaListContainer"></div>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- SECCIÓN 2: COMPLEMENTOS, ADICIONALES Y SALSAS                    -->
+      <!-- ================================================================ -->
+      <section class="cms-section-panel" id="sec-complementos">
+        <div class="cms-panel-header">
+          <div class="cms-panel-title-group">
+            <h2>2. Complementos, Adicionales y Salsa Adicional</h2>
+            <p>Agrega o quita ingredientes adicionales y administra el precio y textos del tarrito de salsa adicional.</p>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button type="button" class="btn-admin-action" id="btnResetAdditionsFactory">Restaurar Adicionales Fábrica</button>
+            <button type="button" class="btn-admin-action btn-save-main" id="btnSaveAdditionsSection">Guardar y Publicar Adicionales</button>
+          </div>
+        </div>
+
+        <!-- CONFIGURACIÓN DE SALSA ADICIONAL -->
+        <div class="cms-fieldset-card">
+          <h3 class="cms-fieldset-title">✦ Configuración de Salsa Adicional (Tarrito)</h3>
+          <div class="cms-grid-3">
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgSauceName">Nombre en el Carrito / Tabla</label>
+              <input type="text" id="cfgSauceName" class="newspaper-input" placeholder="Salsa Adicional (Tarrito)">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgSaucePrice">Precio Unitario (COP)</label>
+              <input type="number" id="cfgSaucePrice" class="newspaper-input" placeholder="2000">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgSauceTitle">Título de la Tarjeta de Salsa</label>
+              <input type="text" id="cfgSauceTitle" class="newspaper-input" placeholder="¿Deseas Salsa Adicional?">
+            </div>
+          </div>
+          <div class="admin-form-group" style="margin-top: 10px;">
+            <label class="form-label" for="cfgSauceDesc">Descripción de la Tarjeta de Salsa</label>
+            <input type="text" id="cfgSauceDesc" class="newspaper-input">
+          </div>
+        </div>
+
+        <!-- CREAR NUEVO ADICIONAL -->
+        <div class="cms-fieldset-card">
+          <h3 class="cms-fieldset-title">✦ Añadir Nuevo Complemento / Ingrediente Extra</h3>
+          <div class="add-complement-grid">
+            <div class="admin-form-group">
+              <label class="form-label" for="cmsNewCompName">Nombre *</label>
+              <input type="text" id="cmsNewCompName" class="newspaper-input" placeholder="Ej: Jalapeños o Borde de Queso">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cmsNewCompDesc">Descripción</label>
+              <input type="text" id="cmsNewCompDesc" class="newspaper-input" placeholder="Ej: Rodajas encurtidas">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cmsNewCompPersonal">Personal (4p)</label>
+              <input type="number" id="cmsNewCompPersonal" class="newspaper-input" value="3000">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cmsNewCompPizzeta">Pizzeta (6p)</label>
+              <input type="number" id="cmsNewCompPizzeta" class="newspaper-input" value="3500">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cmsNewCompMediana">Mediana (10p)</label>
+              <input type="number" id="cmsNewCompMediana" class="newspaper-input" value="5000">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cmsNewCompFamiliar">Familiar (12p)</label>
+              <input type="number" id="cmsNewCompFamiliar" class="newspaper-input" value="6500">
+            </div>
+          </div>
+          <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+            <button type="button" class="btn-mustard-solid" id="btnCmsCreateAddition" style="padding: 10px 22px; font-size: 0.76rem;">
+              + CREAR ADICIONAL
+            </button>
+          </div>
+        </div>
+
+        <!-- TABLA DE COMPLEMENTOS -->
+        <div class="admin-pizza-table-wrapper">
+          <table class="admin-pizza-table">
+            <thead>
+              <tr>
+                <th>Nombre del Adicional</th>
+                <th>Descripción</th>
+                <th>Personal (4p)</th>
+                <th>Pizzeta (6p)</th>
+                <th>Mediana (10p)</th>
+                <th>Familiar (12p)</th>
+                <th style="width: 90px; text-align: center;">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="cmsAdditionsTbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- SECCIÓN 3: PORTADA (HERO), BARRA SUPERIOR, MARQUESINA Y TAMAÑOS  -->
+      <!-- ================================================================ -->
+      <section class="cms-section-panel" id="sec-portada">
+        <div class="cms-panel-header">
+          <div class="cms-panel-title-group">
+            <h2>3. Portada Principal (Hero), Barra Superior y Tamaños</h2>
+            <p>Modifica los titulares de bienvenida, el logotipo, la foto principal de portada y las descripciones de las porciones.</p>
+          </div>
+          <button type="button" class="btn-admin-action btn-save-main" id="btnSaveHeroSection">Guardar y Publicar Portada</button>
+        </div>
+
+        <!-- BARRA SUPERIOR Y ENCABEZADO -->
+        <div class="cms-fieldset-card">
+          <h3 class="cms-fieldset-title">✦ Barra Superior, Lema y Logotipo</h3>
+          <div class="cms-grid-2">
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgOvenBadge">Estado del Horno (Esquina Superior)</label>
+              <input type="text" id="cfgOvenBadge" class="newspaper-input" placeholder="HORNO ENCENDIDO">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgCityTag">Ciudad en Barra Superior</label>
+              <input type="text" id="cfgCityTag" class="newspaper-input" placeholder="CARTAGENA DE INDIAS">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgSlogan">Lema Oficial de la Marca</label>
+              <input type="text" id="cfgSlogan" class="newspaper-input" placeholder="“UNA IDEA QUE NACIÓ PARA SERVIR”">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgBrandTagline">Subtítulo bajo el Logo</label>
+              <input type="text" id="cfgBrandTagline" class="newspaper-input" placeholder="Pizzeria Artigianale — Cartagena de Indias">
+            </div>
+          </div>
+
+          <div class="admin-form-group" style="margin-top: 12px;">
+            <label class="form-label" for="cfgMarqueeText">Texto de la Marquesina en Movimiento (Separar frases con ✦)</label>
+            <input type="text" id="cfgMarqueeText" class="newspaper-input">
+          </div>
+
+          <div class="admin-form-group" style="margin-top: 14px;">
+            <label class="form-label">Logotipo Oficial del Sitio</label>
+            <div class="cms-image-picker-row">
+              <div class="cms-image-preview-box" style="width: 76px; height: 76px; border-radius: 50%;">
+                <img id="previewLogoImg" src="logo.png" alt="Vista previa Logo">
+              </div>
+              <div class="cms-image-controls">
+                <input type="text" id="cfgLogoUrl" class="newspaper-input" placeholder="logo.png o URL de Cloudinary">
+                <div class="cms-image-btn-row">
+                  <button type="button" class="btn-admin-mini btn-cloudinary-upload" data-target-input="cfgLogoUrl" data-target-preview="previewLogoImg">Subir Nuevo Logo con Cloudinary</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PORTADA HERO -->
+        <div class="cms-fieldset-card">
+          <h3 class="cms-fieldset-title">✦ Portada Principal (Hero) y Fotografía Destacada</h3>
+          <div class="admin-form-group">
+            <label class="form-label" for="cfgHeroKicker">Insignia Superior de Portada</label>
+            <input type="text" id="cfgHeroKicker" class="newspaper-input">
+          </div>
+          <div class="admin-form-group">
+            <label class="form-label" for="cfgHeroTitle">Titular Principal Grande (H1)</label>
+            <textarea id="cfgHeroTitle" class="newspaper-textarea" rows="2"></textarea>
+          </div>
+          <div class="admin-form-group">
+            <label class="form-label" for="cfgHeroBody">Párrafo de Presentación</label>
+            <textarea id="cfgHeroBody" class="newspaper-textarea" rows="3"></textarea>
+          </div>
+
+          <div class="admin-form-group" style="margin-top: 14px;">
+            <label class="form-label">Fotografía Principal de Portada</label>
+            <div class="cms-image-picker-row">
+              <div class="cms-image-preview-box">
+                <img id="previewHeroImg" src="" alt="Vista previa Hero">
+              </div>
+              <div class="cms-image-controls">
+                <input type="text" id="cfgHeroImageUrl" class="newspaper-input" placeholder="URL de la imagen de portada">
+                <div class="cms-image-btn-row">
+                  <button type="button" class="btn-admin-mini btn-cloudinary-upload" data-target-input="cfgHeroImageUrl" data-target-preview="previewHeroImg">Subir Foto de Portada con Cloudinary</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-form-group" style="margin-top: 12px;">
+            <label class="form-label" for="cfgHeroImageCaption">Pie de Foto de la Portada</label>
+            <input type="text" id="cfgHeroImageCaption" class="newspaper-input">
+          </div>
+        </div>
+
+        <!-- SECCIÓN DE PORCIONES -->
+        <div class="cms-fieldset-card">
+          <h3 class="cms-fieldset-title">✦ Textos de la Guía de Tamaños y Porciones</h3>
+          <div class="cms-grid-2">
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgPortionsTitle">Título de Sección Tamaños</label>
+              <input type="text" id="cfgPortionsTitle" class="newspaper-input">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgPortionsSub">Subtítulo de Sección Tamaños</label>
+              <input type="text" id="cfgPortionsSub" class="newspaper-input">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgDescPersonal">Descripción Personal (4 porciones)</label>
+              <input type="text" id="cfgDescPersonal" class="newspaper-input">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgDescPizzeta">Descripción Pizzeta (6 porciones)</label>
+              <input type="text" id="cfgDescPizzeta" class="newspaper-input">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgDescMediana">Descripción Mediana (10 porciones)</label>
+              <input type="text" id="cfgDescMediana" class="newspaper-input">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgDescFamiliar">Descripción Familiar (12 porciones)</label>
+              <input type="text" id="cfgDescFamiliar" class="newspaper-input">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- SECCIÓN 4: NOTA DEL CHEF E HISTORIA                              -->
+      <!-- ================================================================ -->
+      <section class="cms-section-panel" id="sec-chef">
+        <div class="cms-panel-header">
+          <div class="cms-panel-title-group">
+            <h2>4. Nota de la Cocina (Chef) y Cuadro de Historia</h2>
+            <p>Edita el mensaje destacado sobre fondo rojo, su fotografía de acompañamiento y el volante histórico.</p>
+          </div>
+          <button type="button" class="btn-admin-action btn-save-main" id="btnSaveChefSection">Guardar y Publicar Nota e Historia</button>
+        </div>
+
+        <div class="cms-fieldset-card">
+          <h3 class="cms-fieldset-title">✦ Bloque Rojo: Nota de la Cocina</h3>
+          <div class="cms-grid-2">
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgCooksGreeting">Saludo / Título del Chef</label>
+              <input type="text" id="cfgCooksGreeting" class="newspaper-input" placeholder="¡Hola Amigos!">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgCooksSign">Firma del Bloque</label>
+              <input type="text" id="cfgCooksSign" class="newspaper-input" placeholder="— Fer Pizz">
+            </div>
+          </div>
+          <div class="admin-form-group" style="margin-top: 10px;">
+            <label class="form-label" for="cfgCooksQuote">Mensaje / Cita de la Cocina</label>
+            <textarea id="cfgCooksQuote" class="newspaper-textarea" rows="3"></textarea>
+          </div>
+
+          <div class="admin-form-group" style="margin-top: 14px;">
+            <label class="form-label">Fotografía del Bloque de Cocina</label>
+            <div class="cms-image-picker-row">
+              <div class="cms-image-preview-box">
+                <img id="previewCooksImg" src="" alt="Vista previa Cocina">
+              </div>
+              <div class="cms-image-controls">
+                <input type="text" id="cfgCooksImageUrl" class="newspaper-input">
+                <div class="cms-image-btn-row">
+                  <button type="button" class="btn-admin-mini btn-cloudinary-upload" data-target-input="cfgCooksImageUrl" data-target-preview="previewCooksImg">Subir Foto de Cocina con Cloudinary</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-form-group" style="margin-top: 12px;">
+            <label class="form-label" for="cfgCooksImageCaption">Etiqueta sobre la Foto de Cocina</label>
+            <input type="text" id="cfgCooksImageCaption" class="newspaper-input">
+          </div>
+        </div>
+
+        <div class="cms-fieldset-card">
+          <h3 class="cms-fieldset-title">✦ Cuadro de Historia y Volante Clásico</h3>
+          <div class="admin-form-group">
+            <label class="form-label">Imagen del Volante / Historia de Marca</label>
+            <div class="cms-image-picker-row">
+              <div class="cms-image-preview-box">
+                <img id="previewFlyerImg" src="" alt="Vista previa Volante">
+              </div>
+              <div class="cms-image-controls">
+                <input type="text" id="cfgFlyerImageUrl" class="newspaper-input">
+                <div class="cms-image-btn-row">
+                  <button type="button" class="btn-admin-mini btn-cloudinary-upload" data-target-input="cfgFlyerImageUrl" data-target-preview="previewFlyerImg">Subir Imagen con Cloudinary</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="admin-form-group" style="margin-top: 12px;">
+            <label class="form-label" for="cfgFlyerCaption">Descripción bajo la Imagen de Historia</label>
+            <input type="text" id="cfgFlyerCaption" class="newspaper-input">
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- SECCIÓN 5: CONTACTO, HORARIOS Y REDES SOCIALES                   -->
+      <!-- ================================================================ -->
+      <section class="cms-section-panel" id="sec-contacto">
+        <div class="cms-panel-header">
+          <div class="cms-panel-title-group">
+            <h2>5. Contacto, WhatsApp de Pedidos, Horarios y Redes</h2>
+            <p>Actualiza los números telefónicos, el número receptor de pedidos de WhatsApp y los horarios de atención.</p>
+          </div>
+          <button type="button" class="btn-admin-action btn-save-main" id="btnSaveContactSection">Guardar y Publicar Contacto</button>
+        </div>
+
+        <div class="cms-fieldset-card">
+          <h3 class="cms-fieldset-title">✦ Líneas Telefónicas y Redes</h3>
+          <div class="cms-grid-2">
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgWhatsappPhone">Número de WhatsApp que Recibe los Pedidos (Con código de país, sin +)</label>
+              <input type="text" id="cfgWhatsappPhone" class="newspaper-input" placeholder="Ej: 573162446724">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgDisplayPhone">Teléfono Visible al Público</label>
+              <input type="text" id="cfgDisplayPhone" class="newspaper-input" placeholder="Ej: (316) 244-6724">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgInstagramHandle">Usuario de Instagram</label>
+              <input type="text" id="cfgInstagramHandle" class="newspaper-input" placeholder="@Ferpizz.ctg">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgInstagramUrl">Enlace Completo de Instagram</label>
+              <input type="text" id="cfgInstagramUrl" class="newspaper-input" placeholder="https://instagram.com/Ferpizz.ctg">
+            </div>
+          </div>
+        </div>
+
+        <div class="cms-fieldset-card">
+          <h3 class="cms-fieldset-title">✦ Horarios de Atención (Texto Visible) y Cobertura</h3>
+          <div class="cms-grid-2">
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgHoursLine1">Horario Línea 1</label>
+              <input type="text" id="cfgHoursLine1" class="newspaper-input" placeholder="Lunes a Jueves: 4:30 PM — 11:00 PM">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgHoursLine2">Horario Línea 2</label>
+              <input type="text" id="cfgHoursLine2" class="newspaper-input" placeholder="Viernes a Domingo & Festivos: 4:00 PM — 11:45 PM">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgCoverageCity">Ciudad / Ubicación</label>
+              <input type="text" id="cfgCoverageCity" class="newspaper-input" placeholder="Cartagena de Indias, Colombia.">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgCoverageDesc">Mensaje de Domicilios y Cobertura</label>
+              <input type="text" id="cfgCoverageDesc" class="newspaper-input">
+            </div>
+          </div>
+        </div>
+
+        <!-- PROGRAMADOR AUTOMÁTICO DE HORARIOS POR DÍA Y HORA -->
+        <div class="cms-fieldset-card">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; border-bottom: 1px dashed var(--border-paper); padding-bottom: 10px; margin-bottom: 14px;">
+            <h3 class="cms-fieldset-title" style="border: none; padding: 0; margin: 0;">✦ Programador Automático por Día y Hora («No estamos atendiendo»)</h3>
+            <span id="cmsLiveStoreStatusBadge" style="font-size: 0.72rem; font-weight: 800; padding: 5px 12px; text-transform: uppercase; letter-spacing: 0.08em; border: 1.5px solid var(--ink-wine); background-color: var(--mustard-warm); color: var(--ink-wine);">
+              CALCULANDO ESTADO...
+            </span>
+          </div>
+          <p style="font-size: 0.84rem; color: var(--ink-charcoal); margin: 0 0 16px 0; line-height: 1.5;">
+            Configura a qué hora abre y cierra Fer Pizz cada día de la semana. Cuando un cliente entre fuera de ese rango horario (o en un día marcado como cerrado), la página mostrará automáticamente el aviso <strong>«No estamos atendiendo»</strong>.
+          </p>
+
+          <div class="cms-grid-2" style="margin-bottom: 18px;">
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgStoreStatusMode">Modo de Control de Apertura</label>
+              <select id="cfgStoreStatusMode" class="newspaper-input">
+                <option value="auto">Automático (Según tabla de días y horas de abajo)</option>
+                <option value="force_open">Forzar Abierto Ahora («Horno Encendido» siempre)</option>
+                <option value="force_closed">Forzar Cerrado Ahora («No estamos atendiendo» siempre)</option>
+              </select>
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cfgClosedMessage">Mensaje cuando está cerrado</label>
+              <input type="text" id="cfgClosedMessage" class="newspaper-input" placeholder="No estamos atendiendo en este momento. Consulta nuestros horarios de apertura.">
+            </div>
+          </div>
+
+          <div class="admin-table-wrapper">
+            <table class="admin-Menu-table">
+              <thead>
+                <tr>
+                  <th>Día de la Semana</th>
+                  <th style="width: 170px;">Estado del Día</th>
+                  <th style="width: 160px;">Hora de Apertura</th>
+                  <th style="width: 160px;">Hora de Cierre</th>
+                </tr>
+              </thead>
+              <tbody id="cmsWeeklyScheduleTbody">
+                <!-- Renderizado dinámicamente por admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- SECCIÓN 6: BASE DE DATOS (FIRESTORE), CLOUDINARY Y RESPALDOS     -->
+      <!-- ================================================================ -->
+      <section class="cms-section-panel" id="sec-database">
+        <div class="cms-panel-header">
+          <div class="cms-panel-title-group">
+            <h2>6. Conexión de Base de Datos (Firebase Firestore) y Cloudinary CDN</h2>
+            <p>Deja conectada tu base de datos gratuita para que cada cambio que publiques se actualice en todos los dispositivos al instante.</p>
+          </div>
+        </div>
+
+        <!-- FIREBASE FIRESTORE -->
+        <div class="cms-fieldset-card">
+          <h3 class="cms-fieldset-title">✦ 1. Base de Datos en Tiempo Real: Firebase Firestore (Plan Gratuito Spark)</h3>
+          <p style="font-size: 0.86rem; line-height: 1.55; color: var(--ink-charcoal); margin-bottom: 14px;">
+            Pega aquí el objeto <code>firebaseConfig</code> (en formato JSON) que te entrega la consola de Firebase al crear tu aplicación web. Al hacer clic en <strong>Vincular y Subir Base de Datos</strong>, toda la carta, precios, complementos y textos actuales se subirán a la colección <code>ferpizz_cms/site_data</code>.
+          </p>
+
+          <div class="admin-form-group">
+            <label class="form-label" for="cmsFirebaseJsonInput">Credenciales Firebase JSON (firebaseConfig)</label>
+            <textarea id="cmsFirebaseJsonInput" class="newspaper-textarea code-font" rows="7" placeholder='{
+  "apiKey": "AIzaSy...",
+  "authDomain": "tu-proyecto.firebaseapp.com",
+  "projectId": "tu-proyecto",
+  "storageBucket": "tu-proyecto.appspot.com",
+  "messagingSenderId": "123456789",
+  "appId": "1:123456789:web:abcdef"
+}'></textarea>
+          </div>
+
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px;">
+            <button type="button" class="btn-admin-action btn-save-main" id="btnSaveAndSyncFirebase">
+              Vincular y Subir Datos Actuales a Firestore
+            </button>
+            <button type="button" class="btn-admin-action" id="btnPullFromFirebase">
+              Descargar Datos desde Firestore
+            </button>
+            <button type="button" class="btn-admin-action" id="btnClearFirebaseConfig">
+              Desvincular Firebase
+            </button>
+          </div>
+
+          <div id="cmsFirebaseFeedbackBox" style="margin-top: 12px; font-size: 0.84rem; font-weight: 700; color: var(--ink-wine);"></div>
+
+          <div style="margin-top: 18px; padding: 14px; background: rgba(0,0,0,0.03); border: 1px dashed var(--border-paper);">
+            <h4 style="font-family: var(--font-headline); font-size: 0.90rem; margin: 0 0 6px 0; color: var(--accent-crimson);">
+              ¿Cómo crear y conectar tu Base de Datos Firestore en 3 minutos?
+            </h4>
+            <ol style="font-size: 0.80rem; line-height: 1.6; padding-left: 18px; margin: 0; color: var(--ink-charcoal);">
+              <li>Entra a <strong>console.firebase.google.com</strong> e inicia sesión con tu cuenta de Google.</li>
+              <li>Haz clic en <strong>Crear un proyecto</strong> (ej. <em>ferpizz-cartagena</em>).</li>
+              <li>En el menú lateral izquierdo, entra a <strong>Compilación &rarr; Firestore Database</strong> y haz clic en <strong>Crear base de datos</strong>.</li>
+              <li>En las Reglas (Rules) de Firestore, coloca lectura pública y escritura abierta mientras administras: <code>allow read, write: if true;</code> y publica las reglas.</li>
+              <li>Ve a la Configuración del Proyecto (ícono de engranaje) &rarr; sección <strong>Tus apps</strong> &rarr; elige el ícono Web (<code>&lt;/&gt;</code>), regístrala y copia los datos de <code>firebaseConfig</code> en el cuadro de arriba.</li>
+              <li>Para dejarlo fijo en el código al subir tu página a internet, pega ese mismo bloque en la variable <code>PRODUCTION_FIREBASE_CONFIG</code> al inicio del archivo <code>cms-data.js</code>.</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- CLOUDINARY CDN -->
+        <div class="cms-fieldset-card">
+          <h3 class="cms-fieldset-title">✦ 2. Servidor de Imágenes: Cloudinary CDN (25.000 Fotos Gratis / Mes)</h3>
+          <div class="cms-grid-2">
+            <div class="admin-form-group">
+              <label class="form-label" for="cmsCloudinaryName">Cloud Name (Nombre de tu Nube)</label>
+              <input type="text" id="cmsCloudinaryName" class="newspaper-input" placeholder="Ej: ferpizz-ctg">
+            </div>
+            <div class="admin-form-group">
+              <label class="form-label" for="cmsCloudinaryPreset">Upload Preset (Modo Unsigned)</label>
+              <input type="text" id="cmsCloudinaryPreset" class="newspaper-input" placeholder="Ej: ferpizz_unsigned">
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px;">
+            <button type="button" class="btn-admin-action btn-save-main" id="btnSaveCmsCloudinary">Guardar Credenciales Cloudinary</button>
+            <button type="button" class="btn-admin-action" id="btnTestCmsCloudinary">Probar Subida de Imagen</button>
+          </div>
+        </div>
+
+        <!-- RESPALDO COMPLETO JSON Y REESTABLECIMIENTO -->
+        <div class="cms-fieldset-card">
+          <h3 class="cms-fieldset-title">✦ 3. Copia de Seguridad (Exportar / Importar JSON) y Restauración Total</h3>
+          <p style="font-size: 0.84rem; color: var(--ink-muted); margin-bottom: 14px;">
+            Puedes descargar un archivo con toda la configuración, pizzas, precios y complementos de tu sitio como respaldo, o restaurar toda la página a los valores originales de fábrica.
+          </p>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button type="button" class="btn-admin-action" id="btnExportBackupJson">Descargar Copia de Seguridad (.JSON)</button>
+            <label class="btn-admin-action" style="cursor: pointer; display: inline-flex; align-items: center;">
+              <span>Importar Archivo (.JSON)</span>
+              <input type="file" id="inputImportBackupJson" accept=".json" style="display: none;">
+            </label>
+            <button type="button" class="btn-admin-action" id="btnResetEntireSiteFactory" style="border-color: var(--accent-crimson); color: var(--accent-crimson);">
+              Restaurar Todo el Sitio de Fábrica
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- NOTIFICACIÓN TOAST -->
+  <div class="editorial-toast" id="editorialToast" role="alert" aria-live="assertive"></div>
+
+  <!-- Cloudinary Upload Widget -->
+  <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+
+  <!-- Motor de Datos Compartido (Local + Firebase Firestore) -->
+  <script src="cms-data.js"></script>
+
+  <!-- Lógica de Administración Completa -->
+  <script src="admin.js"></script>
+</body>
+</html>
+

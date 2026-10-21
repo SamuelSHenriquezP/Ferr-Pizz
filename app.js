@@ -15,8 +15,9 @@
       num: '01',
       name: 'Jamón y Queso',
       category: 'clasica',
-      badge: 'CLÁSICA',
+      badge: '✦ CLÁSICA',
       desc: 'Base de salsa pomodoro artesanal, generosa mozzarella hilada de primera calidad, jamón selecto ahumado y orégano de campo.',
+      image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=700&q=80',
       available: true,
       prices: {
         personal: 12000,
@@ -30,8 +31,9 @@
       num: '02',
       name: 'Jamón, Queso y Pollo',
       category: 'pollo',
-      badge: 'TRADICIONAL',
+      badge: 'CON POLLO',
       desc: 'Nuestra combinación favorita: pechuga desmechada sazonada con hierbas mediterráneas, jamón artesanal y queso mozzarella fundido.',
+      image: 'https://images.unsplash.com/photo-1594007654729-407eedc4be65?auto=format&fit=crop&w=700&q=80',
       available: true,
       prices: {
         personal: 14000,
@@ -44,9 +46,10 @@
       id: 'hawaiana',
       num: '03',
       name: 'Hawaiana',
-      category: 'clasica',
-      badge: 'CARIBEÑA',
+      category: 'tradicional',
+      badge: 'TRADICIONAL',
       desc: 'La reina caribeña: piña dulce caramelizada al fuego de leña, cubos de jamón ahumado y mozzarella dorada al punto perfecto.',
+      image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=700&q=80',
       available: true,
       prices: {
         personal: 13000,
@@ -60,8 +63,9 @@
       num: '04',
       name: 'Pollo',
       category: 'pollo',
-      badge: 'ARTESANAL',
+      badge: 'CON POLLO',
       desc: 'Pechuga de pollo marinada con ajo y romero, cubierta con reducción de tomate fresco y doble capa de queso mozzarella.',
+      image: 'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?auto=format&fit=crop&w=700&q=80',
       available: true,
       prices: {
         personal: 15000,
@@ -75,8 +79,9 @@
       num: '05',
       name: 'Pollo Champiñones',
       category: 'pollo',
-      badge: 'FAVORITA',
+      badge: 'CON POLLO',
       desc: 'Champiñones frescos salteados en mantequilla clarificada, trozos tiernos de pechuga marinada y abundante mozzarella fundida.',
+      image: 'https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&w=700&q=80',
       available: true,
       prices: {
         personal: 16000,
@@ -89,9 +94,10 @@
       id: 'peperoni',
       num: '06',
       name: 'Peperoni',
-      category: 'clasica',
-      badge: 'ITALIANA',
+      category: 'tradicional',
+      badge: 'TRADICIONAL',
       desc: 'Abundantes rodajas de pepperoni curado con notas de pimentón español y pimienta, gratinadas sobre salsa pomodoro casera.',
+      image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=700&q=80',
       available: true,
       prices: {
         personal: 15000,
@@ -107,6 +113,7 @@
       category: 'especial',
       badge: '✦ ESPECIALIDAD',
       desc: 'La joya indiscutible de Fer Pizz: tocineta crujiente, maíz tierno dulce, pollo especiado, jamón selecto y la salsa especial de la casa.',
+      image: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?auto=format&fit=crop&w=700&q=80',
       available: true,
       featured: true,
       prices: {
@@ -120,9 +127,10 @@
       id: 'verduras',
       num: '08',
       name: 'Verduras',
-      category: 'clasica',
+      category: 'tradicional',
       badge: 'VEGETARIANA',
       desc: 'Pimientos asados a fuego vivo, champiñones, maíz dulce, cebolla blanca caramelizada, aceitunas negras y albahaca fresca en hoja.',
+      image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=700&q=80',
       available: true,
       prices: {
         personal: 12000,
@@ -142,7 +150,7 @@
   };
 
   // PRECIOS EXACTOS DE ADICIONALES SEGÚN TAMAÑO (DEL MENÚ OFICIAL)
-  const ADDITIONS_CONFIG = [
+  const DEFAULT_ADDITIONS = [
     {
       id: 'maiz',
       name: 'Maíz Tierno',
@@ -211,14 +219,22 @@
     }
   ];
 
+  // CONFIGURACIÓN DE SALSA ADICIONAL (CARTAGENA)
+  let SAUCE_PRICE = 2000;
+  let SAUCE_NAME = 'Salsa Adicional (Tarrito)';
+
   // CONSTANTES DEL NEGOCIO
-  const WHATSAPP_PHONE = '573162446724';
-  const STORAGE_KEY_MENU = 'ferpizz_menu_v3';
-  const STORAGE_KEY_CART = 'ferpizz_cart_v3';
+  let WHATSAPP_PHONE = '573162446724';
+  const STORAGE_KEY_SITE_CONFIG = 'ferpizz_site_config_v1';
+  const STORAGE_KEY_MENU = 'ferpizz_menu_v5';
+  const STORAGE_KEY_ADDITIONS = 'ferpizz_additions_v1';
+  const STORAGE_KEY_CART = 'ferpizz_cart_v4';
+  const STORAGE_KEY_CLOUDINARY = 'ferpizz_cloudinary_cfg';
   const ADMIN_PASSWORD_DEFAULT = 'ferpizz2026';
 
   // ESTADO GLOBAL
   let activeMenu = [];
+  let activeAdditions = [];
   let cart = [];
   let activeFilter = 'all';
   let leafletMap = null;
@@ -233,6 +249,7 @@
     pizza: null,
     sizeKey: 'mediana',
     selectedAdditions: [],
+    extraSauceCount: 0,
     quantity: 1
   };
 
@@ -247,10 +264,14 @@
 
   // INICIALIZACIÓN
   function initApp() {
+    loadSiteConfigAndHydrate();
     loadMenuData();
+    loadAdditionsData();
     loadCartData();
     renderCurrentDate();
     renderMenuGrid();
+    renderPublicAdditionsTable();
+    setupDirectSauceButton();
     setupToppingsModal();
     setupCartDrawer();
     setupLeafletMap();
@@ -259,18 +280,335 @@
     setupPortionsGuideSync();
     setupScrollAnimations();
     setupMobileStickyBar();
+    setupRealtimeSyncListeners();
   }
 
-  // CARGAR DATOS DEL MENÚ
+  // CARGAR CONFIGURACIÓN DE SITIO Y ACTUALIZAR TEXTOS/IMÁGENES DEL DOM
+  function loadSiteConfigAndHydrate() {
+    try {
+      const cfg = window.FerPizzCMS
+        ? window.FerPizzCMS.getSiteConfig()
+        : JSON.parse(localStorage.getItem(STORAGE_KEY_SITE_CONFIG) || 'null');
+      if (cfg) applySiteConfigToDOM(cfg);
+    } catch (e) {}
+  }
+
+  function applySiteConfigToDOM(cfg) {
+    if (!cfg) return;
+
+    if (cfg.saucePrice) SAUCE_PRICE = parseInt(cfg.saucePrice, 10) || 2000;
+    if (cfg.sauceName) SAUCE_NAME = cfg.sauceName;
+    if (cfg.whatsappPhone) WHATSAPP_PHONE = String(cfg.whatsappPhone).replace(/[^0-9]/g, '') || '573162446724';
+
+    // 1. Barra Superior y Header
+    const ovenBadge = document.querySelector('.badge-oven');
+    if (ovenBadge && cfg.ovenBadge) ovenBadge.textContent = cfg.ovenBadge;
+
+    const cityTag = document.querySelector('.topbar-text');
+    if (cityTag && cfg.cityTag) cityTag.textContent = cfg.cityTag;
+
+    const topSlogan = document.querySelector('.topbar-slogan');
+    if (topSlogan && cfg.slogan) topSlogan.textContent = cfg.slogan;
+
+    const tagline = document.querySelector('.brand-tagline');
+    if (tagline && cfg.brandTagline) tagline.textContent = cfg.brandTagline;
+
+    if (cfg.logoUrl) {
+      document.querySelectorAll('.official-logo-img, .footer-logo-img, .stamp-inner-content img').forEach(img => {
+        img.src = cfg.logoUrl;
+      });
+    }
+
+    // 2. Marquesina
+    if (cfg.marqueeText) {
+      const parts = cfg.marqueeText.split('✦').map(s => s.trim()).filter(Boolean);
+      const html = parts.map(p => `${p} <span class="m-diamond">✦</span> `).join('');
+      document.querySelectorAll('#marqueeTrack .marquee-content').forEach(mc => {
+        mc.innerHTML = html;
+      });
+    }
+
+    // 3. Portada (Hero)
+    const heroKicker = document.querySelector('.hero-kicker-badge');
+    if (heroKicker && cfg.heroKicker) {
+      heroKicker.innerHTML = `<span class="kicker-star">★</span> ${cfg.heroKicker}`;
+    }
+
+    const heroTitle = document.querySelector('.hero-headline-title');
+    if (heroTitle && cfg.heroTitle) heroTitle.textContent = cfg.heroTitle;
+
+    const heroBody = document.querySelector('.hero-body-text');
+    if (heroBody && cfg.heroBody) {
+      const text = cfg.heroBody.trim();
+      if (text.length > 0) {
+        const firstChar = text.charAt(0);
+        const restText = text.slice(1);
+        heroBody.innerHTML = `<span class="letterhighlight">${firstChar}</span>${restText}`;
+      }
+    }
+
+    const heroImg = document.querySelector('.editorial-main-img');
+    if (heroImg && cfg.heroImageUrl) heroImg.src = cfg.heroImageUrl;
+
+    const heroCaption = document.querySelector('.photo-caption-bar .caption-text');
+    if (heroCaption && cfg.heroImageCaption) heroCaption.textContent = cfg.heroImageCaption;
+
+    // 4. Guía de Tamaños y Porciones
+    const portHeadline = document.querySelector('.portions-guide-section .section-headline');
+    if (portHeadline && cfg.portionsTitle) portHeadline.textContent = cfg.portionsTitle;
+
+    const portSub = document.querySelector('.portions-guide-section .section-sub');
+    if (portSub && cfg.portionsSub) portSub.textContent = cfg.portionsSub;
+
+    const descMap = {
+      personal: cfg.descPersonal,
+      pizzeta: cfg.descPizzeta,
+      mediana: cfg.descMediana,
+      familiar: cfg.descFamiliar
+    };
+    Object.keys(descMap).forEach(sKey => {
+      if (descMap[sKey]) {
+        const el = document.querySelector(`.portion-card[data-size="${sKey}"] .portion-desc`);
+        if (el) el.textContent = descMap[sKey];
+      }
+    });
+
+    // 5. Tarjeta de Salsa Adicional
+    const sauceTitleEl = document.querySelector('.sauce-addon-title');
+    if (sauceTitleEl && cfg.sauceTitle) sauceTitleEl.textContent = cfg.sauceTitle;
+
+    const sauceDescEl = document.querySelector('.sauce-addon-desc');
+    if (sauceDescEl && cfg.sauceDesc) sauceDescEl.textContent = cfg.sauceDesc;
+
+    const saucePriceEl = document.querySelector('.sauce-addon-price');
+    if (saucePriceEl) saucePriceEl.textContent = `${formatCOP(SAUCE_PRICE)} COP`;
+
+    const modalSaucePriceEl = document.querySelector('.sauce-modal-single-price');
+    if (modalSaucePriceEl) modalSaucePriceEl.textContent = `+${formatCOP(SAUCE_PRICE)} COP c/u`;
+
+    // 6. Nota de la Cocina (Chef)
+    const cooksTitle = document.querySelector('.cooks-greeting-title');
+    if (cooksTitle && cfg.cooksGreeting) cooksTitle.textContent = cfg.cooksGreeting;
+
+    const cooksQuote = document.querySelector('.cooks-quote');
+    if (cooksQuote && cfg.cooksQuote) {
+      const cleanQuote = cfg.cooksQuote.replace(/^[«"“]|[»"”]$/g, '');
+      cooksQuote.textContent = `«${cleanQuote}»`;
+    }
+
+    const cooksSign = document.querySelector('.cooks-sign-block .sign-name');
+    if (cooksSign && cfg.cooksSign) cooksSign.textContent = cfg.cooksSign;
+
+    const cooksMotto = document.querySelector('.cooks-sign-block .sign-motto');
+    if (cooksMotto && cfg.slogan) cooksMotto.textContent = cfg.slogan;
+
+    const cooksImg = document.querySelector('.dough-action-img');
+    if (cooksImg && cfg.cooksImageUrl) cooksImg.src = cfg.cooksImageUrl;
+
+    const cooksCap = document.querySelector('.photo-overlay-tag span');
+    if (cooksCap && cfg.cooksImageCaption) cooksCap.textContent = cfg.cooksImageCaption;
+
+    // 7. Contacto, Horarios, Redes y Volante
+    document.querySelectorAll('a[href*="wa.me"]').forEach(a => {
+      if (a.classList.contains('btn-editorial-outline')) {
+        a.href = `https://wa.me/${WHATSAPP_PHONE}?text=Hola%20Fer%20Pizz%2C%20quisiera%20hacer%20un%20pedido%20directo`;
+      } else {
+        a.href = `https://wa.me/${WHATSAPP_PHONE}`;
+      }
+    });
+
+    const topPhoneLink = document.querySelector('.topbar-right a.topbar-contact-link:first-child');
+    if (topPhoneLink && cfg.displayPhone) topPhoneLink.textContent = cfg.displayPhone;
+
+    const bigPhoneLink = document.querySelector('.phone-big-link');
+    if (bigPhoneLink && cfg.displayPhone) bigPhoneLink.textContent = cfg.displayPhone;
+
+    const footerWa = document.getElementById('footerWaLink');
+    if (footerWa && cfg.displayPhone) footerWa.textContent = `WhatsApp: ${cfg.displayPhone}`;
+
+    document.querySelectorAll('a[href*="instagram.com"]').forEach(a => {
+      if (cfg.instagramUrl) a.href = cfg.instagramUrl;
+    });
+
+    const topIg = document.querySelector('.topbar-right a.topbar-contact-link:last-child');
+    if (topIg && cfg.instagramHandle) topIg.textContent = cfg.instagramHandle;
+
+    const bodyIg = document.querySelector('.insta-follow-btn span');
+    if (bodyIg && cfg.instagramHandle) bodyIg.textContent = cfg.instagramHandle;
+
+    const footerIg = document.getElementById('footerIgLink');
+    if (footerIg && cfg.instagramHandle) footerIg.textContent = `Instagram: ${cfg.instagramHandle}`;
+
+    const infoBlocks = document.querySelectorAll('.contact-card-box .info-block-row .info-text');
+    if (infoBlocks[0] && (cfg.hoursLine1 || cfg.hoursLine2)) {
+      infoBlocks[0].innerHTML = `${cfg.hoursLine1 || ''}<br>${cfg.hoursLine2 || ''}`;
+    }
+    if (infoBlocks[1] && (cfg.coverageCity || cfg.coverageDesc)) {
+      infoBlocks[1].innerHTML = `${cfg.coverageCity || ''}<br><span>${cfg.coverageDesc || ''}</span>`;
+    }
+
+    const flyerImg = document.querySelector('.original-flyer-img');
+    if (flyerImg && cfg.flyerImageUrl) flyerImg.src = cfg.flyerImageUrl;
+
+    const flyerSlogan = document.querySelector('.flyer-slogan');
+    if (flyerSlogan && cfg.slogan) flyerSlogan.textContent = cfg.slogan;
+
+    const flyerCapP = document.querySelector('.flyer-caption p');
+    if (flyerCapP && cfg.flyerCaption) flyerCapP.textContent = cfg.flyerCaption;
+
+    const footerMotto = document.querySelector('.footer-motto-quote');
+    if (footerMotto && cfg.slogan) footerMotto.textContent = cfg.slogan;
+
+    // 8. Evaluar horario por día y hora ("No estamos atendiendo")
+    updatePublicStoreScheduleState(cfg);
+  }
+
+  function updatePublicStoreScheduleState(customCfg) {
+    if (!window.FerPizzCMS || typeof window.FerPizzCMS.evaluateStoreStatus !== 'function') return;
+
+    const status = window.FerPizzCMS.evaluateStoreStatus(customCfg);
+    const ovenBadge = document.querySelector('.badge-oven');
+    const banner = document.getElementById('storeClosedBanner');
+    const msgEl = document.getElementById('storeClosedMessageText');
+    const hoursEl = document.getElementById('storeClosedTodayHours');
+    const waSubmitBtn = document.getElementById('sendWhatsAppOrderBtn');
+    const waBtnText = waSubmitBtn ? waSubmitBtn.querySelector('.btn-wa-text') : null;
+
+    if (ovenBadge) {
+      ovenBadge.textContent = status.badgeText;
+      if (status.isOpen) {
+        ovenBadge.classList.remove('is-closed');
+      } else {
+        ovenBadge.classList.add('is-closed');
+      }
+    }
+
+    if (banner) {
+      if (status.isOpen) {
+        banner.classList.add('hidden');
+      } else {
+        banner.classList.remove('hidden');
+        if (msgEl) msgEl.textContent = status.closedMessage;
+        if (hoursEl) hoursEl.textContent = status.todayText || '';
+      }
+    }
+
+    if (waSubmitBtn && waBtnText) {
+      if (status.isOpen) {
+        waSubmitBtn.disabled = false;
+        waSubmitBtn.style.opacity = '1';
+        waSubmitBtn.style.cursor = 'pointer';
+        waBtnText.textContent = 'ENVIAR PEDIDO A WHATSAPP';
+      } else {
+        waSubmitBtn.disabled = true;
+        waSubmitBtn.style.opacity = '0.6';
+        waSubmitBtn.style.cursor = 'not-allowed';
+        waBtnText.textContent = 'NO ESTAMOS ATENDIENDO AHORA';
+      }
+    }
+  }
+
+  // ESCUCHAR CAMBIOS EN TIEMPO REAL (FIRESTORE Y PESTAÑAS LOCALES)
+  function setupRealtimeSyncListeners() {
+    if (window.FerPizzCMS && typeof window.FerPizzCMS.subscribeToCloudChanges === 'function') {
+      window.FerPizzCMS.subscribeToCloudChanges(cloudState => {
+        if (cloudState.siteConfig) applySiteConfigToDOM(cloudState.siteConfig);
+        if (Array.isArray(cloudState.menu) && cloudState.menu.length > 0) {
+          activeMenu = cloudState.menu;
+          renderMenuGrid();
+        }
+        if (Array.isArray(cloudState.additions)) {
+          activeAdditions = cloudState.additions;
+          renderPublicAdditionsTable();
+        }
+      });
+    }
+
+    if (typeof window.addEventListener === 'function') {
+      window.addEventListener('storage', () => {
+        loadSiteConfigAndHydrate();
+        loadMenuData();
+        loadAdditionsData();
+        renderMenuGrid();
+        renderPublicAdditionsTable();
+      });
+    }
+
+    // Re-evaluar cada 30 segundos por si cambia el minuto de apertura o cierre
+    setInterval(() => {
+      updatePublicStoreScheduleState();
+    }, 30000);
+  }
+
+  // CARGAR DATOS DE ADICIONALES / COMPLEMENTOS
+  function loadAdditionsData() {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY_ADDITIONS);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          activeAdditions = parsed;
+          return;
+        }
+      }
+      activeAdditions = JSON.parse(JSON.stringify(DEFAULT_ADDITIONS));
+      localStorage.setItem(STORAGE_KEY_ADDITIONS, JSON.stringify(activeAdditions));
+    } catch (e) {
+      activeAdditions = JSON.parse(JSON.stringify(DEFAULT_ADDITIONS));
+    }
+  }
+
+  // RENDER DE LA TABLA PÚBLICA DE ADICIONALES (HOMEPAGE)
+  function renderPublicAdditionsTable() {
+    const tbody = document.getElementById('publicAdditionsTbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    activeAdditions.forEach(add => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${add.name}</strong> ${add.desc ? `<small>(${add.desc})</small>` : ''}</td>
+        <td>${formatCOP(add.prices.personal)}</td>
+        <td>${formatCOP(add.prices.pizzeta)}</td>
+        <td>${formatCOP(add.prices.mediana)}</td>
+        <td>${formatCOP(add.prices.familiar)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Fila oficial destacada de salsa adicional (tarrito)
+    const sauceTr = document.createElement('tr');
+    sauceTr.className = 'table-sauces-highlight-row';
+    sauceTr.innerHTML = `
+      <td><strong>${SAUCE_NAME}</strong></td>
+      <td>${formatCOP(SAUCE_PRICE)}</td>
+      <td>${formatCOP(SAUCE_PRICE)}</td>
+      <td>${formatCOP(SAUCE_PRICE)}</td>
+      <td>${formatCOP(SAUCE_PRICE)}</td>
+    `;
+    tbody.appendChild(sauceTr);
+  }
+
+  // CARGAR DATOS DEL MENÚ (SOPORTA PIZZAS NUEVAS Y EDITADAS)
   function loadMenuData() {
     try {
       const stored = localStorage.getItem(STORAGE_KEY_MENU);
       if (stored) {
-        activeMenu = JSON.parse(stored);
-      } else {
-        activeMenu = JSON.parse(JSON.stringify(DEFAULT_MENU));
-        localStorage.setItem(STORAGE_KEY_MENU, JSON.stringify(activeMenu));
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          activeMenu = parsed.map((p, idx) => {
+            const defMatch = DEFAULT_MENU.find(d => d.id === p.id);
+            return {
+              ...p,
+              num: p.num || String(idx + 1).padStart(2, '0'),
+              image: p.image || (defMatch ? defMatch.image : 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=700&q=80')
+            };
+          });
+          return;
+        }
       }
+      activeMenu = JSON.parse(JSON.stringify(DEFAULT_MENU));
+      localStorage.setItem(STORAGE_KEY_MENU, JSON.stringify(activeMenu));
     } catch (e) {
       activeMenu = JSON.parse(JSON.stringify(DEFAULT_MENU));
     }
@@ -307,6 +645,11 @@
     const container = document.getElementById('pizzaMenuContainer');
     if (!container) return;
 
+    const allTabBtn = document.querySelector('.filter-tab[data-filter="all"]');
+    if (allTabBtn) {
+      allTabBtn.textContent = `Todas (${activeMenu.length})`;
+    }
+
     container.innerHTML = '';
 
     const filteredPizzas = activeFilter === 'all'
@@ -324,6 +667,18 @@
       const initialPrice = pizza.prices[defaultSize] || pizza.prices.familiar || 0;
 
       card.innerHTML = `
+        <!-- FOTOGRAFÍA ARTESANAL DE LA PIZZA -->
+        <div class="pizza-card-media">
+          <img 
+            src="${pizza.image || 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=700&q=80'}" 
+            alt="Pizza artesanal ${pizza.name} en Fer Pizz Cartagena" 
+            class="pizza-card-img" 
+            loading="lazy"
+            onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=700&q=80';"
+          />
+          <div class="pizza-card-stamp">FER PIZZ</div>
+        </div>
+
         <div class="card-top-row">
           <div class="pizza-title-wrap">
             <span class="pizza-number">${pizza.num || `0${index + 1}`}</span>
@@ -466,6 +821,32 @@
       });
     }
 
+    // Controles de cantidad para salsa adicional dentro del modal
+    const sauceMinusBtn = document.getElementById('modalSauceMinusBtn');
+    const saucePlusBtn = document.getElementById('modalSaucePlusBtn');
+
+    if (sauceMinusBtn) {
+      sauceMinusBtn.addEventListener('click', () => {
+        if (modalCustomState.extraSauceCount > 0) {
+          modalCustomState.extraSauceCount--;
+          const el = document.getElementById('modalSauceQtyCount');
+          if (el) el.textContent = modalCustomState.extraSauceCount;
+          updateModalTotalDisplay();
+        }
+      });
+    }
+
+    if (saucePlusBtn) {
+      saucePlusBtn.addEventListener('click', () => {
+        if (modalCustomState.extraSauceCount < 20) {
+          modalCustomState.extraSauceCount++;
+          const el = document.getElementById('modalSauceQtyCount');
+          if (el) el.textContent = modalCustomState.extraSauceCount;
+          updateModalTotalDisplay();
+        }
+      });
+    }
+
     if (confirmBtn) {
       confirmBtn.addEventListener('click', handleConfirmCustomPizza);
     }
@@ -486,6 +867,7 @@
       pizza: pizza,
       sizeKey: sizeKey,
       selectedAdditions: [],
+      extraSauceCount: 0,
       quantity: 1
     };
 
@@ -494,6 +876,7 @@
     const subEl = document.getElementById('toppingsModalSub');
     const basePillEl = document.getElementById('toppingsBasePill');
     const qtyEl = document.getElementById('modalQtyCount');
+    const sauceQtyEl = document.getElementById('modalSauceQtyCount');
     const notesInput = document.getElementById('modalItemNotes');
 
     if (titleEl) titleEl.textContent = `PIZZA ${pizza.name.toUpperCase()}`;
@@ -502,6 +885,7 @@
     const basePrice = pizza.prices[sizeKey] || 0;
     if (basePillEl) basePillEl.textContent = `Precio base: ${formatCOP(basePrice)}`;
     if (qtyEl) qtyEl.textContent = '1';
+    if (sauceQtyEl) sauceQtyEl.textContent = '0';
     if (notesInput) notesInput.value = '';
 
     // Renderizar selector de tamaños dentro del modal
@@ -509,6 +893,7 @@
 
     // Renderizar lista de toppings disponibles con precios según tamaño
     renderToppingsModalCards(sizeKey);
+
     updateModalTotalDisplay();
 
     // Abrir modal con animación
@@ -597,7 +982,7 @@
     if (!container) return;
     container.innerHTML = '';
 
-    ADDITIONS_CONFIG.forEach(add => {
+    activeAdditions.forEach(add => {
       const price = add.prices[sizeKey] || add.prices.mediana;
       const card = document.createElement('div');
       card.className = 'topping-option-item';
@@ -653,11 +1038,13 @@
     });
   }
 
+  // RENDERIZADO DE SALSAS EN EL MODAL DE TOPPINGS
   function updateModalTotalDisplay() {
     if (!modalCustomState.pizza) return;
     const basePrice = modalCustomState.pizza.prices[modalCustomState.sizeKey] || 0;
     const additionsSum = modalCustomState.selectedAdditions.reduce((acc, a) => acc + a.price, 0);
-    const unitPrice = basePrice + additionsSum;
+    const saucesSum = (modalCustomState.extraSauceCount || 0) * SAUCE_PRICE;
+    const unitPrice = basePrice + additionsSum + saucesSum;
     const total = unitPrice * modalCustomState.quantity;
 
     const displayEl = document.getElementById('modalTotalSumDisplay');
@@ -673,7 +1060,8 @@
     const sizeKey = modalCustomState.sizeKey;
     const basePrice = pizza.prices[sizeKey] || 0;
     const additionsSum = modalCustomState.selectedAdditions.reduce((acc, a) => acc + a.price, 0);
-    const unitPrice = basePrice + additionsSum;
+    const saucesSum = (modalCustomState.extraSauceCount || 0) * SAUCE_PRICE;
+    const unitPrice = basePrice + additionsSum + saucesSum;
     const notes = document.getElementById('modalItemNotes')?.value.trim() || '';
 
     const cartItem = {
@@ -685,6 +1073,8 @@
       sizePortions: SIZES[sizeKey].portions,
       basePrice: basePrice,
       additions: [...modalCustomState.selectedAdditions],
+      extraSauceCount: modalCustomState.extraSauceCount || 0,
+      saucePriceTotal: saucesSum,
       notes: notes,
       unitPrice: unitPrice,
       quantity: modalCustomState.quantity
@@ -696,6 +1086,36 @@
     closeToppingsModal();
 
     showToast(`✓ Se agregó ${modalCustomState.quantity}x «${pizza.name}» (${SIZES[sizeKey].label}) al carrito`);
+  }
+
+  // ACCIÓN DE SALSA ADICIONAL DIRECTA EN LA CARTA
+  function setupDirectSauceButton() {
+    const btn = document.getElementById('btnDirectAddSauce');
+    if (btn) {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        addDirectSauceToCart();
+      });
+    }
+  }
+
+  function addDirectSauceToCart() {
+    const existing = cart.find(item => item.isStandaloneSauce);
+    if (existing) {
+      existing.quantity += 1;
+    } else {
+      cart.push({
+        cartItemId: 'sauce_' + Date.now(),
+        isStandaloneSauce: true,
+        name: SAUCE_NAME,
+        unitPrice: SAUCE_PRICE,
+        quantity: 1
+      });
+    }
+
+    saveCartData();
+    renderReceiptItems();
+    showToast('✓ Se añadió 1x Salsa Adicional al carrito');
   }
 
   // ACTUALIZAR BADGES Y BARRA MÓVIL
@@ -711,9 +1131,9 @@
           { scale: 1.55, rotation: -12 }, 
           { scale: 1, rotation: 0, duration: 0.5, ease: 'elastic.out(1.2, 0.4)' }
         );
-      } else {
+      } else if (badge.style) {
         badge.style.transform = 'scale(1.25)';
-        setTimeout(() => badge.style.transform = 'scale(1)', 250);
+        setTimeout(() => { if (badge.style) badge.style.transform = 'scale(1)'; }, 250);
       }
     }
 
@@ -733,7 +1153,7 @@
     if (cart.length === 0) {
       container.innerHTML = `
         <div class="receipt-empty-state">
-          <span class="empty-icon">🍕</span>
+          <span class="empty-icon">✦</span>
           <p>Tu carrito está vacío.</p>
           <a href="#menu-section" class="btn-mustard-solid" style="padding: 10px 18px; margin-top: 12px;" id="emptyCartBackBtn">Ver La Carta</a>
         </div>
@@ -755,24 +1175,42 @@
 
       const row = document.createElement('div');
       row.className = 'receipt-item-row';
-      row.innerHTML = `
-        <div class="receipt-item-info">
-          <div class="receipt-item-name">${item.quantity}x Pizza ${item.name}</div>
-          <div class="receipt-item-meta">Formato: ${item.sizeLabel} (${item.sizePortions})</div>
-          ${item.additions && item.additions.length > 0 ? `
-            <div class="receipt-item-additions">+ Adic: ${item.additions.map(a => a.name).join(', ')}</div>
-          ` : ''}
-          ${item.notes ? `
-            <div class="receipt-item-notes" style="font-size:0.75rem; color:var(--ink-muted); margin-top:3px;">📝 Nota: ${item.notes}</div>
-          ` : ''}
-        </div>
-        <div class="receipt-item-actions">
-          <span class="receipt-item-price">${formatCOP(itemSubtotal)}</span>
-          <button type="button" class="receipt-item-remove-btn" data-item-id="${item.cartItemId}">
-            Quitar
-          </button>
-        </div>
-      `;
+      if (item.isStandaloneSauce) {
+        row.innerHTML = `
+          <div class="receipt-item-info">
+            <div class="receipt-item-name">${item.quantity}x ${item.name}</div>
+            <div class="receipt-item-meta">Tarrito de salsa adicional</div>
+          </div>
+          <div class="receipt-item-actions">
+            <span class="receipt-item-price">${formatCOP(itemSubtotal)}</span>
+            <button type="button" class="receipt-item-remove-btn" data-item-id="${item.cartItemId}">
+              Quitar
+            </button>
+          </div>
+        `;
+      } else {
+        row.innerHTML = `
+          <div class="receipt-item-info">
+            <div class="receipt-item-name">${item.quantity}x Pizza ${item.name}</div>
+            <div class="receipt-item-meta">Formato: ${item.sizeLabel} (${item.sizePortions})</div>
+            ${item.additions && item.additions.length > 0 ? `
+              <div class="receipt-item-additions">+ Adic: ${item.additions.map(a => a.name).join(', ')}</div>
+            ` : ''}
+            ${item.extraSauceCount && item.extraSauceCount > 0 ? `
+              <div class="receipt-item-sauces">+ Salsa Adicional: ${item.extraSauceCount}x (${formatCOP(item.extraSauceCount * SAUCE_PRICE)})</div>
+            ` : ''}
+            ${item.notes ? `
+              <div class="receipt-item-notes" style="font-size:0.75rem; color:var(--ink-muted); margin-top:3px;">Nota: ${item.notes}</div>
+            ` : ''}
+          </div>
+          <div class="receipt-item-actions">
+            <span class="receipt-item-price">${formatCOP(itemSubtotal)}</span>
+            <button type="button" class="receipt-item-remove-btn" data-item-id="${item.cartItemId}">
+              Quitar
+            </button>
+          </div>
+        `;
+      }
       container.appendChild(row);
     });
 
@@ -872,7 +1310,7 @@
             border: 2px solid #4A1417;
             box-shadow: 2px 3px 6px rgba(0,0,0,0.35);
           ">
-            <span style="transform: rotate(45deg); font-size: 15px;">🍕</span>
+            <span style="transform: rotate(45deg); font-size: 15px; font-weight: 900; color: #4A1417;">✦</span>
           </div>
         `,
         iconSize: [32, 32],
@@ -940,6 +1378,14 @@
   function handleSendWhatsAppOrder(e) {
     if (e) e.preventDefault();
 
+    if (window.FerPizzCMS && typeof window.FerPizzCMS.evaluateStoreStatus === 'function') {
+      const storeStatus = window.FerPizzCMS.evaluateStoreStatus();
+      if (!storeStatus.isOpen) {
+        showToast(`No estamos atendiendo ahora (${storeStatus.todayText}).`);
+        return;
+      }
+    }
+
     if (cart.length === 0) {
       showToast('Tu carrito está vacío. Añade al menos una pizza.');
       return;
@@ -962,33 +1408,42 @@
       const itemSubtotal = item.unitPrice * item.quantity;
       subtotal += itemSubtotal;
 
-      itemsText += `• *${item.quantity}x Pizza ${item.name}*\n`;
-      itemsText += `  └ Formato: ${item.sizeLabel} (${item.sizePortions})\n`;
-      if (item.additions && item.additions.length > 0) {
-        itemsText += `  └ Adicionales: ${item.additions.map(a => a.name).join(', ')}\n`;
+      if (item.isStandaloneSauce) {
+        itemsText += `• *${item.quantity}x ${item.name}*\n`;
+        itemsText += `  └ Tarrito de salsa adicional\n`;
+        itemsText += `  └ Subtotal: ${formatCOP(itemSubtotal)}\n`;
+      } else {
+        itemsText += `• *${item.quantity}x Pizza ${item.name}*\n`;
+        itemsText += `  └ Formato: ${item.sizeLabel} (${item.sizePortions})\n`;
+        if (item.additions && item.additions.length > 0) {
+          itemsText += `  └ Adicionales: ${item.additions.map(a => a.name).join(', ')}\n`;
+        }
+        if (item.extraSauceCount && item.extraSauceCount > 0) {
+          itemsText += `  └ Salsa Adicional: ${item.extraSauceCount} tarrito(s) (${formatCOP(item.extraSauceCount * SAUCE_PRICE)})\n`;
+        }
+        if (item.notes) {
+          itemsText += `  └ Nota de cocina: ${item.notes}\n`;
+        }
+        itemsText += `  └ Subtotal: ${formatCOP(itemSubtotal)}\n`;
       }
-      if (item.notes) {
-        itemsText += `  └ Nota de cocina: ${item.notes}\n`;
-      }
-      itemsText += `  └ Subtotal: ${formatCOP(itemSubtotal)}\n`;
     });
 
     const googleMapsUrl = `https://maps.google.com/?q=${currentCoordinates.lat.toFixed(5)},${currentCoordinates.lng.toFixed(5)}`;
 
     const message = 
-`🍕 *NUEVO PEDIDO — FER PIZZ CARTAGENA*
+`*NUEVO PEDIDO — FER PIZZ CARTAGENA*
 ──────────────────────────────
-👤 *Cliente:* ${name}
-📞 *Teléfono:* ${phone}
-📍 *Dirección:* ${address}
-🗺️ *Ubicación GPS:* ${googleMapsUrl}
-${notes ? `📝 *Notas:* ${notes}\n` : ''}──────────────────────────────
-📋 *DETALLE DE TU PEDIDO:*
+✦ *Cliente:* ${name}
+✦ *Teléfono:* ${phone}
+✦ *Dirección:* ${address}
+✦ *Ubicación GPS:* ${googleMapsUrl}
+${notes ? `✦ *Notas:* ${notes}\n` : ''}──────────────────────────────
+*DETALLE DE TU PEDIDO:*
 ${itemsText}──────────────────────────────
-💰 *TOTAL ESTIMADO:* ${formatCOP(subtotal)} COP
+*TOTAL ESTIMADO:* ${formatCOP(subtotal)} COP
 ──────────────────────────────
 “UNA IDEA QUE NACIÓ PARA SERVIR”
-¡Horno encendido! 🔥 Gracias por preferirnos.`;
+Horno encendido. Gracias por preferirnos.`;
 
     const waUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
     window.open(waUrl, '_blank');
@@ -1225,7 +1680,7 @@ ${itemsText}──────────────────────�
     });
 
     const targets = document.querySelectorAll(
-      '.portions-interactive-grid, #pizzaMenuContainer, .additions-official-panel, .cooks-fluid-card, .contact-split-grid, .official-brand-footer, .reveal-on-scroll'
+      '.portions-interactive-grid, #pizzaMenuContainer, .additions-official-panel, .sauce-addon-card, .cooks-fluid-card, .contact-split-grid, .official-brand-footer, .reveal-on-scroll'
     );
     targets.forEach(t => observer.observe(t));
   }
@@ -1253,7 +1708,7 @@ ${itemsText}──────────────────────�
     });
 
     const targets = document.querySelectorAll(
-      '.portions-interactive-grid, #pizzaMenuContainer, .additions-official-panel, .cooks-fluid-card, .contact-split-grid, .official-brand-footer'
+      '.portions-interactive-grid, #pizzaMenuContainer, .additions-official-panel, .sauce-addon-card, .cooks-fluid-card, .contact-split-grid, .official-brand-footer'
     );
     targets.forEach(t => observer.observe(t));
     document.querySelectorAll('.reveal-on-scroll:not(.revealed)').forEach(el => {
@@ -1283,17 +1738,21 @@ ${itemsText}──────────────────────�
         clearTimeout(stampClickTimer);
 
         if (stampClickCount >= 5) {
-          openAdminModal();
           stampClickCount = 0;
+          window.location.href = 'admin.html';
         } else {
           stampClickTimer = setTimeout(() => stampClickCount = 0, 2000);
         }
       });
     }
 
-    if (window.location.hash === '#admin') openAdminModal();
+    if (window.location.hash === '#admin') {
+      window.location.href = 'admin.html';
+    }
     window.addEventListener('hashchange', () => {
-      if (window.location.hash === '#admin') openAdminModal();
+      if (window.location.hash === '#admin') {
+        window.location.href = 'admin.html';
+      }
     });
 
     if (closeAdminBtn) closeAdminBtn.addEventListener('click', closeAdminModal);
@@ -1320,6 +1779,62 @@ ${itemsText}──────────────────────�
 
     const btnSaveAnnounce = document.getElementById('btnSaveAnnounceChanges');
     if (btnSaveAnnounce) btnSaveAnnounce.addEventListener('click', saveAnnounceChanges);
+
+    // Adicionales y Complementos
+    const btnCreateComp = document.getElementById('btnCreateNewComp');
+    if (btnCreateComp) btnCreateComp.addEventListener('click', createComplement);
+
+    const btnSaveToppings = document.getElementById('btnSaveToppingsChanges');
+    if (btnSaveToppings) btnSaveToppings.addEventListener('click', saveAdminToppingsChanges);
+
+    const btnResetToppings = document.getElementById('btnResetToppingsDefaults');
+    if (btnResetToppings) btnResetToppings.addEventListener('click', resetToppingsToDefaults);
+
+    // Configuración Cloudinary CDN
+    const cloudNameIn = document.getElementById('adminCloudinaryName');
+    const cloudPresetIn = document.getElementById('adminCloudinaryPreset');
+    const btnSaveCloud = document.getElementById('btnSaveCloudinaryConfig');
+    const btnTestCloud = document.getElementById('btnTestCloudinaryUpload');
+
+    const curCloudCfg = getCloudinaryConfig();
+    if (cloudNameIn && curCloudCfg.cloudName) cloudNameIn.value = curCloudCfg.cloudName;
+    if (cloudPresetIn && curCloudCfg.uploadPreset) cloudPresetIn.value = curCloudCfg.uploadPreset;
+
+    if (btnSaveCloud) {
+      btnSaveCloud.addEventListener('click', function () {
+        const cName = cloudNameIn ? cloudNameIn.value.trim() : '';
+        const cPreset = cloudPresetIn ? cloudPresetIn.value.trim() : '';
+        saveCloudinaryConfig(cName, cPreset);
+        showToast('✓ Configuración de Cloudinary guardada');
+      });
+    }
+
+    if (btnTestCloud) {
+      btnTestCloud.addEventListener('click', function () {
+        const cName = cloudNameIn ? cloudNameIn.value.trim() : '';
+        const cPreset = cloudPresetIn ? cloudPresetIn.value.trim() : '';
+        if (!cName || !cPreset) {
+          alert('Por favor ingresa primero tu Cloud Name y Upload Preset antes de hacer la prueba.');
+          return;
+        }
+        if (typeof window.cloudinary === 'undefined') {
+          alert('El script de Cloudinary no ha cargado. Verifica tu conexión a internet.');
+          return;
+        }
+        const testWidget = window.cloudinary.createUploadWidget({
+          cloudName: cName,
+          uploadPreset: cPreset,
+          sources: ['local', 'url', 'camera'],
+          multiple: false,
+          folder: 'ferpizz_test'
+        }, (error, result) => {
+          if (!error && result && result.event === 'success') {
+            alert('¡Prueba exitosa! Imagen subida correctamente a Cloudinary:\n' + result.info.secure_url);
+          }
+        });
+        testWidget.open();
+      });
+    }
   }
 
   function openAdminModal() {
@@ -1351,6 +1866,7 @@ ${itemsText}──────────────────────�
       dashView.classList.remove('hidden');
       if (errorEl) errorEl.textContent = '';
       populateAdminPizzaTable();
+      populateAdminToppingsTable();
     } else {
       if (errorEl) errorEl.textContent = 'Clave incorrecta. Por favor intenta de nuevo.';
     }
@@ -1379,6 +1895,9 @@ ${itemsText}──────────────────────�
     activeMenu.forEach(pizza => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
+        <td style="text-align: center;">
+          <img src="${pizza.image || 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=700&q=80'}" alt="${pizza.name}" class="admin-table-thumb" id="admin-thumb-${pizza.id}">
+        </td>
         <td>
           <strong>${pizza.name}</strong><br>
           <small style="color: var(--ink-muted);">${pizza.badge || ''}</small>
@@ -1393,9 +1912,237 @@ ${itemsText}──────────────────────�
         <td><input type="number" class="admin-table-input" data-id="${pizza.id}" data-field="pizzeta" value="${pizza.prices.pizzeta}"></td>
         <td><input type="number" class="admin-table-input" data-id="${pizza.id}" data-field="mediana" value="${pizza.prices.mediana}"></td>
         <td><input type="number" class="admin-table-input" data-id="${pizza.id}" data-field="familiar" value="${pizza.prices.familiar}"></td>
+        <td>
+          <div class="admin-row-btn-group">
+            <button type="button" class="btn-admin-mini btn-cloudinary-upload" data-id="${pizza.id}">Subir Foto</button>
+            <button type="button" class="btn-admin-mini btn-url-edit" data-id="${pizza.id}">Pegar URL</button>
+          </div>
+        </td>
       `;
       tbody.appendChild(tr);
     });
+
+    tbody.querySelectorAll('.btn-cloudinary-upload').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const pId = this.dataset.id;
+        handleCloudinaryUploadForPizza(pId);
+      });
+    });
+
+    tbody.querySelectorAll('.btn-url-edit').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const pId = this.dataset.id;
+        handleUrlPromptForPizza(pId);
+      });
+    });
+  }
+
+  // GESTIÓN DE CONFIGURACIÓN Y SUBIDAS DE CLOUDINARY
+  function getCloudinaryConfig() {
+    if (window.FerPizzCMS && typeof window.FerPizzCMS.getCloudinaryConfig === 'function') {
+      return window.FerPizzCMS.getCloudinaryConfig();
+    }
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY_CLOUDINARY);
+      if (stored) return JSON.parse(stored);
+    } catch (e) {}
+    return { cloudName: 'kqlledef', uploadPreset: 'ferpizz_fotos' };
+  }
+
+  function saveCloudinaryConfig(cloudName, uploadPreset) {
+    try {
+      localStorage.setItem(STORAGE_KEY_CLOUDINARY, JSON.stringify({
+        cloudName: (cloudName || '').trim(),
+        uploadPreset: (uploadPreset || '').trim()
+      }));
+    } catch (e) {}
+  }
+
+  function updatePizzaImage(pizzaId, imageUrl) {
+    const pizza = activeMenu.find(p => p.id === pizzaId);
+    if (!pizza) return;
+    pizza.image = imageUrl;
+    localStorage.setItem(STORAGE_KEY_MENU, JSON.stringify(activeMenu));
+
+    const thumb = document.getElementById(`admin-thumb-${pizzaId}`);
+    if (thumb) thumb.src = imageUrl;
+
+    renderMenuGrid();
+    showToast(`✓ Foto de "${pizza.name}" actualizada`);
+  }
+
+  function handleCloudinaryUploadForPizza(pizzaId) {
+    const cfg = getCloudinaryConfig();
+    const pizza = activeMenu.find(p => p.id === pizzaId);
+    if (!pizza) return;
+
+    if (!cfg.cloudName || !cfg.uploadPreset) {
+      const wantSetup = confirm(`Para subir fotos directamente desde tu celular o equipo, necesitas configurar tu Cloud Name y Upload Preset gratuito de Cloudinary.\n\n¿Deseas abrir la pestaña "Fotos & Cloudinary CDN" para configurarlo ahora?\n(También puedes usar el botón "Pegar URL" si ya tienes un enlace).`);
+      if (wantSetup) {
+        const cloudTab = document.querySelector('.admin-tab-btn[data-tab="tab-cloudinary"]');
+        if (cloudTab) cloudTab.click();
+      }
+      return;
+    }
+
+    if (typeof window.cloudinary === 'undefined') {
+      alert('El servicio de Cloudinary no ha terminado de cargar o no hay conexión a internet.');
+      return;
+    }
+
+    const widget = window.cloudinary.createUploadWidget({
+      cloudName: cfg.cloudName,
+      uploadPreset: cfg.uploadPreset,
+      sources: ['local', 'url', 'camera'],
+      multiple: false,
+      folder: 'ferpizz_catalogo',
+      clientAllowedFormats: ['png', 'jpg', 'jpeg', 'webp'],
+      maxImageFileSize: 10000000,
+      theme: 'minimal'
+    }, (error, result) => {
+      if (!error && result && result.event === 'success') {
+        const secureUrl = result.info.secure_url;
+        updatePizzaImage(pizzaId, secureUrl);
+      }
+    });
+
+    widget.open();
+  }
+
+  function handleUrlPromptForPizza(pizzaId) {
+    const pizza = activeMenu.find(p => p.id === pizzaId);
+    if (!pizza) return;
+
+    const currentUrl = pizza.image || '';
+    const newUrl = prompt(`Ingresa el enlace directo (URL) de la imagen para "${pizza.name}":`, currentUrl);
+    if (newUrl !== null) {
+      const trimmed = newUrl.trim();
+      if (trimmed) {
+        updatePizzaImage(pizzaId, trimmed);
+      }
+    }
+  }
+
+  // GESTIÓN DE COMPLEMENTOS Y ADICIONALES EN EL CMS
+  function populateAdminToppingsTable() {
+    const tbody = document.getElementById('adminToppingsTbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    activeAdditions.forEach(add => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <input type="text" class="admin-table-input" data-id="${add.id}" data-field="name" value="${add.name}" style="width: 140px; text-align: left; font-weight: 700;">
+        </td>
+        <td>
+          <input type="text" class="admin-table-input" data-id="${add.id}" data-field="desc" value="${add.desc || ''}" style="width: 170px; text-align: left;">
+        </td>
+        <td><input type="number" class="admin-table-input" data-id="${add.id}" data-field="personal" value="${add.prices.personal}"></td>
+        <td><input type="number" class="admin-table-input" data-id="${add.id}" data-field="pizzeta" value="${add.prices.pizzeta}"></td>
+        <td><input type="number" class="admin-table-input" data-id="${add.id}" data-field="mediana" value="${add.prices.mediana}"></td>
+        <td><input type="number" class="admin-table-input" data-id="${add.id}" data-field="familiar" value="${add.prices.familiar}"></td>
+        <td style="text-align: center;">
+          <button type="button" class="btn-admin-mini btn-comp-delete" data-id="${add.id}" title="Eliminar adicional">Quitar</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    tbody.querySelectorAll('.btn-comp-delete').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const id = this.dataset.id;
+        deleteComplement(id);
+      });
+    });
+  }
+
+  function createComplement() {
+    const nameIn = document.getElementById('newCompName');
+    const descIn = document.getElementById('newCompDesc');
+    const pPersonalIn = document.getElementById('newCompPersonal');
+    const pPizzetaIn = document.getElementById('newCompPizzeta');
+    const pMedianaIn = document.getElementById('newCompMediana');
+    const pFamiliarIn = document.getElementById('newCompFamiliar');
+
+    const name = nameIn ? nameIn.value.trim() : '';
+    if (!name) {
+      alert('Ingresa el nombre del ingrediente o adicional.');
+      if (nameIn) nameIn.focus();
+      return;
+    }
+
+    const desc = descIn ? descIn.value.trim() : '';
+    const personal = parseInt(pPersonalIn?.value, 10) || 2000;
+    const pizzeta = parseInt(pPizzetaIn?.value, 10) || 3000;
+    const mediana = parseInt(pMedianaIn?.value, 10) || 4000;
+    const familiar = parseInt(pFamiliarIn?.value, 10) || 5000;
+
+    const id = 'add_' + name.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now().toString().slice(-4);
+
+    activeAdditions.push({
+      id: id,
+      name: name,
+      desc: desc,
+      prices: { personal, pizzeta, mediana, familiar }
+    });
+
+    localStorage.setItem(STORAGE_KEY_ADDITIONS, JSON.stringify(activeAdditions));
+
+    if (nameIn) nameIn.value = '';
+    if (descIn) descIn.value = '';
+
+    populateAdminToppingsTable();
+    renderPublicAdditionsTable();
+    showToast(`✓ Adicional "${name}" añadido`);
+  }
+
+  function deleteComplement(id) {
+    const comp = activeAdditions.find(a => a.id === id);
+    if (!comp) return;
+
+    if (!confirm(`¿Deseas eliminar el adicional "${comp.name}" de la carta y del personalizador?`)) return;
+
+    activeAdditions = activeAdditions.filter(a => a.id !== id);
+    localStorage.setItem(STORAGE_KEY_ADDITIONS, JSON.stringify(activeAdditions));
+
+    populateAdminToppingsTable();
+    renderPublicAdditionsTable();
+    showToast(`✓ Adicional "${comp.name}" eliminado`);
+  }
+
+  function saveAdminToppingsChanges() {
+    const tbody = document.getElementById('adminToppingsTbody');
+    if (!tbody) return;
+
+    activeAdditions.forEach(add => {
+      const nameIn = tbody.querySelector(`input[data-id="${add.id}"][data-field="name"]`);
+      const descIn = tbody.querySelector(`input[data-id="${add.id}"][data-field="desc"]`);
+      const pPersonal = tbody.querySelector(`input[data-id="${add.id}"][data-field="personal"]`);
+      const pPizzeta = tbody.querySelector(`input[data-id="${add.id}"][data-field="pizzeta"]`);
+      const pMediana = tbody.querySelector(`input[data-id="${add.id}"][data-field="mediana"]`);
+      const pFamiliar = tbody.querySelector(`input[data-id="${add.id}"][data-field="familiar"]`);
+
+      if (nameIn && nameIn.value.trim()) add.name = nameIn.value.trim();
+      if (descIn) add.desc = descIn.value.trim();
+      if (pPersonal) add.prices.personal = parseInt(pPersonal.value, 10) || add.prices.personal;
+      if (pPizzeta) add.prices.pizzeta = parseInt(pPizzeta.value, 10) || add.prices.pizzeta;
+      if (pMediana) add.prices.mediana = parseInt(pMediana.value, 10) || add.prices.mediana;
+      if (pFamiliar) add.prices.familiar = parseInt(pFamiliar.value, 10) || add.prices.familiar;
+    });
+
+    localStorage.setItem(STORAGE_KEY_ADDITIONS, JSON.stringify(activeAdditions));
+    renderPublicAdditionsTable();
+    showToast('✓ Cambios en adicionales guardados con éxito');
+  }
+
+  function resetToppingsToDefaults() {
+    if (!confirm('¿Restaurar los adicionales a los 6 ingredientes oficiales de fábrica?')) return;
+    activeAdditions = JSON.parse(JSON.stringify(DEFAULT_ADDITIONS));
+    localStorage.setItem(STORAGE_KEY_ADDITIONS, JSON.stringify(activeAdditions));
+    populateAdminToppingsTable();
+    renderPublicAdditionsTable();
+    showToast('✓ Adicionales restaurados de fábrica');
   }
 
   function saveAdminMenuChanges() {

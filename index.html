@@ -23,7 +23,7 @@
   <div class="unified-editorial-topbar">
     <div class="site-container topbar-flex">
       <div class="topbar-left">
-        <span class="badge-oven">🔥 HORNO ENCENDIDO</span>
+        <span class="badge-oven">HORNO ENCENDIDO</span>
         <span class="topbar-sep">✦</span>
         <span class="topbar-text">CARTAGENA DE INDIAS</span>
         <span class="topbar-sep desktop-only">✦</span>
@@ -34,7 +34,7 @@
       </div>
       <div class="topbar-right">
         <a href="https://wa.me/573162446724" target="_blank" rel="noopener noreferrer" class="topbar-contact-link">
-          📞 (316) 244-6724
+          (316) 244-6724
         </a>
         <span class="topbar-sep">✦</span>
         <a href="https://instagram.com/Ferpizz.ctg" target="_blank" rel="noopener noreferrer" class="topbar-contact-link">
@@ -99,6 +99,15 @@
       <div class="marquee-content" aria-hidden="true">
         FER PIZZ <span class="m-diamond">✦</span> “UNA IDEA QUE NACIÓ PARA SERVIR” <span class="m-diamond">✦</span> CARTAGENA DE INDIAS <span class="m-diamond">✦</span> RECETA TRADICIONAL DE LA CASA <span class="m-diamond">✦</span> PEDIDOS AL (316) 244-6724 <span class="m-diamond">✦</span> @FERPIZZ.CTG <span class="m-diamond">✦</span> DEL HORNO A TU MESA <span class="m-diamond">✦</span>
       </div>
+    </div>
+  </div>
+
+  <!-- AVISO AUTOMÁTICO CUANDO LA PIZZERÍA ESTÁ CERRADA -->
+  <div class="store-closed-banner hidden" id="storeClosedBanner" role="status" aria-live="polite">
+    <div class="site-container store-closed-inner">
+      <span class="store-closed-pill">NO ESTAMOS ATENDIENDO</span>
+      <span class="store-closed-msg" id="storeClosedMessageText">No estamos atendiendo en este momento. Consulta nuestros horarios de apertura.</span>
+      <span class="store-closed-hours" id="storeClosedTodayHours"></span>
     </div>
   </div>
 
@@ -187,11 +196,12 @@
         <!-- FORMATO 1: PERSONAL -->
         <div class="portion-card" data-size="personal">
           <div class="portion-circle-diagram">
-            <!-- 4 Porciones: Cruz en círculo -->
-            <svg viewBox="0 0 100 100" class="pizza-cut-svg">
+            <!-- 4 Porciones: Cruz simétrica en círculo -->
+            <svg viewBox="0 0 100 100" class="pizza-cut-svg" aria-label="Diagrama de 4 porciones simétricas">
               <circle cx="50" cy="50" r="44" stroke="#BD2026" stroke-width="3" fill="#FCD968" fill-opacity="0.25"/>
-              <line x1="50" y1="6" x2="50" y2="94" stroke="#BD2026" stroke-width="2.5"/>
-              <line x1="6" y1="50" x2="94" y2="50" stroke="#BD2026" stroke-width="2.5"/>
+              <line x1="50" y1="6" x2="50" y2="94" stroke="#BD2026" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="6" y1="50" x2="94" y2="50" stroke="#BD2026" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="50" cy="50" r="2.5" fill="#BD2026"/>
             </svg>
           </div>
           <span class="portion-count-tag">(4 porciones)</span>
@@ -202,12 +212,13 @@
         <!-- FORMATO 2: PIZZETA -->
         <div class="portion-card" data-size="pizzeta">
           <div class="portion-circle-diagram">
-            <!-- 6 Porciones: 3 líneas a 60° -->
-            <svg viewBox="0 0 100 100" class="pizza-cut-svg">
+            <!-- 6 Porciones: 3 líneas simétricas a 60° -->
+            <svg viewBox="0 0 100 100" class="pizza-cut-svg" aria-label="Diagrama de 6 porciones simétricas">
               <circle cx="50" cy="50" r="44" stroke="#BD2026" stroke-width="3" fill="#FCD968" fill-opacity="0.25"/>
-              <line x1="50" y1="6" x2="50" y2="94" stroke="#BD2026" stroke-width="2.5"/>
-              <line x1="12" y1="28" x2="88" y2="72" stroke="#BD2026" stroke-width="2.5"/>
-              <line x1="12" y1="72" x2="88" y2="28" stroke="#BD2026" stroke-width="2.5"/>
+              <line x1="50" y1="6" x2="50" y2="94" stroke="#BD2026" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="11.9" y1="28" x2="88.1" y2="72" stroke="#BD2026" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="88.1" y1="28" x2="11.9" y2="72" stroke="#BD2026" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="50" cy="50" r="2.5" fill="#BD2026"/>
             </svg>
           </div>
           <span class="portion-count-tag">(6 porciones)</span>
@@ -219,14 +230,15 @@
         <div class="portion-card active-featured" data-size="mediana">
           <div class="portion-badge-pop">POPULAR</div>
           <div class="portion-circle-diagram">
-            <!-- 10 Porciones -->
-            <svg viewBox="0 0 100 100" class="pizza-cut-svg">
+            <!-- 10 Porciones simétricas exactas a 36° -->
+            <svg viewBox="0 0 100 100" class="pizza-cut-svg" aria-label="Diagrama de 10 porciones simétricas">
               <circle cx="50" cy="50" r="44" stroke="#BD2026" stroke-width="3" fill="#FCD968" fill-opacity="0.32"/>
-              <line x1="50" y1="6" x2="50" y2="94" stroke="#BD2026" stroke-width="2"/>
-              <line x1="8" y1="36" x2="92" y2="64" stroke="#BD2026" stroke-width="2"/>
-              <line x1="24" y1="14" x2="76" y2="86" stroke="#BD2026" stroke-width="2"/>
-              <line x1="76" y1="14" x2="24" y2="86" stroke="#BD2026" stroke-width="2"/>
-              <line x1="92" y1="36" x2="8" y2="64" stroke="#BD2026" stroke-width="2"/>
+              <line x1="50" y1="6" x2="50" y2="94" stroke="#BD2026" stroke-width="2" stroke-linecap="round"/>
+              <line x1="24.1" y1="14.4" x2="75.9" y2="85.6" stroke="#BD2026" stroke-width="2" stroke-linecap="round"/>
+              <line x1="8.2" y1="36.4" x2="91.8" y2="63.6" stroke="#BD2026" stroke-width="2" stroke-linecap="round"/>
+              <line x1="8.2" y1="63.6" x2="91.8" y2="36.4" stroke="#BD2026" stroke-width="2" stroke-linecap="round"/>
+              <line x1="24.1" y1="85.6" x2="75.9" y2="14.4" stroke="#BD2026" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="50" cy="50" r="2.5" fill="#BD2026"/>
             </svg>
           </div>
           <span class="portion-count-tag">(10 porciones)</span>
@@ -237,15 +249,16 @@
         <!-- FORMATO 4: FAMILIAR -->
         <div class="portion-card" data-size="familiar">
           <div class="portion-circle-diagram">
-            <!-- 12 Porciones -->
-            <svg viewBox="0 0 100 100" class="pizza-cut-svg">
+            <!-- 12 Porciones simétricas exactas a 30° con corte prolijo y centro limpio -->
+            <svg viewBox="0 0 100 100" class="pizza-cut-svg" aria-label="Diagrama de 12 porciones simétricas y prolijas">
               <circle cx="50" cy="50" r="44" stroke="#BD2026" stroke-width="3" fill="#FCD968" fill-opacity="0.25"/>
-              <line x1="50" y1="6" x2="50" y2="94" stroke="#BD2026" stroke-width="1.8"/>
-              <line x1="6" y1="50" x2="94" y2="50" stroke="#BD2026" stroke-width="1.8"/>
-              <line x1="19" y1="19" x2="81" y2="81" stroke="#BD2026" stroke-width="1.8"/>
-              <line x1="19" y1="81" x2="81" y2="19" stroke="#BD2026" stroke-width="1.8"/>
-              <line x1="10" y1="35" x2="90" y2="65" stroke="#BD2026" stroke-width="1.8"/>
-              <line x1="35" y1="10" x2="65" y2="90" stroke="#BD2026" stroke-width="1.8"/>
+              <line x1="50" y1="6" x2="50" y2="94" stroke="#BD2026" stroke-width="1.8" stroke-linecap="round"/>
+              <line x1="6" y1="50" x2="94" y2="50" stroke="#BD2026" stroke-width="1.8" stroke-linecap="round"/>
+              <line x1="11.9" y1="28" x2="88.1" y2="72" stroke="#BD2026" stroke-width="1.8" stroke-linecap="round"/>
+              <line x1="28" y1="11.9" x2="72" y2="88.1" stroke="#BD2026" stroke-width="1.8" stroke-linecap="round"/>
+              <line x1="72" y1="11.9" x2="28" y2="88.1" stroke="#BD2026" stroke-width="1.8" stroke-linecap="round"/>
+              <line x1="88.1" y1="28" x2="11.9" y2="72" stroke="#BD2026" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="50" cy="50" r="2.5" fill="#BD2026"/>
             </svg>
           </div>
           <span class="portion-count-tag">(12 porciones)</span>
@@ -272,9 +285,10 @@
         <!-- FILTROS DE CATEGORÍA INTERACTIVOS -->
         <div class="menu-filter-nav" role="tablist" aria-label="Filtrar por categoría">
           <button type="button" class="filter-tab active" data-filter="all">Todas (8)</button>
+          <button type="button" class="filter-tab" data-filter="clasica">Clásicas</button>
           <button type="button" class="filter-tab" data-filter="especial">Especialidad</button>
           <button type="button" class="filter-tab" data-filter="pollo">Con Pollo</button>
-          <button type="button" class="filter-tab" data-filter="clasica">Clásicas</button>
+          <button type="button" class="filter-tab" data-filter="tradicional">Tradicionales</button>
         </div>
       </div>
 
@@ -301,7 +315,7 @@
                 <th>Familiar</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="publicAdditionsTbody">
               <tr>
                 <td><strong>Maíz Tierno</strong></td>
                 <td>$3.000</td>
@@ -323,8 +337,32 @@
                 <td>$2.000</td>
                 <td>$3.000</td>
               </tr>
+              <tr class="table-sauces-highlight-row">
+                <td><strong>Salsa Adicional (Tarrito)</strong></td>
+                <td>$2.000</td>
+                <td>$2.000</td>
+                <td>$2.000</td>
+                <td>$2.000</td>
+              </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- SECCIÓN SALSA ADICIONAL -->
+      <div class="sauce-addon-card reveal-on-scroll" id="salsas-section">
+        <div class="sauce-addon-content">
+          <div class="sauce-addon-text">
+            <span class="sauce-addon-tag">✦ EXTRA PARA TUS PORCIONES</span>
+            <h3 class="sauce-addon-title">¿Deseas Salsa Adicional?</h3>
+            <p class="sauce-addon-desc">Añade tarritos de salsa de la casa para acompañar tu pizza por solo <strong>$2.000 COP</strong> cada uno.</p>
+          </div>
+        </div>
+        <div class="sauce-addon-actions">
+          <span class="sauce-addon-price">$2.000 COP</span>
+          <button type="button" class="btn-add-sauce-direct" id="btnDirectAddSauce">
+            + AÑADIR SALSA ADICIONAL
+          </button>
         </div>
       </div>
 
@@ -386,7 +424,7 @@
             <div class="contact-lead-phone">
               <span class="phone-label">LÍNEA DE PEDIDOS & WHATSAPP</span>
               <a href="https://wa.me/573162446724" target="_blank" rel="noopener noreferrer" class="phone-big-link">
-                📞 (316) 244-6724
+                (316) 244-6724
               </a>
             </div>
 
@@ -409,7 +447,7 @@
             <div class="info-block-row">
               <span class="info-label">SÍGUENOS EN REDES</span>
               <a href="https://instagram.com/Ferpizz.ctg" target="_blank" rel="noopener noreferrer" class="insta-follow-btn">
-                <span class="ig-icon">📸</span> @Ferpizz.ctg
+                <span>@Ferpizz.ctg</span>
               </a>
             </div>
 
@@ -455,8 +493,9 @@
           <li><a href="#menu-section">Ver La Carta de Pizzas</a></li>
           <li><a href="#porciones-section">Formatos y Porciones</a></li>
           <li><a href="#horarios-section">Horarios & Domicilios</a></li>
-          <li><a href="https://wa.me/573162446724" target="_blank" rel="noopener noreferrer">WhatsApp: (316) 244-6724</a></li>
-          <li><a href="https://instagram.com/Ferpizz.ctg" target="_blank" rel="noopener noreferrer">Instagram: @Ferpizz.ctg</a></li>
+          <li><a href="https://wa.me/573162446724" target="_blank" rel="noopener noreferrer" id="footerWaLink">WhatsApp: (316) 244-6724</a></li>
+          <li><a href="https://instagram.com/Ferpizz.ctg" target="_blank" rel="noopener noreferrer" id="footerIgLink">Instagram: @Ferpizz.ctg</a></li>
+          <li><a href="admin.html">Panel Administrador (CMS)</a></li>
         </ul>
       </div>
 
@@ -501,7 +540,7 @@
         <span class="sticky-total" id="mobileStickyTotal">$0 COP</span>
       </div>
       <button type="button" class="btn-sticky-checkout" id="mobileCartOpenBtn">
-        <span>VER CARRITO 🛒</span>
+        <span>VER CARRITO</span>
       </button>
     </div>
   </aside>
@@ -529,6 +568,28 @@
         <!-- LISTA INTERACTIVA DE ADICIONALES -->
         <div class="toppings-cards-list" id="toppingsCardsList">
           <!-- Inyectado dinámicamente vía app.js -->
+        </div>
+
+        <!-- SECCIÓN DE SALSA ADICIONAL -->
+        <div class="toppings-section-intro sauces-intro">
+          <span>SALSA ADICIONAL:</span>
+          <small>Tarrito para acompañar tus porciones</small>
+        </div>
+        <div class="sauce-modal-single-box">
+          <div class="sauce-modal-info">
+            <div>
+              <div class="sauce-modal-title">Tarrito de Salsa Adicional</div>
+              <div class="sauce-modal-sub">Porción individual de salsa de la casa</div>
+            </div>
+          </div>
+          <div class="sauce-modal-controls">
+            <span class="sauce-modal-unit-price">+$2.000 c/u</span>
+            <div class="qty-stepper sauce-stepper">
+              <button type="button" class="btn-qty" id="modalSauceMinusBtn" aria-label="Menos salsa">-</button>
+              <span class="qty-count" id="modalSauceQtyCount">0</span>
+              <button type="button" class="btn-qty" id="modalSaucePlusBtn" aria-label="Más salsa">+</button>
+            </div>
+          </div>
         </div>
 
         <!-- SELECTOR DE CANTIDAD -->
@@ -635,9 +696,9 @@
           <!-- MAPA LEAFLET CON FILTRO SEPIA -->
           <div class="map-receipt-wrapper">
             <div class="map-header-bar">
-              <span class="map-bar-title">📍 PIN DE GEOLOCALIZACIÓN EN CARTAGENA</span>
+              <span class="map-bar-title">PIN DE GEOLOCALIZACIÓN EN CARTAGENA</span>
               <button type="button" class="btn-geo-locate" id="btnGeolocate" title="Ubicar mi posición satelital">
-                <span>🎯 Ubicar mi GPS</span>
+                <span>Ubicar mi GPS</span>
               </button>
             </div>
             <p class="map-instruction">
@@ -688,7 +749,7 @@
       </div>
 
       <div class="admin-auth-view" id="adminAuthView">
-        <div class="auth-lock-icon">🔒</div>
+        <div class="auth-lock-icon">✦</div>
         <h4>Acceso Restringido a Maestros Pizzaiolos</h4>
         <p>Introduce la clave de acceso de Fer Pizz para modificar la carta y precios.</p>
         <div class="auth-input-group">
@@ -700,14 +761,16 @@
 
       <div class="admin-dashboard-view hidden" id="adminDashboardView">
         <div class="admin-tabs">
-          <button type="button" class="admin-tab-btn active" data-tab="tab-pizzas">🍕 Carta de Pizzas & Precios</button>
-          <button type="button" class="admin-tab-btn" data-tab="tab-anuncio">📢 Nota de Cocina & Promo</button>
-          <button type="button" class="admin-tab-btn" data-tab="tab-firebase">☁️ Firebase Firestore Spark</button>
+          <button type="button" class="admin-tab-btn active" data-tab="tab-pizzas">Carta de Pizzas &amp; Precios</button>
+          <button type="button" class="admin-tab-btn" data-tab="tab-toppings">Complementos &amp; Adicionales</button>
+          <button type="button" class="admin-tab-btn" data-tab="tab-cloudinary">Fotos &amp; Cloudinary CDN</button>
+          <button type="button" class="admin-tab-btn" data-tab="tab-anuncio">Nota de Cocina &amp; Promo</button>
+          <button type="button" class="admin-tab-btn" data-tab="tab-firebase">Base de Datos en la Nube</button>
         </div>
 
         <div class="admin-tab-content active" id="tab-pizzas">
           <div class="tab-toolbar">
-            <p class="toolbar-info">Precios oficiales en COP y disponibilidad. Los cambios se guardan al instante.</p>
+            <p class="toolbar-info">Precios oficiales en COP, disponibilidad y fotografía. Los cambios se guardan al instante.</p>
             <div class="toolbar-actions">
               <button type="button" class="btn-admin-action" id="btnResetDefaults">Restaurar Precios Fábrica</button>
               <button type="button" class="btn-admin-action btn-save-main" id="btnSaveAdminChanges">Guardar Cambios</button>
@@ -718,16 +781,126 @@
             <table class="admin-pizza-table" id="adminPizzaTable">
               <thead>
                 <tr>
+                  <th style="width: 55px; text-align: center;">Foto</th>
                   <th>Sabor / Especialidad</th>
                   <th>Estado</th>
                   <th>Personal (4p)</th>
                   <th>Pizzeta (6p)</th>
                   <th>Mediana (10p)</th>
                   <th>Familiar (12p)</th>
+                  <th style="min-width: 170px; text-align: center;">Gestión de Foto</th>
                 </tr>
               </thead>
               <tbody id="adminPizzaTbody"></tbody>
             </table>
+          </div>
+        </div>
+
+        <div class="admin-tab-content" id="tab-toppings">
+          <div class="tab-toolbar">
+            <p class="toolbar-info">Crea, edita o elimina complementos e ingredientes adicionales para personalizar las pizzas.</p>
+            <div class="toolbar-actions">
+              <button type="button" class="btn-admin-action" id="btnResetToppingsDefaults">Restaurar Adicionales Fábrica</button>
+              <button type="button" class="btn-admin-action btn-save-main" id="btnSaveToppingsChanges">Guardar Cambios de Adicionales</button>
+            </div>
+          </div>
+
+          <!-- PANEL PARA AÑADIR NUEVO COMPLEMENTO -->
+          <div class="add-complement-panel">
+            <h4 class="add-complement-title">✦ Añadir Nuevo Complemento / Adicional</h4>
+            <div class="add-complement-grid">
+              <div class="admin-form-group">
+                <label class="form-label" for="newCompName">Nombre *</label>
+                <input type="text" id="newCompName" class="newspaper-input" placeholder="Ej: Jalapeños Asados">
+              </div>
+              <div class="admin-form-group">
+                <label class="form-label" for="newCompDesc">Descripción</label>
+                <input type="text" id="newCompDesc" class="newspaper-input" placeholder="Ej: Rodajas picantes salteadas">
+              </div>
+              <div class="admin-form-group">
+                <label class="form-label" for="newCompPersonal">Personal (4p)</label>
+                <input type="number" id="newCompPersonal" class="newspaper-input" placeholder="COP" value="3000">
+              </div>
+              <div class="admin-form-group">
+                <label class="form-label" for="newCompPizzeta">Pizzeta (6p)</label>
+                <input type="number" id="newCompPizzeta" class="newspaper-input" placeholder="COP" value="3500">
+              </div>
+              <div class="admin-form-group">
+                <label class="form-label" for="newCompMediana">Mediana (10p)</label>
+                <input type="number" id="newCompMediana" class="newspaper-input" placeholder="COP" value="5000">
+              </div>
+              <div class="admin-form-group">
+                <label class="form-label" for="newCompFamiliar">Familiar (12p)</label>
+                <input type="number" id="newCompFamiliar" class="newspaper-input" placeholder="COP" value="6500">
+              </div>
+            </div>
+            <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+              <button type="button" class="btn-mustard-solid" id="btnCreateNewComp" style="padding: 10px 22px; font-size: 0.76rem;">+ CREAR ADICIONAL</button>
+            </div>
+          </div>
+
+          <!-- TABLA DE COMPLEMENTOS EDITABLES -->
+          <div class="admin-pizza-table-wrapper" style="margin-top: 16px;">
+            <table class="admin-pizza-table" id="adminToppingsTable">
+              <thead>
+                <tr>
+                  <th>Adicional</th>
+                  <th>Descripción</th>
+                  <th>Personal (4p)</th>
+                  <th>Pizzeta (6p)</th>
+                  <th>Mediana (10p)</th>
+                  <th>Familiar (12p)</th>
+                  <th style="width: 80px; text-align: center;">Acción</th>
+                </tr>
+              </thead>
+              <tbody id="adminToppingsTbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="admin-tab-content" id="tab-cloudinary">
+          <div class="cloudinary-guide-box">
+            <div class="status-indicator">
+              <span class="status-pill status-spark">Cloudinary CDN: 25.000 fotos al mes sin costo</span>
+            </div>
+            <p style="margin: 10px 0 14px; font-size: 0.88rem; line-height: 1.5; color: var(--ink-charcoal);">
+              Sube fotos directas desde tu celular o computadora. Se optimizan y entregan en alta velocidad sin saturar tu servidor.
+            </p>
+          </div>
+
+          <div class="admin-form-group">
+            <label class="form-label" for="adminCloudinaryName">Cloud Name (Nombre de tu Nube)</label>
+            <input type="text" id="adminCloudinaryName" class="newspaper-input" placeholder="Ejemplo: ferpizz-ctg o tu_cloud_name">
+            <small style="color: var(--ink-muted); font-size: 0.76rem; display: block; margin-top: 4px;">
+              Aparece en la esquina superior del panel de control de Cloudinary al registrarte.
+            </small>
+          </div>
+
+          <div class="admin-form-group">
+            <label class="form-label" for="adminCloudinaryPreset">Upload Preset (Preset Sin Firmar / Unsigned)</label>
+            <input type="text" id="adminCloudinaryPreset" class="newspaper-input" placeholder="Ejemplo: ferpizz_preset o ml_default">
+            <small style="color: var(--ink-muted); font-size: 0.76rem; display: block; margin-top: 4px;">
+              En Cloudinary: Ajustes (Settings) &rarr; Upload &rarr; Add upload preset &rarr; Signing Mode: "Unsigned".
+            </small>
+          </div>
+
+          <div class="cloudinary-actions-row" style="display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap;">
+            <button type="button" class="btn-admin-action btn-save-main" id="btnSaveCloudinaryConfig">Guardar Configuración Cloudinary</button>
+            <button type="button" class="btn-admin-action" id="btnTestCloudinaryUpload">Probar Subida de Foto</button>
+          </div>
+
+          <div class="cloudinary-quick-steps" style="margin-top: 24px; padding: 16px; background: rgba(0,0,0,0.03); border: 1px dashed var(--border-paper);">
+            <h4 style="font-family: var(--font-headline); font-size: 0.95rem; margin-bottom: 8px; color: var(--accent-crimson);">
+              Instrucciones Rápidas de Activación (2 Minutos)
+            </h4>
+            <ol style="font-size: 0.82rem; line-height: 1.6; padding-left: 20px; color: var(--ink-charcoal); margin: 0;">
+              <li>Regístrate gratis en <strong>cloudinary.com</strong>.</li>
+              <li>Copia tu <strong>Cloud Name</strong> del panel principal y pégalo arriba.</li>
+              <li>Haz clic en el engranaje de configuración &rarr; <strong>Upload</strong> &rarr; <strong>Add upload preset</strong>.</li>
+              <li>Cambia el <em>Signing Mode</em> a <strong>Unsigned</strong> y haz clic en Guardar.</li>
+              <li>Copia el nombre de ese preset en el campo <em>Upload Preset</em> arriba y guarda los cambios.</li>
+              <li>¡Listo! En la pestaña "Carta de Pizzas &amp; Precios" podrás hacer clic en <strong>Subir Foto</strong> para cualquier sabor. También puedes usar <strong>Pegar URL</strong> en cualquier momento sin configurar nada.</li>
+            </ol>
           </div>
         </div>
 
@@ -780,6 +953,12 @@
   <!-- GSAP 3 & ScrollTrigger para animaciones espectaculares de entrada -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- Cloudinary Upload Widget (25.000 imágenes gratuitas al mes) -->
+  <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+
+  <!-- Motor de Datos Compartido (Local + Firebase Firestore) -->
+  <script src="cms-data.js"></script>
 
   <!-- Lógica Interactiva y Animaciones -->
   <script src="app.js"></script>

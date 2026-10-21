@@ -106,6 +106,73 @@ body.newspaper-theme.full-viewport {
   font-weight: 800;
   letter-spacing: 0.08em;
   box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.badge-oven.is-closed {
+  background-color: #2A1214;
+  color: var(--mustard-ferpizz);
+  border: 1px solid var(--mustard-ferpizz);
+}
+
+/* AVISO EDITORIAL CUANDO NO ESTÁN ATENDIENDO */
+.store-closed-banner {
+  background-color: var(--ink-wine);
+  color: #FAF4E8;
+  border-bottom: 2px solid var(--mustard-ferpizz);
+  padding: 12px 0;
+  position: relative;
+  z-index: 45;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+.store-closed-banner.hidden {
+  display: none !important;
+}
+
+.store-closed-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.store-closed-pill {
+  background-color: var(--accent-crimson);
+  color: var(--mustard-ferpizz);
+  border: 1.5px solid var(--mustard-ferpizz);
+  padding: 4px 12px;
+  font-family: var(--font-headline);
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.store-closed-msg {
+  font-family: var(--font-serif-editorial);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.store-closed-hours {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--mustard-ferpizz);
+  letter-spacing: 0.04em;
+  padding-left: 10px;
+  border-left: 1px solid rgba(252, 217, 104, 0.4);
+}
+
+@media (max-width: 768px) {
+  .store-closed-hours {
+    border-left: none;
+    padding-left: 0;
+    width: 100%;
+  }
 }
 
 .topbar-sep {
@@ -751,7 +818,7 @@ body.newspaper-theme.full-viewport {
 }
 
 .portion-card:hover .portion-circle-diagram {
-  transform: rotate(45deg) scale(1.08);
+  transform: translateY(-4px) scale(1.06);
 }
 
 .pizza-cut-svg {
@@ -878,6 +945,46 @@ body.newspaper-theme.full-viewport {
     0 16px 32px rgba(74, 20, 23, 0.12),
     4px 4px 0 var(--mustard-ferpizz);
   transform: translateY(-4px);
+}
+
+/* FOTO ARTESANAL DE LA PIZZA EN EL CATÁLOGO */
+.pizza-card-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  margin-bottom: 16px;
+  border: 1.5px solid var(--border-paper);
+  background-color: #EDE8DE;
+}
+
+.pizza-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--trans-smooth), filter var(--trans-smooth);
+}
+
+.pizza-editorial-card:hover .pizza-card-img {
+  transform: scale(1.05);
+}
+
+.pizza-card-stamp {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: rgba(26, 22, 21, 0.85);
+  color: var(--mustard-ferpizz);
+  font-family: var(--font-sans);
+  font-size: 0.60rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  padding: 3px 8px;
+  border: 1px solid rgba(249, 195, 72, 0.45);
+  text-transform: uppercase;
+  backdrop-filter: blur(4px);
+  pointer-events: none;
 }
 
 .pizza-editorial-card.card-featured {
@@ -1156,6 +1263,96 @@ body.newspaper-theme.full-viewport {
   padding: 12px 16px;
   border: 1px solid var(--border-paper);
   background-color: var(--bg-canvas);
+}
+
+.table-sauces-highlight-row td {
+  background-color: #FFF9EE;
+  border-top: 2px solid var(--mustard-deep);
+}
+.table-sauces-highlight-row td strong {
+  color: var(--accent-crimson);
+}
+
+/* ========================================================
+   SECCIÓN SALSA ADICIONAL (EDITORIAL FER PIZZ)
+   ======================================================== */
+.sauce-addon-card {
+  margin-top: 28px;
+  background-color: var(--bg-card);
+  border: 2px solid var(--ink-wine);
+  box-shadow: 6px 6px 0 var(--mustard-ferpizz);
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.sauce-addon-content {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex: 1 1 300px;
+}
+
+.sauce-addon-tag {
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--accent-crimson);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.sauce-addon-title {
+  font-family: var(--font-headline);
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--ink-charcoal);
+  margin-bottom: 4px;
+}
+
+.sauce-addon-desc {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: var(--ink-muted);
+  line-height: 1.35;
+}
+
+.sauce-addon-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sauce-addon-price {
+  font-family: var(--font-headline);
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: var(--accent-crimson);
+}
+
+.btn-add-sauce-direct {
+  background-color: var(--accent-crimson);
+  color: #FFF;
+  border: 1px solid var(--ink-wine);
+  padding: 10px 18px;
+  font-family: var(--font-sans);
+  font-size: 0.80rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all var(--trans-fast);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: 2px;
+}
+
+.btn-add-sauce-direct:hover {
+  background-color: var(--ink-wine);
+  box-shadow: 2px 2px 0 var(--mustard-ferpizz);
 }
 
 /* ========================================================
@@ -1905,6 +2102,61 @@ body.newspaper-theme.full-viewport {
   color: var(--accent-crimson);
 }
 
+/* SALSA ADICIONAL EN EL MODAL DE TOPPINGS */
+.toppings-section-intro.sauces-intro {
+  margin-top: 14px;
+  border-top: 1px dashed var(--border-paper);
+  padding-top: 16px;
+}
+
+.sauce-modal-single-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--border-paper);
+  gap: 12px;
+}
+
+.sauce-modal-single-box:hover {
+  border-color: var(--accent-crimson);
+  background-color: #FAF5EB;
+}
+
+.sauce-modal-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sauce-modal-title {
+  font-family: var(--font-headline);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--ink-charcoal);
+  margin-bottom: 2px;
+}
+
+.sauce-modal-sub {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+}
+
+.sauce-modal-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sauce-modal-unit-price {
+  font-family: var(--font-headline);
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--accent-crimson);
+  white-space: nowrap;
+}
+
 /* CANTIDAD Y NOTAS */
 .toppings-qty-row {
   display: flex;
@@ -2146,6 +2398,13 @@ body.newspaper-theme.full-viewport {
 .receipt-item-additions {
   font-size: 0.7rem;
   color: var(--accent-crimson);
+  font-style: normal;
+  font-weight: 600;
+}
+
+.receipt-item-sauces {
+  font-size: 0.7rem;
+  color: #8C4700;
   font-style: normal;
   font-weight: 600;
 }
@@ -2528,6 +2787,112 @@ body.newspaper-theme.full-viewport {
   border: 1px solid var(--border-paper);
   background-color: var(--bg-canvas);
   text-align: right;
+}
+
+/* MINIATURAS Y ACCIONES EN LA TABLA DEL CMS */
+.admin-table-thumb {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border: 1.5px solid var(--border-paper);
+  border-radius: 2px;
+  display: block;
+  margin: 0 auto;
+  background-color: #EDE8DE;
+}
+
+.admin-row-btn-group {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-admin-mini {
+  padding: 5px 8px;
+  font-size: 0.70rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--bg-paper);
+  border: 1px solid var(--border-paper);
+  color: var(--ink-wine);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-admin-mini:hover {
+  background: var(--mustard-ferpizz);
+  border-color: var(--ink-wine);
+}
+
+.btn-admin-mini.btn-cloudinary-upload {
+  background: var(--accent-crimson);
+  color: var(--white-pure);
+  border-color: var(--ink-wine);
+}
+
+.btn-admin-mini.btn-cloudinary-upload:hover {
+  background: var(--ink-wine);
+  color: var(--mustard-ferpizz);
+}
+
+.cloudinary-guide-box {
+  background-color: rgba(249, 195, 72, 0.08);
+  border: 1.5px solid var(--border-mustard);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+/* GESTIÓN DE COMPLEMENTOS Y ADICIONALES */
+.add-complement-panel {
+  background-color: rgba(249, 195, 72, 0.08);
+  border: 1.5px solid var(--border-mustard);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.add-complement-title {
+  font-family: var(--font-headline);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--accent-crimson);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.add-complement-grid {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr 1fr 1fr 1fr;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+@media (max-width: 900px) {
+  .add-complement-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+  .add-complement-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.btn-admin-mini.btn-comp-delete {
+  background-color: transparent;
+  color: var(--accent-crimson);
+  border-color: var(--accent-crimson);
+}
+
+.btn-admin-mini.btn-comp-delete:hover {
+  background-color: var(--accent-crimson);
+  color: var(--white-pure);
 }
 
 /* TOAST */
