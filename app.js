@@ -440,8 +440,12 @@
     if (footerIg && cfg.instagramHandle) footerIg.textContent = `Instagram: ${cfg.instagramHandle}`;
 
     const infoBlocks = document.querySelectorAll('.contact-card-box .info-block-row .info-text');
-    if (infoBlocks[0] && (cfg.hoursLine1 || cfg.hoursLine2)) {
-      infoBlocks[0].innerHTML = `${cfg.hoursLine1 || ''}<br>${cfg.hoursLine2 || ''}`;
+    if (infoBlocks[0]) {
+      if (window.FerPizzCMS && typeof window.FerPizzCMS.formatWeeklyScheduleHTML === 'function') {
+        infoBlocks[0].innerHTML = window.FerPizzCMS.formatWeeklyScheduleHTML(cfg);
+      } else if (cfg.hoursLine1 || cfg.hoursLine2) {
+        infoBlocks[0].innerHTML = `${cfg.hoursLine1 || ''}<br>${cfg.hoursLine2 || ''}`;
+      }
     }
     if (infoBlocks[1] && (cfg.coverageCity || cfg.coverageDesc)) {
       infoBlocks[1].innerHTML = `${cfg.coverageCity || ''}<br><span>${cfg.coverageDesc || ''}</span>`;
@@ -491,6 +495,11 @@
         if (msgEl) msgEl.textContent = status.closedMessage;
         if (hoursEl) hoursEl.textContent = status.todayText || '';
       }
+    }
+
+    const infoBlocks = document.querySelectorAll('.contact-card-box .info-block-row .info-text');
+    if (infoBlocks[0] && window.FerPizzCMS && typeof window.FerPizzCMS.formatWeeklyScheduleHTML === 'function') {
+      infoBlocks[0].innerHTML = window.FerPizzCMS.formatWeeklyScheduleHTML(customCfg);
     }
 
     if (waSubmitBtn && waBtnText) {

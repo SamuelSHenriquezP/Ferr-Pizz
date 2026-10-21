@@ -603,6 +603,59 @@
     };
   }
 
+  // GENERAR RESUMEN LEGIBLE AUTOMÁTICO DE LA TABLA DE HORARIOS SEMANALES
+  function formatWeeklyScheduleHTML(customCfg) {
+    const cfg = customCfg || getSiteConfig();
+    const schedule = cfg.weeklySchedule || DEFAULT_SITE_CONFIG.weeklySchedule;
+    const order = [
+      { key: '1', name: 'Lunes' },
+      { key: '2', name: 'Martes' },
+      { key: '3', name: 'Miércoles' },
+      { key: '4', name: 'Jueves' },
+      { key: '5', name: 'Viernes' },
+      { key: '6', name: 'Sábado' },
+      { key: '0', name: 'Domingo' }
+    ];
+
+    const groups = [];
+    order.forEach(d => {
+      const rule = schedule[d.key] || { name: d.name, enabled: true, open: '16:30', close: '23:00' };
+      const label = rule.enabled
+        ? `${formatTime12h(rule.open)} — ${formatTime12h(rule.close)}`
+        : 'Cerrado';
+      const last = groups[groups.length - 1];
+      if (last && last.label === label) {
+        last.endName = d.name;
+        last.count++;
+      } else {
+        groups.push({
+          startName: d.name,
+          endName: d.name,
+          count: 1,
+          label: label,
+          enabled: !!rule.enabled
+        });
+      }
+    });
+
+    const lines = groups.map(g => {
+      let dayRange = g.startName;
+      if (g.count === 2) {
+        dayRange = `${g.startName} y ${g.endName}`;
+      } else if (g.count > 2) {
+        dayRange = `${g.startName} a ${g.endName}`;
+      }
+      return `<strong>${dayRange}:</strong> ${g.label}`;
+    });
+
+    const status = evaluateStoreStatus(cfg);
+    const statusBadge = status.isOpen
+      ? `<span style="display:inline-block; margin-top:6px; padding:2px 8px; font-size:0.7rem; font-weight:800; background:#1E5E3A; color:#FFF; letter-spacing:0.06em;">ABIERTO AHORA</span>`
+      : `<span style="display:inline-block; margin-top:6px; padding:2px 8px; font-size:0.7rem; font-weight:800; background:#BD2026; color:#FCD968; letter-spacing:0.06em;">NO ESTAMOS ATENDIENDO AHORA</span>`;
+
+    return lines.join('<br>') + '<br>' + statusBadge;
+  }
+
   // EXPONER API GLOBAL
   window.FerPizzCMS = {
     KEYS,
@@ -624,7 +677,8 @@
     subscribeToCloudChanges,
     fetchFromDatabaseOnce,
     formatTime12h,
-    evaluateStoreStatus
+    evaluateStoreStatus,
+    formatWeeklyScheduleHTML
   };
 
 })(window);

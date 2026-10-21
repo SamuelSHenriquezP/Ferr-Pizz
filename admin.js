@@ -383,8 +383,6 @@
     cfgDisplayPhone: 'displayPhone',
     cfgInstagramHandle: 'instagramHandle',
     cfgInstagramUrl: 'instagramUrl',
-    cfgHoursLine1: 'hoursLine1',
-    cfgHoursLine2: 'hoursLine2',
     cfgCoverageCity: 'coverageCity',
     cfgCoverageDesc: 'coverageDesc',
     cfgStoreStatusMode: 'storeStatusMode',
