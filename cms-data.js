@@ -32,6 +32,7 @@
     SITE_CONFIG: 'ferpizz_site_config_v1',
     MENU: 'ferpizz_menu_v5',
     ADDITIONS: 'ferpizz_additions_v1',
+    ORDERS: 'ferpizz_orders_log_v1',
     CLOUDINARY: 'ferpizz_cloudinary_cfg',
     FIREBASE: 'ferpizz_firebase_cfg',
     ADMIN_PASS: 'ferpizz_admin_pass_v1'
@@ -656,6 +657,230 @@
     return lines.join('<br>') + '<br>' + statusBadge;
   }
 
+  // ============================================================================
+  // 6. MOTOR DE REGISTRO DE PEDIDOS Y ANALÍTICAS COMERCIALES (LOCAL + FIRESTORE)
+  // ============================================================================
+  function getOrdersLocal() {
+    try {
+      const raw = localStorage.getItem(KEYS.ORDERS);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {}
+    return [];
+  }
+
+  function saveOrdersLocal(ordersArray) {
+    try {
+      localStorage.setItem(KEYS.ORDERS, JSON.stringify(ordersArray || []));
+    } catch (e) {}
+    return ordersArray || [];
+  }
+
+  async function recordOrder(orderPayload) {
+    const now = new Date();
+    const dateISO = orderPayload.dateISO || [
+      now.getFullYear(),
+      String(now.getMonth() + 1).padStart(2, '0'),
+      String(now.getDate()).padStart(2, '0')
+    ].join('-');
+
+    const newOrder = {
+      id: orderPayload.id || ('ord_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4)),
+      createdAt: orderPayload.createdAt || now.toISOString(),
+      dateISO: dateISO,
+      customerName: orderPayload.customerName || 'Cliente',
+      customerPhone: orderPayload.customerPhone || '',
+      customerAddress: orderPayload.customerAddress || '',
+      total: parseInt(orderPayload.total, 10) || 0,
+      items: Array.isArray(orderPayload.items) ? orderPayload.items : [],
+      source: orderPayload.source || 'web_whatsapp'
+    };
+
+    // 1. Guardar en caché local
+    const localOrders = getOrdersLocal();
+    localOrders.unshift(newOrder);
+    saveOrdersLocal(localOrders);
+
+    // 2. Guardar en Firebase Firestore (ferpizz_cms/orders_log)
+    const cfg = getFirebaseConfig();
+    if (cfg) {
+      try {
+        const conn = await initFirestoreConnection(cfg);
+        if (conn.ok) {
+          const docRef = conn.db.collection('ferpizz_cms').doc('orders_log');
+          const snap = await docRef.get();
+          let cloudOrders = [];
+          if (snap.exists && Array.isArray(snap.data().orders)) {
+            cloudOrders = snap.data().orders;
+          }
+          // Evitar duplicado por id
+          if (!cloudOrders.some(o => o.id === newOrder.id)) {
+            cloudOrders.unshift(newOrder);
+          }
+          // Conservar últimos 1000 pedidos en el documento
+          if (cloudOrders.length > 1000) {
+            cloudOrders = cloudOrders.slice(0, 1000);
+          }
+          await docRef.set({
+            orders: cloudOrders,
+            updatedAt: new Date().toISOString()
+          });
+          saveOrdersLocal(cloudOrders);
+          return { ok: true, mode: 'cloud', order: newOrder };
+        }
+      } catch (err) {
+        console.warn('No se pudo subir el pedido a Firestore, guardado localmente:', err);
+      }
+    }
+
+    return { ok: true, mode: 'local', order: newOrder };
+  }
+
+  async function fetchOrdersFromCloud() {
+    const cfg = getFirebaseConfig();
+    if (!cfg) return { ok: false, orders: getOrdersLocal() };
+
+    const conn = await initFirestoreConnection(cfg);
+    if (!conn.ok) return { ok: false, orders: getOrdersLocal() };
+
+    try {
+      const snap = await conn.db.collection('ferpizz_cms').doc('orders_log').get();
+      if (snap.exists && Array.isArray(snap.data().orders)) {
+        const cloudOrders = snap.data().orders;
+        saveOrdersLocal(cloudOrders);
+        return { ok: true, orders: cloudOrders };
+      }
+      return { ok: true, orders: getOrdersLocal() };
+    } catch (err) {
+      return { ok: false, orders: getOrdersLocal(), message: err.message };
+    }
+  }
+
+  async function deleteOrderById(orderId) {
+    let updated = getOrdersLocal().filter(o => o.id !== orderId);
+    saveOrdersLocal(updated);
+
+    const cfg = getFirebaseConfig();
+    if (cfg) {
+      try {
+        const conn = await initFirestoreConnection(cfg);
+        if (conn.ok) {
+          await conn.db.collection('ferpizz_cms').doc('orders_log').set({
+            orders: updated,
+            updatedAt: new Date().toISOString()
+          });
+        }
+      } catch (e) {}
+    }
+    return updated;
+  }
+
+  async function clearAllOrders() {
+    saveOrdersLocal([]);
+    const cfg = getFirebaseConfig();
+    if (cfg) {
+      try {
+        const conn = await initFirestoreConnection(cfg);
+        if (conn.ok) {
+          await conn.db.collection('ferpizz_cms').doc('orders_log').set({
+            orders: [],
+            updatedAt: new Date().toISOString()
+          });
+        }
+      } catch (e) {}
+    }
+    return [];
+  }
+
+  // CALCULAR MÉTRICAS: INGRESOS, PEDIDOS, INGRESOS POR FECHA, MÁS Y MENOS PEDIDAS
+  function computeAnalytics(ordersInput, menuInput, dateFilter) {
+    const allOrders = Array.isArray(ordersInput) ? ordersInput : getOrdersLocal();
+    const menuList = Array.isArray(menuInput) ? menuInput : getMenu();
+
+    // Filtrar por rango de fechas si aplica
+    const filteredOrders = allOrders.filter(ord => {
+      const d = ord.dateISO || (ord.createdAt ? ord.createdAt.slice(0, 10) : '');
+      if (dateFilter && dateFilter.from && d < dateFilter.from) return false;
+      if (dateFilter && dateFilter.to && d > dateFilter.to) return false;
+      return true;
+    });
+
+    let totalRevenue = 0;
+    let totalOrders = filteredOrders.length;
+    let totalPizzasSold = 0;
+    const byDateMap = {};
+    const pizzaStatsMap = {};
+
+    // Inicializar todas las pizzas del catálogo en 0 para poder detectar también las menos pedidas (incluso con 0 ventas)
+    menuList.forEach(p => {
+      pizzaStatsMap[p.id] = {
+        id: p.id,
+        name: p.name,
+        category: p.category || '',
+        qty: 0,
+        revenue: 0
+      };
+    });
+
+    filteredOrders.forEach(ord => {
+      const orderTotal = parseInt(ord.total, 10) || 0;
+      totalRevenue += orderTotal;
+
+      const dKey = ord.dateISO || (ord.createdAt ? ord.createdAt.slice(0, 10) : 'Sin fecha');
+      if (!byDateMap[dKey]) {
+        byDateMap[dKey] = { dateISO: dKey, ordersCount: 0, pizzasCount: 0, revenue: 0 };
+      }
+      byDateMap[dKey].ordersCount += 1;
+      byDateMap[dKey].revenue += orderTotal;
+
+      if (Array.isArray(ord.items)) {
+        ord.items.forEach(item => {
+          if (item.isStandaloneSauce) return;
+          const q = parseInt(item.quantity, 10) || 1;
+          const sub = parseInt(item.subtotal, 10) || ((parseInt(item.unitPrice, 10) || 0) * q);
+          totalPizzasSold += q;
+          byDateMap[dKey].pizzasCount += q;
+
+          const pKey = item.pizzaId || item.name || 'otra';
+          if (!pizzaStatsMap[pKey]) {
+            pizzaStatsMap[pKey] = {
+              id: pKey,
+              name: item.name || 'Pizza Especial',
+              category: '',
+              qty: 0,
+              revenue: 0
+            };
+          }
+          pizzaStatsMap[pKey].qty += q;
+          pizzaStatsMap[pKey].revenue += sub;
+        });
+      }
+    });
+
+    const avgTicket = totalOrders > 0 ? Math.round(totalRevenue / totalOrders) : 0;
+
+    // Ordenar ingresos por fecha (más reciente primero)
+    const revenueByDate = Object.values(byDateMap).sort((a, b) => b.dateISO.localeCompare(a.dateISO));
+
+    // Ranking de pizzas: de más pedidas a menos pedidas
+    const allPizzaStats = Object.values(pizzaStatsMap);
+    const mostOrderedPizzas = [...allPizzaStats].sort((a, b) => (b.qty - a.qty) || (b.revenue - a.revenue));
+    const leastOrderedPizzas = [...allPizzaStats].sort((a, b) => (a.qty - b.qty) || (a.revenue - b.revenue));
+
+    return {
+      totalRevenue,
+      totalOrders,
+      totalPizzasSold,
+      avgTicket,
+      revenueByDate,
+      mostOrderedPizzas,
+      leastOrderedPizzas,
+      filteredOrders
+    };
+  }
+
   // EXPONER API GLOBAL
   window.FerPizzCMS = {
     KEYS,
@@ -678,7 +903,14 @@
     fetchFromDatabaseOnce,
     formatTime12h,
     evaluateStoreStatus,
-    formatWeeklyScheduleHTML
+    formatWeeklyScheduleHTML,
+    getOrdersLocal,
+    saveOrdersLocal,
+    recordOrder,
+    fetchOrdersFromCloud,
+    deleteOrderById,
+    clearAllOrders,
+    computeAnalytics
   };
 
 })(window);

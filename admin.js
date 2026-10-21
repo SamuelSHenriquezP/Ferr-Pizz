@@ -23,8 +23,17 @@
   let state = {
     siteConfig: CMS.getSiteConfig(),
     menu: CMS.getMenu(),
-    additions: CMS.getAdditions()
+    additions: CMS.getAdditions(),
+    orders: CMS.getOrdersLocal ? CMS.getOrdersLocal() : []
   };
+
+  function formatCOP(amount) {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      maximumFractionDigits: 0
+    }).format(amount || 0);
+  }
 
   function initAdminApp() {
     setupLoginGate();
@@ -33,6 +42,7 @@
     setupSectionActions();
     setupImageUploadButtons();
     setupDatabaseAndBackupControls();
+    setupAnalyticsControls();
     checkCloudStatus();
     autoSyncWithCloudOnLoad();
   }
@@ -51,6 +61,14 @@
         menu: state.menu,
         additions: state.additions
       });
+    }
+
+    if (typeof CMS.fetchOrdersFromCloud === 'function') {
+      const ordRes = await CMS.fetchOrdersFromCloud();
+      if (ordRes && Array.isArray(ordRes.orders)) {
+        state.orders = ordRes.orders;
+        renderAnalyticsDashboard();
+      }
     }
   }
 
@@ -108,6 +126,11 @@
         this.classList.add('active');
         const targetPanel = document.getElementById(targetId);
         if (targetPanel) targetPanel.classList.add('active');
+
+        if (targetId === 'sec-analytics') {
+          state.orders = CMS.getOrdersLocal ? CMS.getOrdersLocal() : [];
+          renderAnalyticsDashboard();
+        }
       });
     });
   }
@@ -117,11 +140,13 @@
     state.siteConfig = CMS.getSiteConfig();
     state.menu = CMS.getMenu();
     state.additions = CMS.getAdditions();
+    state.orders = CMS.getOrdersLocal ? CMS.getOrdersLocal() : [];
 
     renderPizzasEditorList();
     renderAdditionsEditorTable();
     populateSiteConfigInputs();
     populateCloudAndCloudinaryInputs();
+    renderAnalyticsDashboard();
   }
 
   // 3A. RENDERIZAR TARJETAS EDITABLES DE PIZZAS
@@ -900,7 +925,8 @@
           exportedAt: new Date().toISOString(),
           siteConfig: state.siteConfig,
           menu: state.menu,
-          additions: state.additions
+          additions: state.additions,
+          orders: state.orders
         };
 
         const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
@@ -927,6 +953,7 @@
             if (parsed.siteConfig) CMS.saveSiteConfigLocal(parsed.siteConfig);
             if (Array.isArray(parsed.menu)) CMS.saveMenuLocal(parsed.menu);
             if (Array.isArray(parsed.additions)) CMS.saveAdditionsLocal(parsed.additions);
+            if (Array.isArray(parsed.orders)) CMS.saveOrdersLocal(parsed.orders);
             populateAllForms();
             await publishAllChanges();
             showToast('✓ Copia de seguridad restaurada y publicada');
@@ -950,6 +977,272 @@
         await publishAllChanges();
         showToast('✓ Sitio completo restaurado a valores de fábrica');
       });
+    }
+  }
+
+  // 7. ANALÍTICAS COMERCIALES, INGRESOS, RANKING DE PIZZAS E HISTORIAL
+  function setupAnalyticsControls() {
+    const btnApplyFilter = document.getElementById('btnApplyAnalyticsFilter');
+    const btnResetFilter = document.getElementById('btnResetAnalyticsFilter');
+    const btnRefreshCloud = document.getElementById('btnRefreshCloudAnalytics');
+    const btnClearHistory = document.getElementById('btnClearAnalyticsHistory');
+    const btnAddManual = document.getElementById('btnAddManualOrder');
+
+    const pizzaSelect = document.getElementById('manualOrdPizza');
+    const sizeSelect = document.getElementById('manualOrdSize');
+    const qtyInput = document.getElementById('manualOrdQty');
+    const totalInput = document.getElementById('manualOrdTotal');
+
+    function updateManualEstimatedTotal() {
+      if (!pizzaSelect || !sizeSelect || !qtyInput || !totalInput) return;
+      const pId = pizzaSelect.value;
+      const sKey = sizeSelect.value || 'mediana';
+      const qty = parseInt(qtyInput.value, 10) || 1;
+      const pizza = state.menu.find(p => p.id === pId);
+      if (pizza && pizza.prices && pizza.prices[sKey]) {
+        totalInput.value = pizza.prices[sKey] * qty;
+      }
+    }
+
+    if (pizzaSelect) pizzaSelect.addEventListener('change', updateManualEstimatedTotal);
+    if (sizeSelect) sizeSelect.addEventListener('change', updateManualEstimatedTotal);
+    if (qtyInput) qtyInput.addEventListener('input', updateManualEstimatedTotal);
+
+    if (btnApplyFilter) {
+      btnApplyFilter.addEventListener('click', () => {
+        renderAnalyticsDashboard();
+        showToast('✓ Filtro de fechas aplicado');
+      });
+    }
+
+    if (btnResetFilter) {
+      btnResetFilter.addEventListener('click', () => {
+        const fromIn = document.getElementById('analyticsDateFrom');
+        const toIn = document.getElementById('analyticsDateTo');
+        if (fromIn) fromIn.value = '';
+        if (toIn) toIn.value = '';
+        renderAnalyticsDashboard();
+        showToast('✓ Mostrando todo el historial');
+      });
+    }
+
+    if (btnRefreshCloud) {
+      btnRefreshCloud.addEventListener('click', async () => {
+        btnRefreshCloud.textContent = 'SINCRONIZANDO...';
+        const res = await CMS.fetchOrdersFromCloud();
+        btnRefreshCloud.textContent = 'Sincronizar Pedidos desde la Nube';
+        if (res && Array.isArray(res.orders)) {
+          state.orders = res.orders;
+          renderAnalyticsDashboard();
+          showToast(`✓ ${state.orders.length} pedido(s) sincronizados desde Firestore`);
+        }
+      });
+    }
+
+    if (btnClearHistory) {
+      btnClearHistory.addEventListener('click', async () => {
+        if (!confirm('¿Estás seguro de borrar todo el historial de pedidos y reiniciar las analíticas a cero?')) return;
+        await CMS.clearAllOrders();
+        state.orders = [];
+        renderAnalyticsDashboard();
+        showToast('✓ Historial de pedidos reiniciado');
+      });
+    }
+
+    if (btnAddManual) {
+      btnAddManual.addEventListener('click', async () => {
+        const pId = pizzaSelect ? pizzaSelect.value : '';
+        const sKey = sizeSelect ? sizeSelect.value : 'mediana';
+        const qty = parseInt(qtyInput?.value, 10) || 1;
+        const pizza = state.menu.find(p => p.id === pId);
+        if (!pizza) {
+          alert('Selecciona una pizza del catálogo.');
+          return;
+        }
+
+        const unitPrice = pizza.prices?.[sKey] || 0;
+        const total = parseInt(totalInput?.value, 10) || (unitPrice * qty);
+        const sizeLabels = { personal: 'Personal', pizzeta: 'Pizzeta', mediana: 'Mediana', familiar: 'Familiar' };
+
+        await CMS.recordOrder({
+          customerName: 'Venta Directa / Teléfono',
+          customerPhone: '',
+          customerAddress: 'Punto Físico / Llamada',
+          total: total,
+          source: 'manual_admin',
+          items: [
+            {
+              pizzaId: pizza.id,
+              name: pizza.name,
+              sizeKey: sKey,
+              sizeLabel: sizeLabels[sKey] || sKey,
+              quantity: qty,
+              unitPrice: unitPrice,
+              subtotal: total,
+              isStandaloneSauce: false
+            }
+          ]
+        });
+
+        state.orders = CMS.getOrdersLocal();
+        renderAnalyticsDashboard();
+        showToast(`✓ Venta registrada: ${qty}x ${pizza.name} (${formatCOP(total)})`);
+      });
+    }
+  }
+
+  function renderAnalyticsDashboard() {
+    if (!CMS.computeAnalytics) return;
+
+    // Poblar selector de pizza para ventas manuales
+    const pizzaSelect = document.getElementById('manualOrdPizza');
+    if (pizzaSelect) {
+      const currentVal = pizzaSelect.value;
+      pizzaSelect.innerHTML = state.menu.map(p => `<option value="${escAttr(p.id)}">${escAttr(p.name)}</option>`).join('');
+      if (currentVal && state.menu.some(p => p.id === currentVal)) {
+        pizzaSelect.value = currentVal;
+      }
+      const totalInput = document.getElementById('manualOrdTotal');
+      const sizeSelect = document.getElementById('manualOrdSize');
+      const qtyInput = document.getElementById('manualOrdQty');
+      const selPizza = state.menu.find(p => p.id === pizzaSelect.value);
+      if (selPizza && totalInput && !totalInput.value) {
+        const sKey = sizeSelect ? sizeSelect.value : 'mediana';
+        const qty = parseInt(qtyInput?.value, 10) || 1;
+        totalInput.value = (selPizza.prices?.[sKey] || 0) * qty;
+      }
+    }
+
+    const fromDate = document.getElementById('analyticsDateFrom')?.value || '';
+    const toDate = document.getElementById('analyticsDateTo')?.value || '';
+
+    const stats = CMS.computeAnalytics(state.orders, state.menu, {
+      from: fromDate,
+      to: toDate
+    });
+
+    // 1. KPIs principales
+    const kpiRev = document.getElementById('kpiTotalRevenue');
+    const kpiOrd = document.getElementById('kpiTotalOrders');
+    const kpiPiz = document.getElementById('kpiTotalPizzas');
+    const kpiAvg = document.getElementById('kpiAvgTicket');
+
+    if (kpiRev) kpiRev.textContent = formatCOP(stats.totalRevenue);
+    if (kpiOrd) kpiOrd.textContent = String(stats.totalOrders);
+    if (kpiPiz) kpiPiz.textContent = String(stats.totalPizzasSold);
+    if (kpiAvg) kpiAvg.textContent = formatCOP(stats.avgTicket);
+
+    // 2. Pizzas Más Pedidas y Menos Pedidas
+    const mostContainer = document.getElementById('analyticsMostOrderedContainer');
+    const leastContainer = document.getElementById('analyticsLeastOrderedContainer');
+    const maxQty = Math.max(1, ...stats.mostOrderedPizzas.map(p => p.qty));
+
+    if (mostContainer) {
+      const topList = stats.mostOrderedPizzas.slice(0, 5);
+      mostContainer.innerHTML = topList.map((p, idx) => {
+        const pct = Math.round((p.qty / maxQty) * 100);
+        return `
+          <div class="ranking-bar-row">
+            <div class="ranking-bar-top">
+              <span>#${idx + 1} ${escAttr(p.name)}</span>
+              <span>${p.qty} pedida(s) • ${formatCOP(p.revenue)}</span>
+            </div>
+            <div class="ranking-bar-track">
+              <div class="ranking-bar-fill" style="width: ${pct}%;"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    if (leastContainer) {
+      const bottomList = stats.leastOrderedPizzas.slice(0, 5);
+      leastContainer.innerHTML = bottomList.map((p, idx) => {
+        const pct = Math.round((p.qty / maxQty) * 100);
+        return `
+          <div class="ranking-bar-row">
+            <div class="ranking-bar-top">
+              <span>#${idx + 1} ${escAttr(p.name)}</span>
+              <span>${p.qty} pedida(s) • ${formatCOP(p.revenue)}</span>
+            </div>
+            <div class="ranking-bar-track">
+              <div class="ranking-bar-fill least" style="width: ${pct}%;"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 3. Tabla de Ingresos por Fecha
+    const dateTbody = document.getElementById('analyticsByDateTbody');
+    if (dateTbody) {
+      if (stats.revenueByDate.length === 0) {
+        dateTbody.innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align: center; color: var(--ink-muted); padding: 18px;">
+              Aún no hay pedidos registrados en este rango de fechas.
+            </td>
+          </tr>
+        `;
+      } else {
+        dateTbody.innerHTML = stats.revenueByDate.map(row => `
+          <tr>
+            <td style="font-weight: 800; color: var(--ink-wine);">${escAttr(row.dateISO)}</td>
+            <td>${row.ordersCount} pedido(s)</td>
+            <td>${row.pizzasCount} pizza(s)</td>
+            <td style="font-weight: 800; color: var(--accent-crimson);">${formatCOP(row.revenue)}</td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    // 4. Historial Detallado de Pedidos Recientes
+    const historyTbody = document.getElementById('analyticsOrdersHistoryTbody');
+    if (historyTbody) {
+      if (stats.filteredOrders.length === 0) {
+        historyTbody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; color: var(--ink-muted); padding: 18px;">
+              Sin pedidos registrados todavía. Cuando un cliente envíe un pedido por WhatsApp o registres una venta manual arriba, aparecerá aquí.
+            </td>
+          </tr>
+        `;
+      } else {
+        historyTbody.innerHTML = stats.filteredOrders.slice(0, 50).map(ord => {
+          const dt = ord.createdAt ? new Date(ord.createdAt) : null;
+          const dateLabel = dt && !isNaN(dt)
+            ? dt.toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' })
+            : (ord.dateISO || '');
+          const itemsSummary = Array.isArray(ord.items)
+            ? ord.items.map(i => `${i.quantity || 1}x ${i.name} (${i.sizeLabel || ''})`).join(', ')
+            : 'Pedido general';
+
+          return `
+            <tr>
+              <td style="font-size: 0.78rem; white-space: nowrap;">${escAttr(dateLabel)}</td>
+              <td>
+                <strong>${escAttr(ord.customerName || 'Cliente')}</strong>
+                ${ord.customerPhone ? `<br><small style="color:var(--ink-muted);">${escAttr(ord.customerPhone)}</small>` : ''}
+              </td>
+              <td style="font-size: 0.80rem;">${escAttr(itemsSummary)}</td>
+              <td style="font-weight: 800; color: var(--ink-wine); white-space: nowrap;">${formatCOP(ord.total)}</td>
+              <td style="text-align: center;">
+                <button type="button" class="btn-admin-mini btn-comp-delete btn-delete-order-row" data-order-id="${escAttr(ord.id)}">Borrar</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        historyTbody.querySelectorAll('.btn-delete-order-row').forEach(btn => {
+          btn.addEventListener('click', async function () {
+            const ordId = this.dataset.orderId;
+            if (!confirm('¿Eliminar este pedido de las estadísticas?')) return;
+            state.orders = await CMS.deleteOrderById(ordId);
+            renderAnalyticsDashboard();
+            showToast('✓ Pedido eliminado del registro');
+          });
+        });
+      }
     }
   }
 

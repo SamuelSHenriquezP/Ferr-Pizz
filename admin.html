@@ -387,6 +387,74 @@
       display: block;
     }
 
+    /* ESTILOS DE ANALÍTICAS Y REPORTES COMERCIALES */
+    .analytics-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+    .analytics-kpi-card {
+      background-color: var(--bg-canvas);
+      border: 2px solid var(--ink-wine);
+      padding: 16px 18px;
+      box-shadow: 3px 3px 0 rgba(74, 20, 23, 0.14);
+    }
+    .analytics-kpi-card.highlight {
+      background-color: var(--mustard-warm);
+    }
+    .analytics-kpi-label {
+      display: block;
+      font-size: 0.70rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--ink-muted);
+      margin-bottom: 6px;
+    }
+    .analytics-kpi-card.highlight .analytics-kpi-label {
+      color: var(--ink-wine);
+    }
+    .analytics-kpi-value {
+      font-family: var(--font-headline);
+      font-size: 1.55rem;
+      font-weight: 900;
+      color: var(--ink-wine);
+      line-height: 1.1;
+    }
+    .analytics-kpi-sub {
+      display: block;
+      font-size: 0.74rem;
+      color: var(--ink-charcoal);
+      margin-top: 6px;
+    }
+    .ranking-bar-row {
+      margin-bottom: 12px;
+    }
+    .ranking-bar-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--ink-wine);
+    }
+    .ranking-bar-track {
+      width: 100%;
+      height: 10px;
+      background-color: #E5DEC9;
+      border: 1px solid var(--ink-wine);
+      overflow: hidden;
+    }
+    .ranking-bar-fill {
+      height: 100%;
+      background-color: var(--accent-crimson);
+      transition: width 0.35s ease;
+    }
+    .ranking-bar-fill.least {
+      background-color: #7D6B5D;
+    }
+
     @media (max-width: 980px) {
       .cms-main-container {
         grid-template-columns: 1fr;
@@ -394,7 +462,7 @@
       .cms-sidebar-nav {
         position: static;
       }
-      .cms-grid-2, .cms-grid-3, .cms-grid-4 {
+      .cms-grid-2, .cms-grid-3, .cms-grid-4, .analytics-kpi-grid {
         grid-template-columns: 1fr;
       }
       .cms-pizza-edit-card {
@@ -488,6 +556,12 @@
         <li>
           <button type="button" class="cms-nav-btn" data-section="sec-database">
             <span>6. Base de Datos y Fotos CDN</span>
+            <span>&rarr;</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="cms-nav-btn" data-section="sec-analytics">
+            <span>7. Analíticas e Ingresos</span>
             <span>&rarr;</span>
           </button>
         </li>
@@ -1052,6 +1126,163 @@
             <button type="button" class="btn-admin-action" id="btnResetEntireSiteFactory" style="border-color: var(--accent-crimson); color: var(--accent-crimson);">
               Restaurar Todo el Sitio de Fábrica
             </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- SECCIÓN 7: ANALÍTICAS, INGRESOS, PEDIDOS Y RANKING DE PIZZAS     -->
+      <!-- ================================================================ -->
+      <section class="cms-section-panel" id="sec-analytics">
+        <div class="cms-panel-header">
+          <div class="cms-panel-title-group">
+            <h2>7. Analíticas Comerciales, Ingresos y Ranking de Pizzas</h2>
+            <p>Monitorea tus ingresos totales, número de pedidos, ventas por fecha y cuáles son las pizzas más y menos pedidas (sincronizado con Firebase Firestore).</p>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button type="button" class="btn-admin-action btn-save-main" id="btnRefreshCloudAnalytics">
+              Sincronizar Pedidos desde la Nube
+            </button>
+            <button type="button" class="btn-admin-action" id="btnClearAnalyticsHistory" style="border-color: var(--accent-crimson); color: var(--accent-crimson);">
+              Limpiar Historial
+            </button>
+          </div>
+        </div>
+
+        <!-- FILTRO POR RANGO DE FECHAS -->
+        <div class="cms-fieldset-card">
+          <h3 class="cms-fieldset-title">✦ Filtrar Estadísticas por Fecha</h3>
+          <div class="cms-grid-3" style="align-items: end;">
+            <div class="admin-form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="analyticsDateFrom">Desde la fecha</label>
+              <input type="date" id="analyticsDateFrom" class="newspaper-input">
+            </div>
+            <div class="admin-form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="analyticsDateTo">Hasta la fecha</label>
+              <input type="date" id="analyticsDateTo" class="newspaper-input">
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn-admin-action btn-save-main" id="btnApplyAnalyticsFilter">Filtrar Fechas</button>
+              <button type="button" class="btn-admin-action" id="btnResetAnalyticsFilter">Ver Todo el Historial</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TARJETAS DE INDICADORES CLAVE (KPIs) -->
+        <div class="analytics-kpi-grid">
+          <div class="analytics-kpi-card highlight">
+            <span class="analytics-kpi-label">INGRESOS TOTALES</span>
+            <div class="analytics-kpi-value" id="kpiTotalRevenue">$0</div>
+            <span class="analytics-kpi-sub">COP acumulados en el periodo</span>
+          </div>
+          <div class="analytics-kpi-card">
+            <span class="analytics-kpi-label">NÚMERO DE PEDIDOS</span>
+            <div class="analytics-kpi-value" id="kpiTotalOrders">0</div>
+            <span class="analytics-kpi-sub">Pedidos registrados</span>
+          </div>
+          <div class="analytics-kpi-card">
+            <span class="analytics-kpi-label">PIZZAS VENDIDAS</span>
+            <div class="analytics-kpi-value" id="kpiTotalPizzas">0</div>
+            <span class="analytics-kpi-sub">Unidades despachadas</span>
+          </div>
+          <div class="analytics-kpi-card">
+            <span class="analytics-kpi-label">TICKET PROMEDIO</span>
+            <div class="analytics-kpi-value" id="kpiAvgTicket">$0</div>
+            <span class="analytics-kpi-sub">Valor promedio por pedido</span>
+          </div>
+        </div>
+
+        <!-- RANKING: LAS PIZZAS MÁS PEDIDAS Y LAS MENOS PEDIDAS -->
+        <div class="cms-grid-2">
+          <div class="cms-fieldset-card">
+            <h3 class="cms-fieldset-title">✦ Pizzas Más Pedidas (Mayor Demanda)</h3>
+            <div id="analyticsMostOrderedContainer">
+              <!-- Renderizado por admin.js -->
+            </div>
+          </div>
+
+          <div class="cms-fieldset-card">
+            <h3 class="cms-fieldset-title">✦ Pizzas Menos Pedidas (Menor Rotación)</h3>
+            <div id="analyticsLeastOrderedContainer">
+              <!-- Renderizado por admin.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- TABLA DE INGRESOS POR FECHA -->
+        <div class="cms-fieldset-card">
+          <h3 class="cms-fieldset-title">✦ Ingresos y Pedidos por Fecha</h3>
+          <div class="admin-table-wrapper">
+            <table class="admin-Menu-table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>N° de Pedidos</th>
+                  <th>Pizzas Vendidas</th>
+                  <th>Ingresos del Día (COP)</th>
+                </tr>
+              </thead>
+              <tbody id="analyticsByDateTbody">
+                <!-- Renderizado por admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- REGISTRAR PEDIDO MANUALMENTE (POR TELÉFONO / PRESENCIAL) -->
+        <div class="cms-fieldset-card">
+          <h3 class="cms-fieldset-title">✦ Registrar Venta Manual (Pedidos por Llamada o Presenciales)</h3>
+          <p style="font-size: 0.82rem; color: var(--ink-muted); margin: 0 0 14px 0;">
+            Los pedidos hechos desde la página web se registran automáticamente al enviarse a WhatsApp. Si recibes un pedido por llamada o directo en el punto, puedes sumarlo aquí para llevar tus cuentas exactas:
+          </p>
+          <div class="cms-grid-4" style="align-items: end;">
+            <div class="admin-form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="manualOrdPizza">Pizza *</label>
+              <select id="manualOrdPizza" class="newspaper-input"></select>
+            </div>
+            <div class="admin-form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="manualOrdSize">Tamaño</label>
+              <select id="manualOrdSize" class="newspaper-input">
+                <option value="personal">Personal (4p)</option>
+                <option value="pizzeta">Pizzeta (6p)</option>
+                <option value="mediana" selected>Mediana (10p)</option>
+                <option value="familiar">Familiar (12p)</option>
+              </select>
+            </div>
+            <div class="admin-form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="manualOrdQty">Cantidad</label>
+              <input type="number" id="manualOrdQty" class="newspaper-input" value="1" min="1" max="50">
+            </div>
+            <div class="admin-form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="manualOrdTotal">Valor Total (COP)</label>
+              <input type="number" id="manualOrdTotal" class="newspaper-input" placeholder="Se calcula automático">
+            </div>
+          </div>
+          <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+            <button type="button" class="btn-mustard-solid" id="btnAddManualOrder" style="padding: 10px 22px; font-size: 0.78rem;">
+              + SUMAR VENTA A LAS ESTADÍSTICAS
+            </button>
+          </div>
+        </div>
+
+        <!-- HISTORIAL DETALLADO DE PEDIDOS RECIENTES -->
+        <div class="cms-fieldset-card">
+          <h3 class="cms-fieldset-title">✦ Historial Detallado de Pedidos Recientes</h3>
+          <div class="admin-table-wrapper">
+            <table class="admin-Menu-table">
+              <thead>
+                <tr>
+                  <th>Fecha / Hora</th>
+                  <th>Cliente</th>
+                  <th>Detalle del Pedido</th>
+                  <th>Total (COP)</th>
+                  <th style="width: 90px; text-align: center;">Acción</th>
+                </tr>
+              </thead>
+              <tbody id="analyticsOrdersHistoryTbody">
+                <!-- Renderizado por admin.js -->
+              </tbody>
+            </table>
           </div>
         </div>
       </section>

@@ -1515,6 +1515,31 @@ Horno encendido. Gracias por preferirnos.`;
     const waUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
     window.open(waUrl, '_blank');
     showToast('✓ Abriendo WhatsApp oficial de Fer Pizz...');
+
+    // Registrar pedido automáticamente en las estadísticas (LocalStorage + Firebase Firestore)
+    if (window.FerPizzCMS && typeof window.FerPizzCMS.recordOrder === 'function') {
+      const orderItems = cart.map(item => ({
+        pizzaId: item.pizzaId || (item.isStandaloneSauce ? 'standalone_sauce' : 'custom'),
+        name: item.name,
+        sizeKey: item.sizeKey || 'unico',
+        sizeLabel: item.sizeLabel || 'Tarrito',
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        subtotal: item.unitPrice * item.quantity,
+        isStandaloneSauce: !!item.isStandaloneSauce,
+        additionsCount: Array.isArray(item.additions) ? item.additions.length : 0,
+        extraSauceCount: item.extraSauceCount || 0
+      }));
+
+      window.FerPizzCMS.recordOrder({
+        customerName: name,
+        customerPhone: phone,
+        customerAddress: address,
+        total: subtotal,
+        items: orderItems,
+        source: 'web_whatsapp'
+      });
+    }
   }
 
   // 7. FILTROS DE CATEGORÍA CON TRANSICIÓN GSAP
