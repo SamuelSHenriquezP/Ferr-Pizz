@@ -167,6 +167,17 @@ body.newspaper-theme.full-viewport {
   border-left: 1px solid rgba(252, 217, 104, 0.4);
 }
 
+/* BOTONES DE PEDIDO BLOQUEADOS CUANDO ESTÁ FUERA DE HORARIO */
+.btn-add-to-cart.btn-store-closed,
+.btn-sauce-direct-add.btn-store-closed {
+  background-color: #DCD6CA !important;
+  color: #6B5D54 !important;
+  border-color: #9E9285 !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
 @media (max-width: 768px) {
   .store-closed-hours {
     border-left: none;

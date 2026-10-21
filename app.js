@@ -515,6 +515,34 @@
         waBtnText.textContent = 'NO ESTAMOS ATENDIENDO AHORA';
       }
     }
+
+    // Actualizar botones de las tarjetas de pizza y botón de salsa adicional
+    document.querySelectorAll('.btn-add-to-cart').forEach(btn => {
+      const span = btn.querySelector('span');
+      if (status.isOpen) {
+        btn.disabled = false;
+        btn.classList.remove('btn-store-closed');
+        if (span) span.textContent = '+ PERSONALIZAR Y PEDIR';
+      } else {
+        btn.disabled = true;
+        btn.classList.add('btn-store-closed');
+        if (span) span.textContent = 'NO ESTAMOS ATENDIENDO';
+      }
+    });
+
+    const directSauceBtn = document.getElementById('btnDirectAddSauce');
+    if (directSauceBtn) {
+      const span = directSauceBtn.querySelector('span');
+      if (status.isOpen) {
+        directSauceBtn.disabled = false;
+        directSauceBtn.classList.remove('btn-store-closed');
+        if (span) span.textContent = '+ AÑADIR SALSA ADICIONAL AL PEDIDO';
+      } else {
+        directSauceBtn.disabled = true;
+        directSauceBtn.classList.add('btn-store-closed');
+        if (span) span.textContent = 'NO ESTAMOS ATENDIENDO';
+      }
+    }
   }
 
   // ESCUCHAR CAMBIOS EN TIEMPO REAL (FIRESTORE Y PESTAÑAS LOCALES)
@@ -665,6 +693,10 @@
       ? activeMenu
       : activeMenu.filter(p => p.category === activeFilter);
 
+    const storeStatus = (window.FerPizzCMS && typeof window.FerPizzCMS.evaluateStoreStatus === 'function')
+      ? window.FerPizzCMS.evaluateStoreStatus()
+      : { isOpen: true };
+
     filteredPizzas.forEach((pizza, index) => {
       const card = document.createElement('article');
       card.className = `pizza-editorial-card reveal-on-scroll ${pizza.featured ? 'card-featured' : ''}`;
@@ -728,10 +760,11 @@
           ${pizza.available ? `
             <button 
               type="button" 
-              class="btn-add-to-cart" 
+              class="btn-add-to-cart ${!storeStatus.isOpen ? 'btn-store-closed' : ''}" 
               data-pizza-id="${pizza.id}"
+              ${!storeStatus.isOpen ? 'disabled' : ''}
             >
-              <span>+ PERSONALIZAR Y PEDIR</span>
+              <span>${storeStatus.isOpen ? '+ PERSONALIZAR Y PEDIR' : 'NO ESTAMOS ATENDIENDO'}</span>
             </button>
           ` : `
             <span class="out-of-stock-tag">TEMPORALMENTE AGOTADA</span>
@@ -868,6 +901,14 @@
   }
 
   function openToppingsModal(pizzaId, sizeKey = 'mediana') {
+    if (window.FerPizzCMS && typeof window.FerPizzCMS.evaluateStoreStatus === 'function') {
+      const storeStatus = window.FerPizzCMS.evaluateStoreStatus();
+      if (!storeStatus.isOpen) {
+        showToast(`No estamos atendiendo ahora. ${storeStatus.todayText}`);
+        return;
+      }
+    }
+
     const pizza = activeMenu.find(p => p.id === pizzaId);
     if (!pizza) return;
 
@@ -1063,6 +1104,15 @@
   }
 
   function handleConfirmCustomPizza() {
+    if (window.FerPizzCMS && typeof window.FerPizzCMS.evaluateStoreStatus === 'function') {
+      const storeStatus = window.FerPizzCMS.evaluateStoreStatus();
+      if (!storeStatus.isOpen) {
+        closeToppingsModal();
+        showToast(`No estamos atendiendo ahora. ${storeStatus.todayText}`);
+        return;
+      }
+    }
+
     if (!modalCustomState.pizza) return;
 
     const pizza = modalCustomState.pizza;
@@ -1109,6 +1159,14 @@
   }
 
   function addDirectSauceToCart() {
+    if (window.FerPizzCMS && typeof window.FerPizzCMS.evaluateStoreStatus === 'function') {
+      const storeStatus = window.FerPizzCMS.evaluateStoreStatus();
+      if (!storeStatus.isOpen) {
+        showToast(`No estamos atendiendo ahora. ${storeStatus.todayText}`);
+        return;
+      }
+    }
+
     const existing = cart.find(item => item.isStandaloneSauce);
     if (existing) {
       existing.quantity += 1;
