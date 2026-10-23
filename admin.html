@@ -567,6 +567,10 @@
         </li>
       </ul>
       <div class="cms-sidebar-footer">
+        <button type="button" class="cms-nav-btn" data-section="sec-password">
+          <span>Cambiar contraseña</span>
+          <span>&rarr;</span>
+        </button>
         <p style="margin: 0 0 8px 0;"><strong>Consejo:</strong> Haz tus cambios en cualquier pestaña y presiona <strong>Publicar Todos los Cambios</strong> arriba a la derecha.</p>
         <button type="button" class="btn-admin-action" id="btnLogoutCms" style="width: 100%; font-size: 0.72rem; padding: 6px;">
           Cerrar Sesión
@@ -576,6 +580,30 @@
 
     <!-- ÁREA DE PANELES DE EDICIÓN -->
     <div class="cms-panels-wrapper">
+      <section class="cms-section-panel" id="sec-password">
+        <div class="cms-panel-header">
+          <div class="cms-panel-title-group">
+            <h2>Cambiar contraseña</h2>
+            <p>La nueva clave se aplicará al acceso desde todos los dispositivos. Al guardarla tendrás que iniciar sesión nuevamente.</p>
+          </div>
+        </div>
+        <form id="cmsPasswordChangeForm" class="cms-fieldset-card">
+          <div class="admin-form-group">
+            <label class="form-label" for="cmsCurrentPassword">Contraseña actual</label>
+            <input type="password" id="cmsCurrentPassword" class="newspaper-input" autocomplete="current-password" required>
+          </div>
+          <div class="admin-form-group">
+            <label class="form-label" for="cmsNewPassword">Nueva contraseña (mínimo 8 caracteres)</label>
+            <input type="password" id="cmsNewPassword" class="newspaper-input" autocomplete="new-password" minlength="8" required>
+          </div>
+          <div class="admin-form-group">
+            <label class="form-label" for="cmsConfirmPassword">Confirmar nueva contraseña</label>
+            <input type="password" id="cmsConfirmPassword" class="newspaper-input" autocomplete="new-password" minlength="8" required>
+          </div>
+          <p id="cmsPasswordChangeFeedback" role="status" aria-live="polite"></p>
+          <button type="submit" class="btn-admin-action btn-save-main" id="btnChangeCmsPassword">Guardar nueva contraseña</button>
+        </form>
+      </section>
 
       <!-- ================================================================ -->
       <!-- SECCIÓN 1: CARTA DE PIZZAS (PRECIOS, TEXTOS, FOTOS Y CREACIÓN)  -->
@@ -1124,6 +1152,19 @@
             <span class="analytics-kpi-label">TICKET PROMEDIO</span>
             <div class="analytics-kpi-value" id="kpiAvgTicket">$0</div>
             <span class="analytics-kpi-sub">Valor promedio por pedido</span>
+          </div>
+        </div>
+
+        <div class="cms-grid-2 analytics-charts-grid">
+          <div class="cms-fieldset-card">
+            <h3 class="cms-fieldset-title">✦ Ventas por Pizza</h3>
+            <p class="analytics-chart-note">Unidades vendidas de las 6 pizzas más pedidas en el período seleccionado.</p>
+            <div id="analyticsPizzaBarChart" aria-live="polite"></div>
+          </div>
+          <div class="cms-fieldset-card">
+            <h3 class="cms-fieldset-title">✦ Distribución de Ingresos</h3>
+            <p class="analytics-chart-note">Participación por canal: pedidos web por WhatsApp, ventas manuales y otros.</p>
+            <div id="analyticsRevenuePieChart" aria-live="polite"></div>
           </div>
         </div>
 

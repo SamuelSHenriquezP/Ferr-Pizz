@@ -897,8 +897,71 @@
     };
   }
 
+  // La clave se guarda separada del contenido y de sus copias de seguridad.
+  async function adminPasswordStore() {
+    if (!getFirebaseConfig()) throw new Error('Se necesita conexión con la nube para administrar la contraseña.');
+    const conn = await initFirestoreConnection();
+    if (!conn.ok) throw new Error('No se pudo conectar para verificar la contraseña. Intenta nuevamente.');
+    return conn.db.collection('ferpizz_cms').doc('admin_access');
+  }
+
+  async function readAdminPassword() {
+    const ref = await adminPasswordStore();
+    const snap = await ref.get({ source: 'server' });
+    return { ref, record: snap.exists ? snap.data() : null };
+  }
+
+  async function passwordDigest(password, salt, iterations) {
+    if (!window.crypto || !window.crypto.subtle) throw new Error('Abre el panel mediante HTTPS o localhost para administrar la contraseña.');
+    const key = await window.crypto.subtle.importKey(
+      'raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']
+    );
+    const bits = await window.crypto.subtle.deriveBits({
+      name: 'PBKDF2', salt: Uint8Array.from(salt), iterations, hash: 'SHA-256'
+    }, key, 256);
+    return Array.from(new Uint8Array(bits), byte => byte.toString(16).padStart(2, '0')).join('');
+  }
+
+  async function matchesAdminPassword(password, record) {
+    if (!record) return password === 'ferpizz2026' || password === 'admin';
+    if (!Array.isArray(record.salt) || !Number.isInteger(record.iterations)
+        || record.iterations < 1 || record.iterations > 1000000 || typeof record.hash !== 'string') {
+      throw new Error('La configuración de acceso no es válida. Contacta al encargado técnico.');
+    }
+    return await passwordDigest(password, record.salt, record.iterations) === record.hash;
+  }
+
+  async function verifyAdminPassword(password) {
+    const { record } = await readAdminPassword();
+    return matchesAdminPassword(password, record);
+  }
+
+  async function changeAdminPassword(currentPassword, newPassword) {
+    if (newPassword.length < 8) throw new Error('La nueva contraseña debe tener al menos 8 caracteres.');
+    if (newPassword === currentPassword || newPassword === 'admin' || newPassword === 'ferpizz2026') {
+      throw new Error('Elige una contraseña diferente de la actual y de las claves predeterminadas.');
+    }
+    const { ref, record } = await readAdminPassword();
+    if (!await matchesAdminPassword(currentPassword, record)) throw new Error('La contraseña actual es incorrecta.');
+    if (!window.crypto || !window.crypto.subtle) throw new Error('Abre el panel mediante HTTPS o localhost para administrar la contraseña.');
+    const salt = Array.from(window.crypto.getRandomValues(new Uint8Array(16)));
+    const iterations = 210000;
+    const hash = await passwordDigest(newPassword, salt, iterations);
+    const conn = await initFirestoreConnection();
+    await conn.db.runTransaction(async transaction => {
+      const latest = await transaction.get(ref);
+      const latestRecord = latest.exists ? latest.data() : null;
+      if ((latestRecord === null) !== (record === null) || latestRecord?.hash !== record?.hash) {
+        throw new Error('La contraseña cambió desde otro dispositivo. Vuelve a intentarlo.');
+      }
+      transaction.set(ref, { salt, iterations, hash });
+    });
+  }
+
   // EXPONER API GLOBAL
   window.FerPizzCMS = {
+    verifyAdminPassword,
+    changeAdminPassword,
     KEYS,
     DEFAULT_SITE_CONFIG,
     DEFAULT_MENU,

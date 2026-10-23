@@ -168,6 +168,116 @@ body.newspaper-theme.full-viewport {
 }
 
 /* BOTONES DE PEDIDO BLOQUEADOS CUANDO ESTÁ FUERA DE HORARIO */
+.analytics-charts-grid > * {
+  min-width: 0;
+}
+
+.analytics-chart-note,
+.analytics-chart-empty {
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.analytics-chart-empty {
+  padding: 55px 12px;
+  text-align: center;
+}
+
+.analytics-bar-chart {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  list-style: none;
+  padding: 24px 0 0;
+  margin: 0;
+}
+
+.analytics-bar-column {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.analytics-bar-area {
+  height: 180px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  border-bottom: 1px solid var(--ink-muted);
+}
+
+.analytics-bar {
+  position: relative;
+  width: 70%;
+  max-width: 52px;
+  min-height: 2px;
+  background: var(--accent-crimson);
+  border-radius: 4px 4px 0 0;
+}
+
+.analytics-bar-value {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding-bottom: 4px;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.analytics-bar-label {
+  display: block;
+  padding-top: 10px;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.analytics-pie-layout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 16px 0;
+}
+
+.analytics-pie {
+  width: min(200px, 100%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.analytics-chart-legend {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.analytics-chart-legend li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.analytics-chart-legend strong {
+  display: block;
+  margin-top: 3px;
+}
+
+.analytics-legend-dot {
+  width: 12px;
+  height: 12px;
+  margin-top: 3px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
 .communication-closed {
   opacity: 0.5;
   cursor: not-allowed;

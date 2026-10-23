@@ -10,7 +10,6 @@
 
   const CMS = window.FerPizzCMS;
   const SESSION_AUTH_KEY = 'ferpizz_cms_session_auth';
-  const DEFAULT_PASS = 'ferpizz2026';
 
   function escAttr(val) {
     return String(val == null ? '' : val)
@@ -37,6 +36,7 @@
 
   function initAdminApp() {
     setupLoginGate();
+    setupPasswordChange();
     setupSidebarNavigation();
     populateAllForms();
     setupSectionActions();
@@ -84,15 +84,23 @@
       if (loginScreen) loginScreen.classList.add('hidden');
     }
 
-    function attemptLogin() {
+    async function attemptLogin() {
+      if (loginBtn && loginBtn.disabled) return;
       const val = passIn ? passIn.value.trim() : '';
-      if (val === DEFAULT_PASS || val === 'admin') {
-        sessionStorage.setItem(SESSION_AUTH_KEY, 'true');
-        if (loginScreen) loginScreen.classList.add('hidden');
-        if (errEl) errEl.textContent = '';
-        showToast('✓ Acceso concedido al Panel de Control Fer Pizz');
-      } else {
-        if (errEl) errEl.textContent = 'Clave incorrecta. Intenta nuevamente.';
+      if (loginBtn) loginBtn.disabled = true;
+      try {
+        if (await CMS.verifyAdminPassword(val)) {
+          sessionStorage.setItem(SESSION_AUTH_KEY, 'true');
+          if (loginScreen) loginScreen.classList.add('hidden');
+          if (errEl) errEl.textContent = '';
+          showToast('✓ Acceso concedido al Panel de Control Fer Pizz');
+        } else {
+          if (errEl) errEl.textContent = 'Clave incorrecta. Intenta nuevamente.';
+        }
+      } catch (err) {
+        if (errEl) errEl.textContent = err.message || 'No se pudo verificar el acceso. Intenta nuevamente.';
+      } finally {
+        if (loginBtn) loginBtn.disabled = false;
       }
     }
 
@@ -112,7 +120,38 @@
     }
   }
 
-  // 2. NAVEGACIÓN LATERAL ENTRE LAS 6 SECCIONES
+  function setupPasswordChange() {
+    const form = document.getElementById('cmsPasswordChangeForm');
+    if (!form) return;
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      const feedback = document.getElementById('cmsPasswordChangeFeedback');
+      const button = document.getElementById('btnChangeCmsPassword');
+      const current = document.getElementById('cmsCurrentPassword').value.trim();
+      const next = document.getElementById('cmsNewPassword').value.trim();
+      const confirm = document.getElementById('cmsConfirmPassword').value.trim();
+      if (next !== confirm) {
+        feedback.textContent = 'Las contraseñas nuevas no coinciden.';
+        return;
+      }
+      if (button.disabled) return;
+      button.disabled = true;
+      feedback.textContent = 'Guardando contraseña...';
+      try {
+        await CMS.changeAdminPassword(current, next);
+        form.reset();
+        feedback.textContent = '';
+        document.getElementById('btnLogoutCms').click();
+        showToast('✓ Contraseña actualizada. Inicia sesión con tu nueva clave.');
+      } catch (err) {
+        feedback.textContent = err.message || 'No se pudo guardar la contraseña. Intenta nuevamente.';
+      } finally {
+        button.disabled = false;
+      }
+    });
+  }
+
+  // 2. NAVEGACIÓN LATERAL ENTRE SECCIONES
   function setupSidebarNavigation() {
     const navBtns = document.querySelectorAll('.cms-nav-btn');
     const panels = document.querySelectorAll('.cms-section-panel');
@@ -1013,6 +1052,63 @@
     }
   }
 
+  function renderAnalyticsCharts(stats) {
+    const bars = document.getElementById('analyticsPizzaBarChart');
+    const pie = document.getElementById('analyticsRevenuePieChart');
+    const empty = '<p class="analytics-chart-empty">No hay ventas para graficar en este período.</p>';
+    if (bars) {
+      const pizzas = stats.mostOrderedPizzas.filter(pizza => pizza.qty > 0).slice(0, 6);
+      const max = Math.max(1, ...pizzas.map(pizza => pizza.qty));
+      bars.innerHTML = pizzas.length ? `
+        <ul class="analytics-bar-chart" aria-label="Unidades vendidas por pizza">
+          ${pizzas.map(pizza => `
+            <li class="analytics-bar-column" title="${escAttr(pizza.name)}: ${pizza.qty} unidades">
+              <div class="analytics-bar-area">
+                <div class="analytics-bar" style="height: ${pizza.qty / max * 100}%;">
+                  <span class="analytics-bar-value">${pizza.qty}</span>
+                </div>
+              </div>
+              <span class="analytics-bar-label">${escAttr(pizza.name)}</span>
+            </li>
+          `).join('')}
+        </ul>` : empty;
+    }
+    if (pie) {
+      const channels = [
+        { label: 'Web / WhatsApp', color: '#BD2026', amount: 0 },
+        { label: 'Venta manual', color: '#B47D13', amount: 0 },
+        { label: 'Otros', color: '#476A57', amount: 0 }
+      ];
+      stats.filteredOrders.forEach(order => {
+        const amount = Number(order.total);
+        if (!Number.isFinite(amount) || amount <= 0) return;
+        const channel = order.source === 'web_whatsapp' ? 0 : order.source === 'manual_admin' ? 1 : 2;
+        channels[channel].amount += amount;
+      });
+      const active = channels.filter(channel => channel.amount > 0);
+      const total = active.reduce((sum, channel) => sum + channel.amount, 0);
+      let end = 0;
+      const segments = active.map(channel => {
+        const start = end;
+        end += channel.amount / total * 100;
+        return `${channel.color} ${start}% ${end}%`;
+      });
+      if (active.length === 1) segments.push(`${active[0].color} 100%`);
+      pie.innerHTML = total > 0 ? `
+        <div class="analytics-pie-layout">
+          <div class="analytics-pie" role="img" aria-label="Distribución de ingresos por canal; valores en la leyenda" style="background: conic-gradient(${segments.join(',')});"></div>
+          <ul class="analytics-chart-legend">
+            ${active.map(channel => `
+              <li>
+                <span class="analytics-legend-dot" style="background: ${channel.color};" aria-hidden="true"></span>
+                <span>${channel.label}<strong>${formatCOP(channel.amount)} · ${(channel.amount / total * 100).toFixed(1)}%</strong></span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>` : empty;
+    }
+  }
+
   function renderAnalyticsDashboard() {
     if (!CMS.computeAnalytics) return;
 
@@ -1042,6 +1138,7 @@
       from: fromDate,
       to: toDate
     });
+    renderAnalyticsCharts(stats);
 
     // 1. KPIs principales
     const kpiRev = document.getElementById('kpiTotalRevenue');

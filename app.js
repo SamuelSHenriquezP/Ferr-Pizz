@@ -230,7 +230,6 @@
   const STORAGE_KEY_ADDITIONS = 'ferpizz_additions_v1';
   const STORAGE_KEY_CART = 'ferpizz_cart_v4';
   const STORAGE_KEY_CLOUDINARY = 'ferpizz_cloudinary_cfg';
-  const ADMIN_PASSWORD_DEFAULT = 'ferpizz2026';
 
   // ESTADO GLOBAL
   let activeMenu = [];
@@ -1939,7 +1938,7 @@ Horno encendido. Gracias por preferirnos.`;
     if (window.location.hash === '#admin') history.replaceState(null, null, ' ');
   }
 
-  function verifyAdminPassword() {
+  async function verifyAdminPassword() {
     const input = document.getElementById('adminPasswordInput');
     const errorEl = document.getElementById('authErrorMsg');
     const authView = document.getElementById('adminAuthView');
@@ -1948,14 +1947,18 @@ Horno encendido. Gracias por preferirnos.`;
     if (!input) return;
     const entered = input.value.trim();
 
-    if (entered === ADMIN_PASSWORD_DEFAULT || entered === 'admin') {
-      authView.classList.add('hidden');
-      dashView.classList.remove('hidden');
-      if (errorEl) errorEl.textContent = '';
-      populateAdminPizzaTable();
-      populateAdminToppingsTable();
-    } else {
-      if (errorEl) errorEl.textContent = 'Clave incorrecta. Por favor intenta de nuevo.';
+    try {
+      if (await window.FerPizzCMS.verifyAdminPassword(entered)) {
+        authView.classList.add('hidden');
+        dashView.classList.remove('hidden');
+        if (errorEl) errorEl.textContent = '';
+        populateAdminPizzaTable();
+        populateAdminToppingsTable();
+      } else {
+        if (errorEl) errorEl.textContent = 'Clave incorrecta. Por favor intenta de nuevo.';
+      }
+    } catch (err) {
+      if (errorEl) errorEl.textContent = err.message || 'No se pudo verificar el acceso. Intenta nuevamente.';
     }
   }
 
