@@ -168,6 +168,12 @@ body.newspaper-theme.full-viewport {
 }
 
 /* BOTONES DE PEDIDO BLOQUEADOS CUANDO ESTÁ FUERA DE HORARIO */
+.communication-closed {
+  opacity: 0.5;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
 .btn-add-to-cart.btn-store-closed,
 .btn-sauce-direct-add.btn-store-closed {
   background-color: #DCD6CA !important;

@@ -957,7 +957,9 @@
           <div class="cms-grid-2">
             <div class="admin-form-group">
               <label class="form-label" for="cfgWhatsappPhone">Número de WhatsApp que Recibe los Pedidos (Con código de país, sin +)</label>
-              <input type="text" id="cfgWhatsappPhone" class="newspaper-input" placeholder="Ej: 573162446724">
+              <input type="tel" id="cfgWhatsappPhone" class="newspaper-input" placeholder="Ej: 573162446724" autocomplete="tel" aria-describedby="cfgWhatsappHelp cfgWhatsappPreview" required>
+              <small id="cfgWhatsappHelp">Incluye el código de país (57 para Colombia). Este número se usará en todos los enlaces de WhatsApp y al enviar pedidos. Puedes escribirlo con +, espacios o guiones.</small>
+              <p id="cfgWhatsappPreview" aria-live="polite" style="font-size: 0.84rem; overflow-wrap: anywhere;"></p>
             </div>
             <div class="admin-form-group">
               <label class="form-label" for="cfgDisplayPhone">Teléfono Visible al Público</label>

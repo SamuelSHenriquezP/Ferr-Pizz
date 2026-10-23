@@ -435,6 +435,13 @@
     });
 
     // Actualizar miniaturas de imágenes de sección
+    const whatsappInput = document.getElementById('cfgWhatsappPhone');
+    if (whatsappInput && !whatsappInput.dataset.boundInput) {
+      whatsappInput.dataset.boundInput = 'true';
+      whatsappInput.addEventListener('input', updateWhatsappPreview);
+    }
+    updateWhatsappPreview();
+
     setPreviewSrc('previewLogoImg', cfg.logoUrl);
     setPreviewSrc('previewHeroImg', cfg.heroImageUrl);
     setPreviewSrc('previewCooksImg', cfg.cooksImageUrl);
@@ -451,6 +458,47 @@
         updateLiveStoreStatusPreview();
       });
     }
+  }
+
+  function updateWhatsappPreview() {
+    const input = document.getElementById('cfgWhatsappPhone');
+    if (!input) return '';
+
+    const raw = input.value.trim();
+    const phone = raw.replace(/\D/g, '');
+    const valid = /^\+?[\d\s().-]+$/.test(raw) && /^[1-9]\d{6,14}$/.test(phone);
+    input.setCustomValidity(valid ? '' : 'Escribe un número válido con código de país, entre 7 y 15 dígitos.');
+
+    const preview = document.getElementById('cfgWhatsappPreview');
+    if (preview) {
+      preview.replaceChildren();
+      if (valid) {
+        const link = document.createElement('a');
+        link.href = `https://wa.me/${phone}`;
+        link.textContent = link.href;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        preview.append('Probar enlace: ', link);
+      } else {
+        preview.textContent = input.validationMessage;
+      }
+    }
+    return valid ? phone : '';
+  }
+
+  function validateWhatsappPhone() {
+    const input = document.getElementById('cfgWhatsappPhone');
+    if (!input) return true;
+    const phone = updateWhatsappPreview();
+    if (!phone) {
+      const contactTab = document.querySelector('.cms-nav-btn[data-section="sec-contacto"]');
+      if (contactTab) contactTab.click();
+      input.reportValidity();
+      input.focus();
+      return false;
+    }
+    input.value = phone;
+    return true;
   }
 
   function renderWeeklyScheduleEditor() {
@@ -694,6 +742,7 @@
   }
 
   async function publishAllChanges() {
+    if (!validateWhatsappPhone()) return;
     collectPizzasFromDOM();
     collectAdditionsFromDOM();
     collectSiteConfigFromDOM();
@@ -844,6 +893,7 @@
           return;
         }
 
+        if (!validateWhatsappPhone()) return;
         CMS.saveFirebaseConfig(parsed);
         if (fbFeedback) fbFeedback.textContent = 'Conectando y subiendo datos a Firestore...';
 

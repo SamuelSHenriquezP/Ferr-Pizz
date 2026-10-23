@@ -264,6 +264,7 @@
 
   // INICIALIZACIÓN
   function initApp() {
+    setupCommunicationGuards();
     loadSiteConfigAndHydrate();
     loadMenuData();
     loadAdditionsData();
@@ -409,11 +410,11 @@
     if (cooksCap && cfg.cooksImageCaption) cooksCap.textContent = cfg.cooksImageCaption;
 
     // 7. Contacto, Horarios, Redes y Volante
-    document.querySelectorAll('a[href*="wa.me"]').forEach(a => {
+    document.querySelectorAll('a[href*="wa.me"], a[data-contact-href*="wa.me"]').forEach(a => {
       if (a.classList.contains('btn-editorial-outline')) {
-        a.href = `https://wa.me/${WHATSAPP_PHONE}?text=Hola%20Fer%20Pizz%2C%20quisiera%20hacer%20un%20pedido%20directo`;
+        a.dataset.contactHref = `https://wa.me/${WHATSAPP_PHONE}?text=Hola%20Fer%20Pizz%2C%20quisiera%20hacer%20un%20pedido%20directo`;
       } else {
-        a.href = `https://wa.me/${WHATSAPP_PHONE}`;
+        a.dataset.contactHref = `https://wa.me/${WHATSAPP_PHONE}`;
       }
     });
 
@@ -426,8 +427,8 @@
     const footerWa = document.getElementById('footerWaLink');
     if (footerWa && cfg.displayPhone) footerWa.textContent = `WhatsApp: ${cfg.displayPhone}`;
 
-    document.querySelectorAll('a[href*="instagram.com"]').forEach(a => {
-      if (cfg.instagramUrl) a.href = cfg.instagramUrl;
+    document.querySelectorAll('a[href*="instagram.com"], a[data-contact-href*="instagram.com"]').forEach(a => {
+      if (cfg.instagramUrl) a.dataset.contactHref = cfg.instagramUrl;
     });
 
     const topIg = document.querySelector('.topbar-right a.topbar-contact-link:last-child');
@@ -467,10 +468,49 @@
     updatePublicStoreScheduleState(cfg);
   }
 
+  const COMMUNICATION_LINK_SELECTOR = 'a[data-contact-href], a[href*="wa.me"], a[href*="whatsapp.com"], a[href*="instagram.com"], a[href^="tel:"], a[href^="mailto:"]';
+
+  function updateCommunicationLinks(status) {
+    document.querySelectorAll(COMMUNICATION_LINK_SELECTOR).forEach(link => {
+      if (!link.dataset.contactHref) link.dataset.contactHref = link.getAttribute('href');
+      if (status.isOpen) {
+        link.setAttribute('href', link.dataset.contactHref);
+        link.removeAttribute('aria-disabled');
+        link.removeAttribute('tabindex');
+        link.classList.remove('communication-closed');
+      } else {
+        link.removeAttribute('href');
+        link.setAttribute('aria-disabled', 'true');
+        link.setAttribute('tabindex', '-1');
+        link.classList.add('communication-closed');
+      }
+    });
+  }
+
+  function setupCommunicationGuards() {
+    function guardCommunication(event) {
+      const link = event.target.closest(COMMUNICATION_LINK_SELECTOR);
+      if (!link) return;
+      const status = window.FerPizzCMS?.evaluateStoreStatus();
+      if (!status || !status.isOpen) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        updateCommunicationLinks(status || { isOpen: false });
+        if (event.type === 'click') showToast(status?.closedMessage || 'No estamos atendiendo en este momento.');
+      }
+    }
+    ['click', 'auxclick', 'contextmenu'].forEach(type => {
+      document.addEventListener(type, guardCommunication, true);
+    });
+    document.addEventListener('visibilitychange', () => updatePublicStoreScheduleState());
+    window.addEventListener('focus', () => updatePublicStoreScheduleState());
+  }
+
   function updatePublicStoreScheduleState(customCfg) {
     if (!window.FerPizzCMS || typeof window.FerPizzCMS.evaluateStoreStatus !== 'function') return;
 
     const status = window.FerPizzCMS.evaluateStoreStatus(customCfg);
+    updateCommunicationLinks(status);
     const ovenBadge = document.querySelector('.badge-oven');
     const banner = document.getElementById('storeClosedBanner');
     const msgEl = document.getElementById('storeClosedMessageText');
@@ -571,10 +611,10 @@
       });
     }
 
-    // Re-evaluar cada 30 segundos por si cambia el minuto de apertura o cierre
+    // Actualizar también las pestañas que permanecen abiertas al cambiar el horario.
     setInterval(() => {
       updatePublicStoreScheduleState();
-    }, 30000);
+    }, 1000);
   }
 
   // CARGAR DATOS DE ADICIONALES / COMPLEMENTOS

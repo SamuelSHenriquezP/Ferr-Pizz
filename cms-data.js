@@ -541,8 +541,12 @@
     const schedule = cfg.weeklySchedule || DEFAULT_SITE_CONFIG.weeklySchedule;
 
     const now = new Date();
-    const dayIdx = now.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
-    const curMinutes = now.getHours() * 60 + now.getMinutes();
+    const localParts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Bogota', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+    }).formatToParts(now);
+    const part = type => localParts.find(item => item.type === type).value;
+    const dayIdx = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(part('weekday'));
+    const curMinutes = Number(part('hour')) * 60 + Number(part('minute'));
     const todayRule = schedule[dayIdx] || DEFAULT_SITE_CONFIG.weeklySchedule[dayIdx];
 
     if (mode === 'force_open') {
@@ -572,6 +576,18 @@
     }
 
     // Modo automático por día y hora
+    const previousDay = (dayIdx + 6) % 7;
+    const previousRule = schedule[previousDay] || DEFAULT_SITE_CONFIG.weeklySchedule[previousDay];
+    // La madrugada pertenece al servicio del día anterior cuando cierra después de medianoche.
+    if (previousRule && previousRule.enabled && parseMinutes(previousRule.close) < parseMinutes(previousRule.open)
+        && curMinutes < parseMinutes(previousRule.close)) {
+      return {
+        isOpen: true, mode: 'auto', badgeText: cfg.ovenBadge || 'HORNO ENCENDIDO',
+        closedMessage: closedMsg, todayRule: previousRule,
+        todayText: `Horario de ${previousRule.name}: ${formatTime12h(previousRule.open)} — ${formatTime12h(previousRule.close)}`
+      };
+    }
+
     if (!todayRule || !todayRule.enabled) {
       return {
         isOpen: false,
@@ -588,10 +604,10 @@
     let isNowOpen = false;
 
     if (closeMin >= openMin) {
-      isNowOpen = curMinutes >= openMin && curMinutes <= closeMin;
+      isNowOpen = curMinutes >= openMin && curMinutes < closeMin;
     } else {
       // Cierre después de medianoche
-      isNowOpen = curMinutes >= openMin || curMinutes <= closeMin;
+      isNowOpen = curMinutes >= openMin;
     }
 
     return {
