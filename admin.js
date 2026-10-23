@@ -41,7 +41,7 @@
     populateAllForms();
     setupSectionActions();
     setupImageUploadButtons();
-    setupDatabaseAndBackupControls();
+    setupBackupControls();
     setupAnalyticsControls();
     checkCloudStatus();
     autoSyncWithCloudOnLoad();
@@ -145,7 +145,6 @@
     renderPizzasEditorList();
     renderAdditionsEditorTable();
     populateSiteConfigInputs();
-    populateCloudAndCloudinaryInputs();
     renderAnalyticsDashboard();
   }
 
@@ -805,11 +804,7 @@
   function openCloudinaryForCallback(onSuccess) {
     const cfg = CMS.getCloudinaryConfig();
     if (!cfg.cloudName || !cfg.uploadPreset) {
-      const go = confirm('Para subir imágenes desde tu dispositivo necesitas guardar tu Cloud Name y Upload Preset en la sección "6. Base de Datos y Fotos CDN".\n\n¿Deseas ir a esa sección ahora?');
-      if (go) {
-        const navBtn = document.querySelector('.cms-nav-btn[data-section="sec-database"]');
-        if (navBtn) navBtn.click();
-      }
+      showToast('La subida de imágenes no está disponible. Contacta al encargado técnico o pega una URL de imagen.');
       return;
     }
 
@@ -838,131 +833,8 @@
     widget.open();
   }
 
-  // 6. CONFIGURACIÓN DE FIREBASE FIRESTORE, CLOUDINARY Y BACKUP JSON
-  function populateCloudAndCloudinaryInputs() {
-    const cloudCfg = CMS.getCloudinaryConfig();
-    const cName = document.getElementById('cmsCloudinaryName');
-    const cPreset = document.getElementById('cmsCloudinaryPreset');
-    if (cName) cName.value = cloudCfg.cloudName || '';
-    if (cPreset) cPreset.value = cloudCfg.uploadPreset || '';
-
-    const fbCfg = CMS.getFirebaseConfig();
-    const fbInput = document.getElementById('cmsFirebaseJsonInput');
-    if (fbInput && fbCfg) {
-      fbInput.value = JSON.stringify(fbCfg, null, 2);
-    }
-  }
-
-  function setupDatabaseAndBackupControls() {
-    const fbInput = document.getElementById('cmsFirebaseJsonInput');
-    const fbFeedback = document.getElementById('cmsFirebaseFeedbackBox');
-    const btnSaveFb = document.getElementById('btnSaveAndSyncFirebase');
-    const btnPullFb = document.getElementById('btnPullFromFirebase');
-    const btnClearFb = document.getElementById('btnClearFirebaseConfig');
-
-    if (btnSaveFb) {
-      btnSaveFb.addEventListener('click', async () => {
-        const rawText = fbInput ? fbInput.value.trim() : '';
-        if (!rawText) {
-          alert('Pega primero el bloque JSON de firebaseConfig.');
-          return;
-        }
-
-        let parsed = null;
-        try {
-          // Permitir pegar JSON puro o un bloque JS de firebaseConfig con claves sin comillas
-          const braceMatch = rawText.match(/\{[\s\S]*\}/);
-          const candidate = braceMatch ? braceMatch[0] : rawText;
-          try {
-            parsed = JSON.parse(candidate);
-          } catch (_) {
-            const normalized = candidate
-              .replace(/\/\/.*$/gm, '')
-              .replace(/,\s*([}\]])/g, '$1')
-              .replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":')
-              .replace(/:\s*'([^']*)'/g, ': "$1"');
-            parsed = JSON.parse(normalized);
-          }
-        } catch (err) {
-          alert('El formato del JSON no es válido. Asegúrate de copiar el bloque { ... } de firebaseConfig.');
-          return;
-        }
-
-        if (!parsed.projectId || !parsed.apiKey) {
-          alert('El objeto debe incluir al menos "apiKey" y "projectId".');
-          return;
-        }
-
-        if (!validateWhatsappPhone()) return;
-        CMS.saveFirebaseConfig(parsed);
-        if (fbFeedback) fbFeedback.textContent = 'Conectando y subiendo datos a Firestore...';
-
-        collectPizzasFromDOM();
-        collectAdditionsFromDOM();
-        collectSiteConfigFromDOM();
-
-        const res = await CMS.publishToDatabase({
-          siteConfig: state.siteConfig,
-          menu: state.menu,
-          additions: state.additions
-        });
-
-        if (fbFeedback) fbFeedback.textContent = res.message;
-        showToast(res.message);
-        checkCloudStatus();
-      });
-    }
-
-    if (btnPullFb) {
-      btnPullFb.addEventListener('click', async () => {
-        if (fbFeedback) fbFeedback.textContent = 'Descargando datos desde Firestore...';
-        const res = await CMS.fetchFromDatabaseOnce();
-        if (res.ok) {
-          populateAllForms();
-          if (fbFeedback) fbFeedback.textContent = '✓ Datos descargados y sincronizados desde Firestore.';
-          showToast('✓ Sitio sincronizado desde la nube');
-        } else {
-          if (fbFeedback) fbFeedback.textContent = res.message;
-          showToast(res.message);
-        }
-      });
-    }
-
-    if (btnClearFb) {
-      btnClearFb.addEventListener('click', () => {
-        if (!confirm('¿Desvincular la configuración local de Firebase Firestore?')) return;
-        CMS.saveFirebaseConfig(null);
-        if (fbInput) fbInput.value = '';
-        if (fbFeedback) fbFeedback.textContent = 'Firebase desvinculado. Operando en modo LocalStorage.';
-        checkCloudStatus();
-        showToast('✓ Firebase desvinculado');
-      });
-    }
-
-    // Cloudinary
-    const btnSaveCloud = document.getElementById('btnSaveCmsCloudinary');
-    const btnTestCloud = document.getElementById('btnTestCmsCloudinary');
-
-    if (btnSaveCloud) {
-      btnSaveCloud.addEventListener('click', () => {
-        const cName = document.getElementById('cmsCloudinaryName')?.value || '';
-        const cPreset = document.getElementById('cmsCloudinaryPreset')?.value || '';
-        CMS.saveCloudinaryConfig(cName, cPreset);
-        showToast('✓ Credenciales de Cloudinary guardadas');
-      });
-    }
-
-    if (btnTestCloud) {
-      btnTestCloud.addEventListener('click', () => {
-        const cName = document.getElementById('cmsCloudinaryName')?.value || '';
-        const cPreset = document.getElementById('cmsCloudinaryPreset')?.value || '';
-        CMS.saveCloudinaryConfig(cName, cPreset);
-        openCloudinaryForCallback(url => {
-          alert('¡Subida de prueba exitosa!\nURL de la imagen en Cloudinary:\n' + url);
-        });
-      });
-    }
-
+  // 6. COPIAS DE SEGURIDAD Y RESTAURACION
+  function setupBackupControls() {
     // Exportar JSON
     const btnExport = document.getElementById('btnExportBackupJson');
     if (btnExport) {
@@ -1301,10 +1173,10 @@
     if (!badge) return;
     const cfg = CMS.getFirebaseConfig();
     if (cfg && cfg.projectId) {
-      badge.textContent = `Firestore Activo: ${cfg.projectId}`;
+      badge.textContent = 'Sincronización activa';
       badge.classList.add('connected');
     } else {
-      badge.textContent = 'Modo: LocalStorage (Listo para conectar BD)';
+      badge.textContent = 'Guardado local';
       badge.classList.remove('connected');
     }
   }

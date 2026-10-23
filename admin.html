@@ -554,8 +554,8 @@
           </button>
         </li>
         <li>
-          <button type="button" class="cms-nav-btn" data-section="sec-database">
-            <span>6. Base de Datos y Fotos CDN</span>
+          <button type="button" class="cms-nav-btn" data-section="sec-backups">
+            <span>6. Copias de Seguridad</span>
             <span>&rarr;</span>
           </button>
         </li>
@@ -1036,86 +1036,19 @@
       </section>
 
       <!-- ================================================================ -->
-      <!-- SECCIÓN 6: BASE DE DATOS (FIRESTORE), CLOUDINARY Y RESPALDOS     -->
+      <!-- COPIAS DE SEGURIDAD Y RESTAURACION -->
       <!-- ================================================================ -->
-      <section class="cms-section-panel" id="sec-database">
+      <section class="cms-section-panel" id="sec-backups">
         <div class="cms-panel-header">
           <div class="cms-panel-title-group">
-            <h2>6. Conexión de Base de Datos (Firebase Firestore) y Cloudinary CDN</h2>
-            <p>Deja conectada tu base de datos gratuita para que cada cambio que publiques se actualice en todos los dispositivos al instante.</p>
-          </div>
-        </div>
-
-        <!-- FIREBASE FIRESTORE -->
-        <div class="cms-fieldset-card">
-          <h3 class="cms-fieldset-title">✦ 1. Base de Datos en Tiempo Real: Firebase Firestore (Plan Gratuito Spark)</h3>
-          <p style="font-size: 0.86rem; line-height: 1.55; color: var(--ink-charcoal); margin-bottom: 14px;">
-            Pega aquí el objeto <code>firebaseConfig</code> (en formato JSON) que te entrega la consola de Firebase al crear tu aplicación web. Al hacer clic en <strong>Vincular y Subir Base de Datos</strong>, toda la carta, precios, complementos y textos actuales se subirán a la colección <code>ferpizz_cms/site_data</code>.
-          </p>
-
-          <div class="admin-form-group">
-            <label class="form-label" for="cmsFirebaseJsonInput">Credenciales Firebase JSON (firebaseConfig)</label>
-            <textarea id="cmsFirebaseJsonInput" class="newspaper-textarea code-font" rows="7" placeholder='{
-  "apiKey": "AIzaSy...",
-  "authDomain": "tu-proyecto.firebaseapp.com",
-  "projectId": "tu-proyecto",
-  "storageBucket": "tu-proyecto.appspot.com",
-  "messagingSenderId": "123456789",
-  "appId": "1:123456789:web:abcdef"
-}'></textarea>
-          </div>
-
-          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px;">
-            <button type="button" class="btn-admin-action btn-save-main" id="btnSaveAndSyncFirebase">
-              Vincular y Subir Datos Actuales a Firestore
-            </button>
-            <button type="button" class="btn-admin-action" id="btnPullFromFirebase">
-              Descargar Datos desde Firestore
-            </button>
-            <button type="button" class="btn-admin-action" id="btnClearFirebaseConfig">
-              Desvincular Firebase
-            </button>
-          </div>
-
-          <div id="cmsFirebaseFeedbackBox" style="margin-top: 12px; font-size: 0.84rem; font-weight: 700; color: var(--ink-wine);"></div>
-
-          <div style="margin-top: 18px; padding: 14px; background: rgba(0,0,0,0.03); border: 1px dashed var(--border-paper);">
-            <h4 style="font-family: var(--font-headline); font-size: 0.90rem; margin: 0 0 6px 0; color: var(--accent-crimson);">
-              ¿Cómo crear y conectar tu Base de Datos Firestore en 3 minutos?
-            </h4>
-            <ol style="font-size: 0.80rem; line-height: 1.6; padding-left: 18px; margin: 0; color: var(--ink-charcoal);">
-              <li>Entra a <strong>console.firebase.google.com</strong> e inicia sesión con tu cuenta de Google.</li>
-              <li>Haz clic en <strong>Crear un proyecto</strong> (ej. <em>ferpizz-cartagena</em>).</li>
-              <li>En el menú lateral izquierdo, entra a <strong>Compilación &rarr; Firestore Database</strong> y haz clic en <strong>Crear base de datos</strong>.</li>
-              <li>En las Reglas (Rules) de Firestore, coloca lectura pública y escritura abierta mientras administras: <code>allow read, write: if true;</code> y publica las reglas.</li>
-              <li>Ve a la Configuración del Proyecto (ícono de engranaje) &rarr; sección <strong>Tus apps</strong> &rarr; elige el ícono Web (<code>&lt;/&gt;</code>), regístrala y copia los datos de <code>firebaseConfig</code> en el cuadro de arriba.</li>
-              <li>Para dejarlo fijo en el código al subir tu página a internet, pega ese mismo bloque en la variable <code>PRODUCTION_FIREBASE_CONFIG</code> al inicio del archivo <code>cms-data.js</code>.</li>
-            </ol>
-          </div>
-        </div>
-
-        <!-- CLOUDINARY CDN -->
-        <div class="cms-fieldset-card">
-          <h3 class="cms-fieldset-title">✦ 2. Servidor de Imágenes: Cloudinary CDN (25.000 Fotos Gratis / Mes)</h3>
-          <div class="cms-grid-2">
-            <div class="admin-form-group">
-              <label class="form-label" for="cmsCloudinaryName">Cloud Name (Nombre de tu Nube)</label>
-              <input type="text" id="cmsCloudinaryName" class="newspaper-input" placeholder="Ej: ferpizz-ctg">
-            </div>
-            <div class="admin-form-group">
-              <label class="form-label" for="cmsCloudinaryPreset">Upload Preset (Modo Unsigned)</label>
-              <input type="text" id="cmsCloudinaryPreset" class="newspaper-input" placeholder="Ej: ferpizz_unsigned">
-            </div>
-          </div>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px;">
-            <button type="button" class="btn-admin-action btn-save-main" id="btnSaveCmsCloudinary">Guardar Credenciales Cloudinary</button>
-            <button type="button" class="btn-admin-action" id="btnTestCmsCloudinary">Probar Subida de Imagen</button>
+            <h2>6. Copias de Seguridad y Restauración</h2>
+            <p>Descarga un respaldo del contenido o restaura una copia de seguridad del sitio.</p>
           </div>
         </div>
 
         <!-- RESPALDO COMPLETO JSON Y REESTABLECIMIENTO -->
         <div class="cms-fieldset-card">
-          <h3 class="cms-fieldset-title">✦ 3. Copia de Seguridad (Exportar / Importar JSON) y Restauración Total</h3>
+          <h3 class="cms-fieldset-title">✦ Copia de Seguridad (Exportar / Importar JSON) y Restauración Total</h3>
           <p style="font-size: 0.84rem; color: var(--ink-muted); margin-bottom: 14px;">
             Puedes descargar un archivo con toda la configuración, pizzas, precios y complementos de tu sitio como respaldo, o restaurar toda la página a los valores originales de fábrica.
           </p>

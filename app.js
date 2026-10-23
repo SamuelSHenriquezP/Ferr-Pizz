@@ -971,7 +971,7 @@
 
     if (titleEl) titleEl.textContent = `PIZZA ${pizza.name.toUpperCase()}`;
     if (subEl) subEl.textContent = `Formato: ${SIZES[sizeKey].label} (${SIZES[sizeKey].portions})`;
-    
+
     const basePrice = pizza.prices[sizeKey] || 0;
     if (basePillEl) basePillEl.textContent = `Precio base: ${formatCOP(basePrice)}`;
     if (qtyEl) qtyEl.textContent = '1';
@@ -1922,51 +1922,6 @@ Horno encendido. Gracias por preferirnos.`;
     const btnResetToppings = document.getElementById('btnResetToppingsDefaults');
     if (btnResetToppings) btnResetToppings.addEventListener('click', resetToppingsToDefaults);
 
-    // Configuración Cloudinary CDN
-    const cloudNameIn = document.getElementById('adminCloudinaryName');
-    const cloudPresetIn = document.getElementById('adminCloudinaryPreset');
-    const btnSaveCloud = document.getElementById('btnSaveCloudinaryConfig');
-    const btnTestCloud = document.getElementById('btnTestCloudinaryUpload');
-
-    const curCloudCfg = getCloudinaryConfig();
-    if (cloudNameIn && curCloudCfg.cloudName) cloudNameIn.value = curCloudCfg.cloudName;
-    if (cloudPresetIn && curCloudCfg.uploadPreset) cloudPresetIn.value = curCloudCfg.uploadPreset;
-
-    if (btnSaveCloud) {
-      btnSaveCloud.addEventListener('click', function () {
-        const cName = cloudNameIn ? cloudNameIn.value.trim() : '';
-        const cPreset = cloudPresetIn ? cloudPresetIn.value.trim() : '';
-        saveCloudinaryConfig(cName, cPreset);
-        showToast('✓ Configuración de Cloudinary guardada');
-      });
-    }
-
-    if (btnTestCloud) {
-      btnTestCloud.addEventListener('click', function () {
-        const cName = cloudNameIn ? cloudNameIn.value.trim() : '';
-        const cPreset = cloudPresetIn ? cloudPresetIn.value.trim() : '';
-        if (!cName || !cPreset) {
-          alert('Por favor ingresa primero tu Cloud Name y Upload Preset antes de hacer la prueba.');
-          return;
-        }
-        if (typeof window.cloudinary === 'undefined') {
-          alert('El script de Cloudinary no ha cargado. Verifica tu conexión a internet.');
-          return;
-        }
-        const testWidget = window.cloudinary.createUploadWidget({
-          cloudName: cName,
-          uploadPreset: cPreset,
-          sources: ['local', 'url', 'camera'],
-          multiple: false,
-          folder: 'ferpizz_test'
-        }, (error, result) => {
-          if (!error && result && result.event === 'success') {
-            alert('¡Prueba exitosa! Imagen subida correctamente a Cloudinary:\n' + result.info.secure_url);
-          }
-        });
-        testWidget.open();
-      });
-    }
   }
 
   function openAdminModal() {
@@ -2081,14 +2036,6 @@ Horno encendido. Gracias por preferirnos.`;
     return { cloudName: 'kqlledef', uploadPreset: 'ferpizz_fotos' };
   }
 
-  function saveCloudinaryConfig(cloudName, uploadPreset) {
-    try {
-      localStorage.setItem(STORAGE_KEY_CLOUDINARY, JSON.stringify({
-        cloudName: (cloudName || '').trim(),
-        uploadPreset: (uploadPreset || '').trim()
-      }));
-    } catch (e) {}
-  }
 
   function updatePizzaImage(pizzaId, imageUrl) {
     const pizza = activeMenu.find(p => p.id === pizzaId);
@@ -2109,11 +2056,7 @@ Horno encendido. Gracias por preferirnos.`;
     if (!pizza) return;
 
     if (!cfg.cloudName || !cfg.uploadPreset) {
-      const wantSetup = confirm(`Para subir fotos directamente desde tu celular o equipo, necesitas configurar tu Cloud Name y Upload Preset gratuito de Cloudinary.\n\n¿Deseas abrir la pestaña "Fotos & Cloudinary CDN" para configurarlo ahora?\n(También puedes usar el botón "Pegar URL" si ya tienes un enlace).`);
-      if (wantSetup) {
-        const cloudTab = document.querySelector('.admin-tab-btn[data-tab="tab-cloudinary"]');
-        if (cloudTab) cloudTab.click();
-      }
+      showToast('La subida de imágenes no está disponible. Contacta al encargado técnico o usa Pegar URL.');
       return;
     }
 
